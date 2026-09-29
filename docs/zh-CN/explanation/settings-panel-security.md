@@ -1,6 +1,6 @@
 # 设置面板安全
 
-**LinguaLens: Open Settings Panel** 命令打开基于 Webview 的 UI（`SettingsPanelController` + `settingsPanel/webview/main.ts`），用于编辑诸多 `aiTranslate.*` 键而无需手写 JSON。本文说明该 UI 的加固方式以及哪些密钥它绝不接触。
+**LinguaLens: Open Settings Panel** 命令打开基于 Webview 的 UI（`SettingsPanelController` + `settingsPanel/webview/main.ts`），用于编辑诸多 `linguaLens.*` 键而无需手写 JSON。本文说明该 UI 的加固方式以及哪些密钥它绝不接触。
 
 ## 威胁模型（实用视角）
 

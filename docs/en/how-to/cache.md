@@ -12,8 +12,8 @@ Control how LinguaLens stores and reuses LLM results to save latency and API cos
 
 `CacheService` maintains:
 
-1. **Memory LRU** — size `aiTranslate.cache.memoryEntries` (default 2000).
-2. **Disk JSONL** — under extension `globalStorageUri/cache/v2`, capped by `aiTranslate.cache.maxDiskMB` (default 50 MB).
+1. **Memory LRU** — size `linguaLens.cache.memoryEntries` (default 2000).
+2. **Disk JSONL** — under extension `globalStorageUri/cache/v2`, capped by `linguaLens.cache.maxDiskMB` (default 50 MB).
 
 Lookup order: memory → disk → miss → LLM. Disk hits promote to memory.
 
@@ -23,9 +23,9 @@ Application scope:
 
 ```json
 {
-  "aiTranslate.cache.enabled": true,
-  "aiTranslate.cache.memoryEntries": 2000,
-  "aiTranslate.cache.maxDiskMB": 50
+  "linguaLens.cache.enabled": true,
+  "linguaLens.cache.memoryEntries": 2000,
+  "linguaLens.cache.maxDiskMB": 50
 }
 ```
 
@@ -36,10 +36,10 @@ When `enabled` is false, `get`/`set` no-op; every translation calls the API.
 A **new cache key** is computed when any of these change:
 
 - Source segment text (after placeholder extraction for hover/strings).
-- `aiTranslate.targetLanguage`.
-- `aiTranslate.llm.model`.
-- `aiTranslate.llm.baseUrl`.
-- `aiTranslate.llm.extraBody` (hashed).
+- `linguaLens.targetLanguage`.
+- `linguaLens.llm.model`.
+- `linguaLens.llm.baseUrl`.
+- `linguaLens.llm.extraBody` (hashed).
 - Prompt version (built-in prompt templates, glossary terms matched, custom `llm.systemPrompt`).
 
 Changing temperature alone does **not** change the key unless it is moved into `extraBody` on your provider.
@@ -60,7 +60,7 @@ Use after:
 
 | Action | Behavior |
 |--------|----------|
-| **Refresh Preview** on `aitranslate:` document | `bypassCache: true` → `invalidateDocumentSegmentCaches` then re-translate. |
+| **Refresh Preview** on `lingualens:` document | `bypassCache: true` → `invalidateDocumentSegmentCaches` then re-translate. |
 | Hover **retranslate** / refresh commands | Passes `bypassCache` through `refreshHoverTranslation`. |
 | Selection translate | Uses cache by default; no dedicated bypass command except re-run after clear. |
 
@@ -78,8 +78,8 @@ Settings panel may show cache stats via `cacheService.stats()` (memory entry cou
 
 ```json
 {
-  "aiTranslate.cache.memoryEntries": 5000,
-  "aiTranslate.cache.maxDiskMB": 200
+  "linguaLens.cache.memoryEntries": 5000,
+  "linguaLens.cache.maxDiskMB": 200
 }
 ```
 

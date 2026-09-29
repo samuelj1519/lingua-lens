@@ -13,7 +13,7 @@
 | D7 | 缓存键包含 `baseUrl` | 最初**不包含** | **已废止** |
 | D8 | `strictChineseVariant` | 未在 `decide()` 中实现；zh-CN/zh-TW 共用 `zh` 语族 | 有效 |
 | D9 | JSX 文本节点 | 默认**不翻译** | 有效 |
-| D10 | 文档预览 | 虚拟 `aitranslate:` URI，而非 Webview | 有效 |
+| D10 | 文档预览 | 虚拟 `lingualens:` URI，而非 Webview | 有效 |
 | D11 | 长选区输出 | 在编辑器旁栏打开虚拟 Markdown 文档 | 有效 |
 
 ## D7（已废止）：缓存键与端点
@@ -31,7 +31,7 @@
 
 ## D8：中文变体
 
-配置项暴露 `aiTranslate.detection.strictChineseVariant`，供将来区分简体/繁体。`LanguageDetector.decide()` 目前**不会**据此分支。`zh-CN` 与 `zh-TW` 目标均通过语族 `zh` 下的汉字统计判断。需要在变体之间转换的用户，在变体逻辑落地前应使用 `document.forceTranslate` 或显式选区翻译。
+配置项暴露 `linguaLens.detection.strictChineseVariant`，供将来区分简体/繁体。`LanguageDetector.decide()` 目前**不会**据此分支。`zh-CN` 与 `zh-TW` 目标均通过语族 `zh` 下的汉字统计判断。需要在变体之间转换的用户，在变体逻辑落地前应使用 `document.forceTranslate` 或显式选区翻译。
 
 ## D10：为何预览使用虚拟文档
 

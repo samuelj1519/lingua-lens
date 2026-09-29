@@ -2,7 +2,7 @@
 
 > 本文档由 `scripts/generate-settings-reference.mjs` 根据 `contributes/configuration.json` 与 `package.nls.*` 自动生成。请勿手改；修改配置或文案后重新运行 `npm run generate-docs`。
 
-所有键均在 VS Code 设置中显示为 `aiTranslate.<key>`。下表按设置 UI 的七个分组排列。
+所有键均在 VS Code 设置中显示为 `linguaLens.<key>`。下表按设置 UI 的七个分组排列。
 
 ## 常规
 
@@ -28,7 +28,7 @@
   - `de` — 德语
   - `es` — 西班牙语
   - `ru` — 俄语
-- **Description:** 译文目标语言。已符合目标语言的文本会被跳过（繁简豁免见 `aiTranslate.*` cross-link）。
+- **Description:** 译文目标语言。已符合目标语言的文本会被跳过（繁简豁免见 `linguaLens.*` cross-link）。
 
 ### `detection.strictChineseVariant`
 
@@ -63,7 +63,7 @@
 - **Type:** array of string (advanced)
 - **Default:** `[]`
 - **Scope:** `resource`
-- **Description:** 正则表达式列表；匹配的片段永不发给模型。与 `aiTranslate.*` cross-link 一并生效。
+- **Description:** 正则表达式列表；匹配的片段永不发给模型。与 `linguaLens.*` cross-link 一并生效。
 
 ### `selection.output`
 
@@ -81,7 +81,7 @@
 - **Type:** array of string
 - **Default:** `["**/.env","**/.env.*","**/*.pem","**/*.key","**/*.p12","**/id_rsa*","**/secrets/**","**/.git/**","**/node_modules/**"]`
 - **Scope:** `resource`
-- **Description:** 永不读取/翻译的文件 glob（如密钥）。与 `aiTranslate.*` cross-link 配合使用。
+- **Description:** 永不读取/翻译的文件 glob（如密钥）。与 `linguaLens.*` cross-link 配合使用。
 
 ### `statusBar.enabled`
 
@@ -111,7 +111,7 @@
 - **Type:** boolean
 - **Default:** `false`
 - **Scope:** `application`
-- **Description:** 悬停/选区等交互请求使用 SSE 流式（可降低首字延迟）。全文批量仍为非流式。另见 `aiTranslate.*` cross-link。
+- **Description:** 悬停/选区等交互请求使用 SSE 流式（可降低首字延迟）。全文批量仍为非流式。另见 `linguaLens.*` cross-link。
 
 ### `llm.extraBody`
 
@@ -125,14 +125,14 @@
 - **Type:** string
 - **Default:** `""`
 - **Scope:** `application`
-- **Description:** 追加到每次翻译系统提示的自定义说明。术语通过 `aiTranslate.*` cross-link 单独注入。
+- **Description:** 追加到每次翻译系统提示的自定义说明。术语通过 `linguaLens.*` cross-link 单独注入。
 
 ### `glossary.path`
 
 - **Type:** string
 - **Default:** `".translate-glossary.json"`
 - **Scope:** `resource`
-- **Description:** 工作区内术语表路径（`.translate-glossary.json`）。每次请求最多匹配 `aiTranslate.*` cross-link 条。
+- **Description:** 工作区内术语表路径（`.translate-glossary.json`）。每次请求最多匹配 `linguaLens.*` cross-link 条。
 
 ### `glossary.maxTerms`
 
@@ -201,7 +201,7 @@
 - **Type:** boolean
 - **Default:** `true`
 - **Scope:** `resource`
-- **Description:** 编辑器悬停翻译总开关。关闭后 `aiTranslate.*` cross-link 等子项无效。
+- **Description:** 编辑器悬停翻译总开关。关闭后 `linguaLens.*` cross-link 等子项无效。
 
 ### `hover.extraDelayMs`
 
@@ -229,7 +229,7 @@
 - **Type:** boolean
 - **Default:** `true`
 - **Scope:** `resource`
-- **Description:** 翻译 Markdown/纯文本段落（与全文预览分段一致）。预览样式见 `aiTranslate.*` cross-link。
+- **Description:** 翻译 Markdown/纯文本段落（与全文预览分段一致）。预览样式见 `linguaLens.*` cross-link。
 
 ### `hover.configKeys`
 
@@ -290,7 +290,7 @@
 - **Enum values:**
   - `interleaved` — 原文整块 → 空行 → 译文整块（列表/表格整块翻译）
   - `append` — 旧版：在每块末尾追加译文
-- **Description:** `aitranslate:` 双语预览排版：**交错**（推荐）或在每块末尾**追加**译文。
+- **Description:** `lingualens:` 双语预览排版：**交错**（推荐）或在每块末尾**追加**译文。
 
 ### `document.codeLens`
 
@@ -304,7 +304,7 @@
 - **Type:** boolean
 - **Default:** `false`
 - **Scope:** `resource`
-- **Description:** 开启后全文翻译不再做语言检测，所有段落都会请求模型（可能导致已是目标语言的文档出现重复内容）。默认与悬停相同，遵循 `aiTranslate.*` cross-link。
+- **Description:** 开启后全文翻译不再做语言检测，所有段落都会请求模型（可能导致已是目标语言的文档出现重复内容）。默认与悬停相同，遵循 `linguaLens.*` cross-link。
 
 ### `document.batchSize`
 
@@ -318,7 +318,7 @@
 - **Type:** number (min 500, max 50000)
 - **Default:** `4000`
 - **Scope:** `resource`
-- **Description:** 每批全文翻译的最大源字符总数（与 `aiTranslate.*` cross-link 共同限制分批）。
+- **Description:** 每批全文翻译的最大源字符总数（与 `linguaLens.*` cross-link 共同限制分批）。
 
 ### `document.sideFileNamePattern`
 

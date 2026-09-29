@@ -8,12 +8,12 @@
 
 ## 发送至 LLM 的数据
 
-LinguaLens 仅将您悬停、选中或主动翻译的文本（注释、字符串、文档段落、Git 提交说明等）发送到 `aiTranslate.llm.baseUrl` 配置的 HTTP 端点，不会上传整个工作区。
+LinguaLens 仅将您悬停、选中或主动翻译的文本（注释、字符串、文档段落、Git 提交说明等）发送到 `linguaLens.llm.baseUrl` 配置的 HTTP 端点，不会上传整个工作区。
 
 ## 密钥
 
 - API Key 存放在 VS Code **SecretStorage** 中，按 API origin 区分。
-- `aiTranslate.privacy.blockSecrets` 会尝试阻止明显的密钥被发送。
+- `linguaLens.privacy.blockSecrets` 会尝试阻止明显的密钥被发送。
 - `.env` 与排除 glob 中的文件不会被翻译。
 
 ## 设置面板

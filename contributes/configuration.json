@@ -3,14 +3,14 @@
     "title": "%config.section.general.title%",
     "order": 1,
     "properties": {
-      "aiTranslate.enabled": {
+      "linguaLens.enabled": {
         "type": "boolean",
         "default": true,
         "scope": "resource",
         "order": 1,
         "markdownDescription": "%config.enabled.markdownDescription%"
       },
-      "aiTranslate.targetLanguage": {
+      "linguaLens.targetLanguage": {
         "type": "string",
         "default": "zh-CN",
         "enum": ["zh-CN", "zh-TW", "en", "ja", "ko", "fr", "de", "es", "ru"],
@@ -29,14 +29,14 @@
         "order": 2,
         "markdownDescription": "%config.targetLanguage.markdownDescription%"
       },
-      "aiTranslate.detection.strictChineseVariant": {
+      "linguaLens.detection.strictChineseVariant": {
         "type": "boolean",
         "default": false,
         "scope": "resource",
         "order": 3,
         "markdownDescription": "%config.detection.strictChineseVariant.markdownDescription%"
       },
-      "aiTranslate.detection.minLength": {
+      "linguaLens.detection.minLength": {
         "type": "number",
         "default": 3,
         "minimum": 1,
@@ -46,7 +46,7 @@
         "tags": ["advanced"],
         "markdownDescription": "%config.detection.minLength.markdownDescription%"
       },
-      "aiTranslate.detection.targetRatio": {
+      "linguaLens.detection.targetRatio": {
         "type": "number",
         "default": 0.6,
         "minimum": 0,
@@ -56,7 +56,7 @@
         "tags": ["advanced"],
         "markdownDescription": "%config.detection.targetRatio.markdownDescription%"
       },
-      "aiTranslate.detection.reliableMinLength": {
+      "linguaLens.detection.reliableMinLength": {
         "type": "number",
         "default": 20,
         "minimum": 1,
@@ -66,7 +66,7 @@
         "tags": ["advanced"],
         "markdownDescription": "%config.detection.reliableMinLength.markdownDescription%"
       },
-      "aiTranslate.detection.skipPatterns": {
+      "linguaLens.detection.skipPatterns": {
         "type": "array",
         "items": { "type": "string" },
         "default": [],
@@ -75,7 +75,7 @@
         "tags": ["advanced"],
         "markdownDescription": "%config.detection.skipPatterns.markdownDescription%"
       },
-      "aiTranslate.selection.output": {
+      "linguaLens.selection.output": {
         "type": "string",
         "enum": ["auto", "notification", "document"],
         "enumDescriptions": [
@@ -88,7 +88,7 @@
         "order": 20,
         "markdownDescription": "%config.selection.output.markdownDescription%"
       },
-      "aiTranslate.privacy.exclude": {
+      "linguaLens.privacy.exclude": {
         "type": "array",
         "items": { "type": "string" },
         "default": [
@@ -106,7 +106,7 @@
         "order": 30,
         "markdownDescription": "%config.privacy.exclude.markdownDescription%"
       },
-      "aiTranslate.statusBar.enabled": {
+      "linguaLens.statusBar.enabled": {
         "type": "boolean",
         "default": true,
         "scope": "application",
@@ -119,7 +119,7 @@
     "title": "%config.section.llm.title%",
     "order": 2,
     "properties": {
-      "aiTranslate.llm.baseUrl": {
+      "linguaLens.llm.baseUrl": {
         "type": "string",
         "default": "https://api.openai.com/v1",
         "scope": "application",
@@ -127,28 +127,28 @@
         "order": 1,
         "markdownDescription": "%config.llm.baseUrl.markdownDescription%"
       },
-      "aiTranslate.llm.model": {
+      "linguaLens.llm.model": {
         "type": "string",
         "default": "",
         "scope": "application",
         "order": 2,
         "markdownDescription": "%config.llm.model.markdownDescription%"
       },
-      "aiTranslate.llm.stream": {
+      "linguaLens.llm.stream": {
         "type": "boolean",
         "default": false,
         "scope": "application",
         "order": 3,
         "markdownDescription": "%config.llm.stream.markdownDescription%"
       },
-      "aiTranslate.llm.extraBody": {
+      "linguaLens.llm.extraBody": {
         "type": "object",
         "default": {},
         "scope": "application",
         "order": 4,
         "markdownDescription": "%config.llm.extraBody.markdownDescription%"
       },
-      "aiTranslate.llm.systemPrompt": {
+      "linguaLens.llm.systemPrompt": {
         "type": "string",
         "default": "",
         "editPresentation": "multilineText",
@@ -156,14 +156,14 @@
         "order": 5,
         "markdownDescription": "%config.llm.systemPrompt.markdownDescription%"
       },
-      "aiTranslate.glossary.path": {
+      "linguaLens.glossary.path": {
         "type": "string",
         "default": ".translate-glossary.json",
         "scope": "resource",
         "order": 10,
         "markdownDescription": "%config.glossary.path.markdownDescription%"
       },
-      "aiTranslate.glossary.maxTerms": {
+      "linguaLens.glossary.maxTerms": {
         "type": "number",
         "default": 50,
         "minimum": 0,
@@ -172,7 +172,7 @@
         "order": 11,
         "markdownDescription": "%config.glossary.maxTerms.markdownDescription%"
       },
-      "aiTranslate.llm.temperature": {
+      "linguaLens.llm.temperature": {
         "type": "number",
         "default": 0.2,
         "minimum": 0,
@@ -182,7 +182,7 @@
         "tags": ["advanced"],
         "markdownDescription": "%config.llm.temperature.markdownDescription%"
       },
-      "aiTranslate.llm.timeoutMs": {
+      "linguaLens.llm.timeoutMs": {
         "type": "number",
         "default": 30000,
         "minimum": 1000,
@@ -191,7 +191,7 @@
         "order": 21,
         "markdownDescription": "%config.llm.timeoutMs.markdownDescription%"
       },
-      "aiTranslate.llm.maxConcurrency": {
+      "linguaLens.llm.maxConcurrency": {
         "type": "number",
         "default": 4,
         "minimum": 1,
@@ -200,7 +200,7 @@
         "order": 22,
         "markdownDescription": "%config.llm.maxConcurrency.markdownDescription%"
       },
-      "aiTranslate.llm.maxTokens": {
+      "linguaLens.llm.maxTokens": {
         "type": "number",
         "default": 4096,
         "minimum": 64,
@@ -209,7 +209,7 @@
         "order": 23,
         "markdownDescription": "%config.llm.maxTokens.markdownDescription%"
       },
-      "aiTranslate.llm.maxRetries": {
+      "linguaLens.llm.maxRetries": {
         "type": "number",
         "default": 3,
         "minimum": 0,
@@ -219,7 +219,7 @@
         "tags": ["advanced"],
         "markdownDescription": "%config.llm.maxRetries.markdownDescription%"
       },
-      "aiTranslate.llm.extraHeaders": {
+      "linguaLens.llm.extraHeaders": {
         "type": "object",
         "default": {},
         "additionalProperties": { "type": "string" },
@@ -228,7 +228,7 @@
         "tags": ["advanced"],
         "markdownDescription": "%config.llm.extraHeaders.markdownDescription%"
       },
-      "aiTranslate.llm.jsonMode": {
+      "linguaLens.llm.jsonMode": {
         "type": "string",
         "enum": ["auto", "on", "off"],
         "enumDescriptions": [
@@ -248,14 +248,14 @@
     "title": "%config.section.hover.title%",
     "order": 3,
     "properties": {
-      "aiTranslate.hover.enabled": {
+      "linguaLens.hover.enabled": {
         "type": "boolean",
         "default": true,
         "scope": "resource",
         "order": 1,
         "markdownDescription": "%config.hover.enabled.markdownDescription%"
       },
-      "aiTranslate.hover.extraDelayMs": {
+      "linguaLens.hover.extraDelayMs": {
         "type": "number",
         "default": 700,
         "minimum": 0,
@@ -264,63 +264,63 @@
         "order": 2,
         "markdownDescription": "%config.hover.extraDelayMs.markdownDescription%"
       },
-      "aiTranslate.hover.comments": {
+      "linguaLens.hover.comments": {
         "type": "boolean",
         "default": true,
         "scope": "resource",
         "order": 10,
         "markdownDescription": "%config.hover.comments.markdownDescription%"
       },
-      "aiTranslate.hover.strings": {
+      "linguaLens.hover.strings": {
         "type": "boolean",
         "default": true,
         "scope": "resource",
         "order": 11,
         "markdownDescription": "%config.hover.strings.markdownDescription%"
       },
-      "aiTranslate.hover.documents": {
+      "linguaLens.hover.documents": {
         "type": "boolean",
         "default": true,
         "scope": "resource",
         "order": 12,
         "markdownDescription": "%config.hover.documents.markdownDescription%"
       },
-      "aiTranslate.hover.configKeys": {
+      "linguaLens.hover.configKeys": {
         "type": "boolean",
         "default": true,
         "scope": "resource",
         "order": 13,
         "markdownDescription": "%config.hover.configKeys.markdownDescription%"
       },
-      "aiTranslate.hover.diagnostics": {
+      "linguaLens.hover.diagnostics": {
         "type": "boolean",
         "default": true,
         "scope": "resource",
         "order": 14,
         "markdownDescription": "%config.hover.diagnostics.markdownDescription%"
       },
-      "aiTranslate.hover.symbolDocs": {
+      "linguaLens.hover.symbolDocs": {
         "type": "boolean",
         "default": true,
         "scope": "resource",
         "order": 15,
         "markdownDescription": "%config.hover.symbolDocs.markdownDescription%"
       },
-      "aiTranslate.hover.gitCommitMessage": {
+      "linguaLens.hover.gitCommitMessage": {
         "type": "boolean",
         "default": true,
         "scope": "resource",
         "order": 16,
         "markdownDescription": "%config.hover.gitCommitMessage.markdownDescription%"
       },
-      "aiTranslate.hover.selection": {
+      "linguaLens.hover.selection": {
         "type": "boolean",
         "default": true,
         "scope": "resource",
         "order": 17,
         "markdownDescription": "%config.hover.selection.markdownDescription%"
       },
-      "aiTranslate.hover.maxChars": {
+      "linguaLens.hover.maxChars": {
         "type": "number",
         "default": 4000,
         "minimum": 100,
@@ -329,7 +329,7 @@
         "order": 20,
         "markdownDescription": "%config.hover.maxChars.markdownDescription%"
       },
-      "aiTranslate.hover.showOriginal": {
+      "linguaLens.hover.showOriginal": {
         "type": "boolean",
         "default": false,
         "scope": "resource",
@@ -343,7 +343,7 @@
     "title": "%config.section.document.title%",
     "order": 4,
     "properties": {
-      "aiTranslate.document.previewStyle": {
+      "linguaLens.document.previewStyle": {
         "type": "string",
         "enum": ["interleaved", "append"],
         "enumDescriptions": [
@@ -355,21 +355,21 @@
         "order": 1,
         "markdownDescription": "%config.document.previewStyle.markdownDescription%"
       },
-      "aiTranslate.document.codeLens": {
+      "linguaLens.document.codeLens": {
         "type": "boolean",
         "default": true,
         "scope": "resource",
         "order": 2,
         "markdownDescription": "%config.document.codeLens.markdownDescription%"
       },
-      "aiTranslate.document.forceTranslate": {
+      "linguaLens.document.forceTranslate": {
         "type": "boolean",
         "default": false,
         "scope": "resource",
         "order": 3,
         "markdownDescription": "%config.document.forceTranslate.markdownDescription%"
       },
-      "aiTranslate.document.batchSize": {
+      "linguaLens.document.batchSize": {
         "type": "number",
         "default": 8,
         "minimum": 1,
@@ -378,7 +378,7 @@
         "order": 10,
         "markdownDescription": "%config.document.batchSize.markdownDescription%"
       },
-      "aiTranslate.document.maxBatchChars": {
+      "linguaLens.document.maxBatchChars": {
         "type": "number",
         "default": 4000,
         "minimum": 500,
@@ -387,14 +387,14 @@
         "order": 11,
         "markdownDescription": "%config.document.maxBatchChars.markdownDescription%"
       },
-      "aiTranslate.document.sideFileNamePattern": {
+      "linguaLens.document.sideFileNamePattern": {
         "type": "string",
         "default": "${fileBasenameNoExtension}.${lang}${fileExtname}",
         "scope": "resource",
         "order": 20,
         "markdownDescription": "%config.document.sideFileNamePattern.markdownDescription%"
       },
-      "aiTranslate.document.sideFileContent": {
+      "linguaLens.document.sideFileContent": {
         "type": "string",
         "enum": ["translated", "bilingual"],
         "enumDescriptions": [
@@ -406,7 +406,7 @@
         "order": 21,
         "markdownDescription": "%config.document.sideFileContent.markdownDescription%"
       },
-      "aiTranslate.document.autoRefresh": {
+      "linguaLens.document.autoRefresh": {
         "type": "boolean",
         "default": false,
         "scope": "resource",
@@ -420,7 +420,7 @@
     "title": "%config.section.markdown.title%",
     "order": 5,
     "properties": {
-      "aiTranslate.markdown.frontmatterFields": {
+      "linguaLens.markdown.frontmatterFields": {
         "type": "array",
         "items": { "type": "string" },
         "default": ["description", "title", "summary", "subtitle", "excerpt", "about"],
@@ -434,14 +434,14 @@
     "title": "%config.section.cache.title%",
     "order": 6,
     "properties": {
-      "aiTranslate.cache.enabled": {
+      "linguaLens.cache.enabled": {
         "type": "boolean",
         "default": true,
         "scope": "application",
         "order": 1,
         "markdownDescription": "%config.cache.enabled.markdownDescription%"
       },
-      "aiTranslate.cache.memoryEntries": {
+      "linguaLens.cache.memoryEntries": {
         "type": "number",
         "default": 2000,
         "minimum": 0,
@@ -451,7 +451,7 @@
         "tags": ["advanced"],
         "markdownDescription": "%config.cache.memoryEntries.markdownDescription%"
       },
-      "aiTranslate.cache.maxDiskMB": {
+      "linguaLens.cache.maxDiskMB": {
         "type": "number",
         "default": 50,
         "minimum": 0,
@@ -467,14 +467,14 @@
     "title": "%config.section.advanced.title%",
     "order": 7,
     "properties": {
-      "aiTranslate.privacy.blockSecrets": {
+      "linguaLens.privacy.blockSecrets": {
         "type": "boolean",
         "default": true,
         "scope": "application",
         "order": 1,
         "markdownDescription": "%config.privacy.blockSecrets.markdownDescription%"
       },
-      "aiTranslate.privacy.allowedSchemes": {
+      "linguaLens.privacy.allowedSchemes": {
         "type": "array",
         "items": { "type": "string" },
         "default": ["file", "untitled", "vscode-remote", "vscode-notebook-cell"],
@@ -483,7 +483,7 @@
         "tags": ["advanced"],
         "markdownDescription": "%config.privacy.allowedSchemes.markdownDescription%"
       },
-      "aiTranslate.parser.maxFileSizeKB": {
+      "linguaLens.parser.maxFileSizeKB": {
         "type": "number",
         "default": 1024,
         "minimum": 16,
@@ -493,7 +493,7 @@
         "tags": ["advanced"],
         "markdownDescription": "%config.parser.maxFileSizeKB.markdownDescription%"
       },
-      "aiTranslate.log.level": {
+      "linguaLens.log.level": {
         "type": "string",
         "enum": ["trace", "debug", "info", "warn", "error", "off"],
         "enumDescriptions": [

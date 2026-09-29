@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 
-const ORIGINS_KEY = 'aiTranslate.apiKeyOrigins';
+const ORIGINS_KEY = 'linguaLens.apiKeyOrigins';
 
 function originOf(baseUrl: string): string {
   try {
@@ -18,7 +18,7 @@ export class ApiKeyStore {
   constructor(private readonly context: vscode.ExtensionContext) {}
 
   private storageKey(origin: string): string {
-    return `aiTranslate.apiKey:${origin}`;
+    return `linguaLens.apiKey:${origin}`;
   }
 
   private async rememberOrigin(origin: string): Promise<void> {

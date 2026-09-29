@@ -25,10 +25,10 @@ export async function showAiTranslateQuickPick(
   if (!pick) return;
   switch (pick.description) {
     case 'toggle':
-      await vscode.commands.executeCommand('aiTranslate.toggle');
+      await vscode.commands.executeCommand('linguaLens.toggle');
       break;
     case 'language':
-      await vscode.commands.executeCommand('aiTranslate.selectTargetLanguage');
+      await vscode.commands.executeCommand('linguaLens.selectTargetLanguage');
       break;
     case 'document': {
       const ed = vscode.window.activeTextEditor;
@@ -44,10 +44,10 @@ export async function showAiTranslateQuickPick(
       await vscode.commands.executeCommand('workbench.action.openSettings', EXTENSION_SETTINGS_FILTER);
       break;
     case 'settingsPanel':
-      await vscode.commands.executeCommand('aiTranslate.openSettingsPanel');
+      await vscode.commands.executeCommand('linguaLens.openSettingsPanel');
       break;
     case 'apikey':
-      await vscode.commands.executeCommand('aiTranslate.setApiKey');
+      await vscode.commands.executeCommand('linguaLens.setApiKey');
       break;
   }
 }

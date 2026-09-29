@@ -11,7 +11,7 @@ LinguaLens treats **code**, **config**, **Markdown/plain documents**, and **Git 
 
 Commands and menus gate on `resourceLangId == markdown || plaintext` or extension regex `\.(md|markdown|txt)$`.
 
-Virtual preview URIs use scheme `aitranslate:` — not translatable as source.
+Virtual preview URIs use scheme `lingualens:` — not translatable as source.
 
 ## Tree-sitter hover languages
 
@@ -39,7 +39,7 @@ If `getSpec(languageId)` returns undefined, tree-sitter string/comment hover may
 
 ### Parser limits
 
-- `aiTranslate.parser.maxFileSizeKB` (default 1024) — files larger than this skip tree-sitter parsing for hover extraction.
+- `linguaLens.parser.maxFileSizeKB` (default 1024) — files larger than this skip tree-sitter parsing for hover extraction.
 - WASM loaded once per grammar; `ParserService` releases on document close.
 
 ### JSX / TSX
@@ -54,11 +54,11 @@ Decision D9: **JSX text nodes are not translated** by default (only comments and
 
 **Extension fallback:** `.json`, `.jsonc`, `.json5`, `.yaml`, `.yml`, `.toml`, `.ini`, `.cfg`, `.conf`, `.properties`, `.props`, `.xml`, `.editorconfig`, `.env.example`.
 
-When `aiTranslate.hover.configKeys` is true, structured key/value extraction runs with format-specific pair node types from specs (YAML mappings, TOML pairs, JSON pairs).
+When `linguaLens.hover.configKeys` is true, structured key/value extraction runs with format-specific pair node types from specs (YAML mappings, TOML pairs, JSON pairs).
 
 ## Other hover sources
 
-Controlled by `aiTranslate.hover.*` toggles:
+Controlled by `linguaLens.hover.*` toggles:
 
 | Toggle | Source |
 |--------|--------|
@@ -71,13 +71,13 @@ Controlled by `aiTranslate.hover.*` toggles:
 | `gitCommitMessage` | Git-associated lines |
 | `selection` | Selection-specific hover provider |
 
-Max length per hover: `aiTranslate.hover.maxChars` (default 4000).
+Max length per hover: `linguaLens.hover.maxChars` (default 4000).
 
 ## Privacy exclusions
 
-Default `aiTranslate.privacy.exclude` globs include `.env`, keys, `node_modules`, `.git`, `secrets/**`, etc. Files matching are blocked in `PrivacyGuard.check()` for translation commands and hovers.
+Default `linguaLens.privacy.exclude` globs include `.env`, keys, `node_modules`, `.git`, `secrets/**`, etc. Files matching are blocked in `PrivacyGuard.check()` for translation commands and hovers.
 
-Allowed URI schemes: `aiTranslate.privacy.allowedSchemes` (default `file`, `untitled`, `vscode-remote`, `vscode-notebook-cell`).
+Allowed URI schemes: `linguaLens.privacy.allowedSchemes` (default `file`, `untitled`, `vscode-remote`, `vscode-notebook-cell`).
 
 ## Locale file generation
 

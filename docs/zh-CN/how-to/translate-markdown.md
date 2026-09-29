@@ -2,13 +2,13 @@
 
 ## 目标
 
-在编辑器中翻译 Markdown 文件：分段感知批量、源文件旁 `aitranslate:` 实时预览，并可选择导出到磁盘旁路文件。
+在编辑器中翻译 Markdown 文件：分段感知批量、源文件旁 `lingualens:` 实时预览，并可选择导出到磁盘旁路文件。
 
 ## 前提
 
 - 已配置 LLM 并设置 API 密钥（[配置提供商](./configure-providers.md)）。
 - 活动文档 language id 为 `markdown` 或 `plaintext`（纯文本仅段落分段）。
-- 文件未被 `aiTranslate.privacy.exclude` 排除。
+- 文件未被 `linguaLens.privacy.exclude` 排除。
 - 提示时已确认隐私。
 
 ## 步骤 1：打开源文档
@@ -28,13 +28,13 @@
 - 分段文档（`MarkdownSegmenter` 或 `PlainTextSegmenter`）。
 - 为每段构建翻译计划（`buildDocumentTranslationPlan`）。
 - 若无分段需翻译且 `forceTranslate` 为 false，显示「已是目标语言」提示并停止。
-- 在源文件旁列打开虚拟 URI `aitranslate:/{basename}.{lang}.preview.md?source=…&lang=…`。
+- 在源文件旁列打开虚拟 URI `lingualens:/{basename}.{lang}.preview.md?source=…&lang=…`。
 
 ## 步骤 3：等待分段进度
 
-翻译在后台运行并显示进度通知（`DocumentSegmentProgressReporter`）。分段经 `TranslationService.translateBatch` 批量，大小为 `aiTranslate.document.batchSize`（默认 8）与字符上限 `maxBatchChars`。
+翻译在后台运行并显示进度通知（`DocumentSegmentProgressReporter`）。分段经 `TranslationService.translateBatch` 批量，大小为 `linguaLens.document.batchSize`（默认 8）与字符上限 `maxBatchChars`。
 
-结果经 `BilingualRenderer` 与 `PreviewContentProvider` 渲染，使用 `aiTranslate.document.previewStyle`：
+结果经 `BilingualRenderer` 与 `PreviewContentProvider` 渲染，使用 `linguaLens.document.previewStyle`：
 
 - **`interleaved`** — 在源结构附近插入译文块。
 - **`append`** — 在每源块后收集译文。
@@ -44,36 +44,36 @@
 - 编辑**源**文件后，在源编辑器运行 **LinguaLens: Refresh Document Translation** 重新分段翻译（会话缺失时可能打开预览）。
 - 在**预览**标签标题栏**刷新**（**LinguaLens: Refresh Preview**）重新读取源，可选**绕过缓存**（`invalidateDocumentSegmentCaches` + 新 API 调用）。
 
-启用 `aiTranslate.document.autoRefresh`（高级，默认 false）可在编辑时联动刷新。
+启用 `linguaLens.document.autoRefresh`（高级，默认 false）可在编辑时联动刷新。
 
 ## 步骤 5：导出旁路文件（可选）
 
 1. 从源编辑器或资源管理器运行 **LinguaLens: Generate Side File**。
 2. 若无会话，扩展会启动并等待翻译完成。
-3. 输出路径使用 `aiTranslate.document.sideFileNamePattern`（默认 `${fileBasenameNoExtension}.${lang}${fileExtname}` → `readme.zh-CN.md`）。
-4. 内容模式 `aiTranslate.document.sideFileContent`：`translated` 或 `bilingual`。
+3. 输出路径使用 `linguaLens.document.sideFileNamePattern`（默认 `${fileBasenameNoExtension}.${lang}${fileExtname}` → `readme.zh-CN.md`）。
+4. 内容模式 `linguaLens.document.sideFileContent`：`translated` 或 `bilingual`。
 
 ## 步骤 6：CodeLens（可选）
 
-`aiTranslate.document.codeLens` 为 true 时，文档上方 CodeLens 提供与翻译/刷新命令对齐的快捷操作。
+`linguaLens.document.codeLens` 为 true 时，文档上方 CodeLens 提供与翻译/刷新命令对齐的快捷操作。
 
 ## 设置参考（文档部分）
 
 ```json
 {
-  "aiTranslate.document.previewStyle": "interleaved",
-  "aiTranslate.document.batchSize": 8,
-  "aiTranslate.document.maxBatchChars": 4000,
-  "aiTranslate.document.codeLens": true,
-  "aiTranslate.document.forceTranslate": false,
-  "aiTranslate.document.sideFileNamePattern": "${fileBasenameNoExtension}.${lang}${fileExtname}",
-  "aiTranslate.document.sideFileContent": "translated"
+  "linguaLens.document.previewStyle": "interleaved",
+  "linguaLens.document.batchSize": 8,
+  "linguaLens.document.maxBatchChars": 4000,
+  "linguaLens.document.codeLens": true,
+  "linguaLens.document.forceTranslate": false,
+  "linguaLens.document.sideFileNamePattern": "${fileBasenameNoExtension}.${lang}${fileExtname}",
+  "linguaLens.document.sideFileContent": "translated"
 }
 ```
 
 ## 验证
 
-- 预览标签 scheme 为 `aitranslate`。
+- 预览标签 scheme 为 `lingualens`。
 - 外语段落出现译文；代码围栏与许多结构元素保持保留（见[文档分段](../explanation/segmentation.md)）。
 - 日志显示 `apiCalls` 递增；无编辑重复预览应命中缓存（[缓存](./cache.md)）。
 
@@ -85,12 +85,12 @@
 | 无内容可译 | 检测将全部标为目标语言；启用[强制翻译](./force-translate.md)或改目标。 |
 | 表格/列表部分失败 | 列表可能回退逐行（`list-lines` 计划）；大表格为保留容器。 |
 | JSON 批量错误 | 模型须返回 id→text JSON；调整模型或 `llm.jsonMode`。 |
-| 超大文件 | tree-sitter 悬停遵守 `aiTranslate.parser.maxFileSizeKB`；文档路径读取全文——极大文件可能慢或占内存。 |
+| 超大文件 | tree-sitter 悬停遵守 `linguaLens.parser.maxFileSizeKB`；文档路径读取全文——极大文件可能慢或占内存。 |
 | 预览已关闭 | 关闭预览文档会 `onClosePreview`；用翻译文档重新打开。 |
 
 ## 编辑源文件时的协作习惯
 
-推荐在预览打开期间编辑**源** Markdown，而非虚拟 `aitranslate:` 标签（只读）。源变更后使用 **Refresh Document Translation** 重新分段；仅刷新预览而不重跑分段可能导致偏移错位。对大型文档，可先关闭 `codeLens` 减少 UI 开销，或临时降低 `batchSize` 以减轻单次 JSON 批量失败概率。与协作者共享时，说明 side file 是否纳入版本控制，避免与手工翻译文件冲突。
+推荐在预览打开期间编辑**源** Markdown，而非虚拟 `lingualens:` 标签（只读）。源变更后使用 **Refresh Document Translation** 重新分段；仅刷新预览而不重跑分段可能导致偏移错位。对大型文档，可先关闭 `codeLens` 减少 UI 开销，或临时降低 `batchSize` 以减轻单次 JSON 批量失败概率。与协作者共享时，说明 side file 是否纳入版本控制，避免与手工翻译文件冲突。
 
 ## 质量检查清单
 
@@ -105,7 +105,7 @@
 
 ## 与隐私排除的交集
 
-`docs/internal/secrets.md` 若匹配 `privacy.exclude`，**Translate Document** 不会启动。将敏感文档移出排除 glob 前请评估是否应改用选区局部翻译。虚拟 `untitled` Markdown 可翻译若 scheme 在 `allowedSchemes` 内，但无 side file 路径直至保存。发布流程建议：预览审阅 → **Generate Side File** → Git diff → 合并；勿将 `aitranslate:` 虚拟标签内容当作已保存文件直接提交。Explorer 右键翻译与标题栏地球图标等价；CI 无法驱动预览，本地化流水线仍应在开发者本机或专用 runner 上运行扩展命令或使用 side file 产物入库。
+`docs/internal/secrets.md` 若匹配 `privacy.exclude`，**Translate Document** 不会启动。将敏感文档移出排除 glob 前请评估是否应改用选区局部翻译。虚拟 `untitled` Markdown 可翻译若 scheme 在 `allowedSchemes` 内，但无 side file 路径直至保存。发布流程建议：预览审阅 → **Generate Side File** → Git diff → 合并；勿将 `lingualens:` 虚拟标签内容当作已保存文件直接提交。Explorer 右键翻译与标题栏地球图标等价；CI 无法驱动预览，本地化流水线仍应在开发者本机或专用 runner 上运行扩展命令或使用 side file 产物入库。
 
 ## 小结
 

@@ -2,7 +2,7 @@
 
 ## Goal
 
-Point LinguaLens at an OpenAI-compatible chat completions API: set `aiTranslate.llm.baseUrl`, `aiTranslate.llm.model`, store an API key, and optionally tune timeouts, concurrency, and `extraBody` for vendor-specific request fields.
+Point LinguaLens at an OpenAI-compatible chat completions API: set `linguaLens.llm.baseUrl`, `linguaLens.llm.model`, store an API key, and optionally tune timeouts, concurrency, and `extraBody` for vendor-specific request fields.
 
 ## Prerequisites
 
@@ -24,11 +24,11 @@ Open **Preferences: Open User Settings (JSON)** or workspace settings. Examples 
 
 ```json
 {
-  "aiTranslate.llm.baseUrl": "https://api.openai.com/v1",
-  "aiTranslate.llm.model": "gpt-4o-mini",
-  "aiTranslate.llm.temperature": 0.2,
-  "aiTranslate.llm.timeoutMs": 30000,
-  "aiTranslate.llm.maxTokens": 4096
+  "linguaLens.llm.baseUrl": "https://api.openai.com/v1",
+  "linguaLens.llm.model": "gpt-4o-mini",
+  "linguaLens.llm.temperature": 0.2,
+  "linguaLens.llm.timeoutMs": 30000,
+  "linguaLens.llm.maxTokens": 4096
 }
 ```
 
@@ -36,9 +36,9 @@ Open **Preferences: Open User Settings (JSON)** or workspace settings. Examples 
 
 ```json
 {
-  "aiTranslate.llm.baseUrl": "https://api.deepseek.com/v1",
-  "aiTranslate.llm.model": "deepseek-chat",
-  "aiTranslate.llm.extraBody": {
+  "linguaLens.llm.baseUrl": "https://api.deepseek.com/v1",
+  "linguaLens.llm.model": "deepseek-chat",
+  "linguaLens.llm.extraBody": {
     "thinking": { "type": "disabled" }
   }
 }
@@ -50,9 +50,9 @@ DeepSeek may enable “thinking” by default on some models; disabling it keeps
 
 ```json
 {
-  "aiTranslate.llm.baseUrl": "https://dashscope.aliyuncs.com/compatible-mode/v1",
-  "aiTranslate.llm.model": "qwen-plus",
-  "aiTranslate.llm.extraBody": {
+  "linguaLens.llm.baseUrl": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+  "linguaLens.llm.model": "qwen-plus",
+  "linguaLens.llm.extraBody": {
     "enable_thinking": false
   }
 }
@@ -64,9 +64,9 @@ Use the **compatible-mode** base URL so request/response shapes match OpenAI. Mo
 
 ```json
 {
-  "aiTranslate.llm.baseUrl": "https://ark.cn-beijing.volces.com/api/v3",
-  "aiTranslate.llm.model": "ep-xxxxxxxxxxxxxxxx",
-  "aiTranslate.llm.extraHeaders": {}
+  "linguaLens.llm.baseUrl": "https://ark.cn-beijing.volces.com/api/v3",
+  "linguaLens.llm.model": "ep-xxxxxxxxxxxxxxxx",
+  "linguaLens.llm.extraHeaders": {}
 }
 ```
 
@@ -76,13 +76,13 @@ Ark endpoints use an **endpoint id** (`ep-…`) as the model field. Region and U
 
 ```json
 {
-  "aiTranslate.llm.baseUrl": "http://127.0.0.1:1234/v1",
-  "aiTranslate.llm.model": "your-local-model-name",
-  "aiTranslate.llm.jsonMode": "auto"
+  "linguaLens.llm.baseUrl": "http://127.0.0.1:1234/v1",
+  "linguaLens.llm.model": "your-local-model-name",
+  "linguaLens.llm.jsonMode": "auto"
 }
 ```
 
-Document batch translation requests JSON responses when `jsonMode` is not `off`. If your server does not support `response_format`, set `aiTranslate.llm.jsonMode` to `off` and expect possible batch parsing failures.
+Document batch translation requests JSON responses when `jsonMode` is not `off`. If your server does not support `response_format`, set `linguaLens.llm.jsonMode` to `off` and expect possible batch parsing failures.
 
 ## Step 3: Store the API key
 
@@ -93,12 +93,12 @@ Document batch translation requests JSON responses when `jsonMode` is not `off`.
 
 | Setting | When to change |
 |---------|----------------|
-| `aiTranslate.llm.stream` | Enable SSE streaming for chat (default false). |
-| `aiTranslate.llm.maxConcurrency` | Parallel document batches (default 4). |
-| `aiTranslate.llm.maxRetries` | HTTP retries with backoff (default 3). |
-| `aiTranslate.llm.extraHeaders` | Custom headers (rare; some gateways). |
-| `aiTranslate.llm.systemPrompt` | Appended/replaced system instructions (affects prompt version and cache). |
-| `aiTranslate.llm.jsonMode` | `auto` / `on` / `off` for JSON batch document calls. |
+| `linguaLens.llm.stream` | Enable SSE streaming for chat (default false). |
+| `linguaLens.llm.maxConcurrency` | Parallel document batches (default 4). |
+| `linguaLens.llm.maxRetries` | HTTP retries with backoff (default 3). |
+| `linguaLens.llm.extraHeaders` | Custom headers (rare; some gateways). |
+| `linguaLens.llm.systemPrompt` | Appended/replaced system instructions (affects prompt version and cache). |
+| `linguaLens.llm.jsonMode` | `auto` / `on` / `off` for JSON batch document calls. |
 
 ## Step 5: Verify
 

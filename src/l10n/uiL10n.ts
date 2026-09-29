@@ -47,7 +47,7 @@ export function formatMessage(template: string, args: Array<string | number>): s
 }
 
 /**
- * Runtime UI string by `aiTranslate.targetLanguage` (custom / unknown → English bundle).
+ * Runtime UI string by `linguaLens.targetLanguage` (custom / unknown → English bundle).
  */
 export function t(key: string, ...args: Array<string | number>): string {
   const raw = getRawTargetLanguage?.() ?? 'en';

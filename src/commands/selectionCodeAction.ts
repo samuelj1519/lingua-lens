@@ -31,7 +31,7 @@ export class SelectionTranslateCodeActionProvider implements vscode.CodeActionPr
     const title = t('codeAction.translateSelection');
     const action = new vscode.CodeAction(title, vscode.CodeActionKind.RefactorRewrite);
     action.command = {
-      command: 'aiTranslate.translateSelectionPopup',
+      command: 'linguaLens.translateSelectionPopup',
       title,
     };
     return [action];

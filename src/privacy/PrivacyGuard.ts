@@ -19,7 +19,7 @@ export class PrivacyGuard {
     if (this.isExcluded(doc.uri, cfg.privacy.exclude)) return 'excluded';
     if (vscode.workspace.isTrusted === false) return 'untrusted';
     const origin = this.originOf(cfg.llm.baseUrl);
-    if (!this.context.globalState.get<boolean>(`aiTranslate.ack:${origin}`)) {
+    if (!this.context.globalState.get<boolean>(`linguaLens.ack:${origin}`)) {
       return 'noAck';
     }
     return null;
@@ -33,7 +33,7 @@ export class PrivacyGuard {
   async ensureAcknowledged(interactive: boolean): Promise<boolean> {
     const cfg = this.config.get();
     const origin = this.originOf(cfg.llm.baseUrl);
-    const key = `aiTranslate.ack:${origin}`;
+    const key = `linguaLens.ack:${origin}`;
     if (this.context.globalState.get<boolean>(key)) return true;
     if (!interactive) return false;
     const host = origin;
@@ -56,7 +56,7 @@ export class PrivacyGuard {
       return false;
     }
     if (choice === openSettings) {
-      await vscode.commands.executeCommand('aiTranslate.openSettings');
+      await vscode.commands.executeCommand('linguaLens.openSettings');
     }
     return false;
   }
@@ -64,7 +64,7 @@ export class PrivacyGuard {
   async acknowledgeOrigin(origin?: string): Promise<void> {
     const cfg = this.config.get();
     const o = origin ?? this.originOf(cfg.llm.baseUrl);
-    await this.context.globalState.update(`aiTranslate.ack:${o}`, true);
+    await this.context.globalState.update(`linguaLens.ack:${o}`, true);
   }
 
   private originOf(baseUrl: string): string {

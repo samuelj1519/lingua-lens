@@ -17,9 +17,9 @@ export class StatusBarController implements vscode.Disposable {
     private readonly apiKeys: ApiKeyStore,
   ) {
     this.toggleItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-    this.toggleItem.command = 'aiTranslate.showQuickPick';
+    this.toggleItem.command = 'linguaLens.showQuickPick';
     this.langItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 99);
-    this.langItem.command = 'aiTranslate.selectTargetLanguage';
+    this.langItem.command = 'linguaLens.selectTargetLanguage';
     this.stats.onDidChange(() => this.scheduleRefresh());
     this.config.onDidChange(() => this.refresh());
     void this.refresh();
@@ -52,7 +52,7 @@ export class StatusBarController implements vscode.Disposable {
     this.langItem.text = cfg.targetLanguage;
     const s = this.stats.snapshot();
     const md = new vscode.MarkdownString();
-    md.isTrusted = { enabledCommands: ['aiTranslate.setApiKey', 'aiTranslate.clearCache'] };
+    md.isTrusted = { enabledCommands: ['linguaLens.setApiKey', 'linguaLens.clearCache'] };
     const stateLabel = enabled ? t('statusbar.tooltip.enabled') : t('statusbar.tooltip.disabled');
     md.appendMarkdown(
       `**${t('statusbar.tooltip.title')}** ${stateLabel} (${t('statusbar.tooltip.target')} ${cfg.targetLanguage})\n\n` +
@@ -62,7 +62,7 @@ export class StatusBarController implements vscode.Disposable {
         `| ${t('statusbar.tooltip.skipped')} | ${s.skipped} |\n` +
         `| ${t('statusbar.tooltip.errors')} | ${s.errors} |\n` +
         `| ${t('statusbar.tooltip.tokens')} | ${s.promptTokens} / ${s.completionTokens} |\n\n` +
-        `${t('statusbar.tooltip.model')} \`${cfg.llm.model || '—'}\` · [${t('statusbar.tooltip.setApiKey')}](command:aiTranslate.setApiKey) · [${t('statusbar.tooltip.clearCache')}](command:aiTranslate.clearCache)`,
+        `${t('statusbar.tooltip.model')} \`${cfg.llm.model || '—'}\` · [${t('statusbar.tooltip.setApiKey')}](command:linguaLens.setApiKey) · [${t('statusbar.tooltip.clearCache')}](command:linguaLens.clearCache)`,
     );
     this.toggleItem.tooltip = md;
     this.langItem.tooltip = md;

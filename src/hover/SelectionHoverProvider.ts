@@ -89,7 +89,7 @@ export class SelectionHoverProvider implements vscode.HoverProvider {
     md.isTrusted = { enabledCommands: [...HOVER_TRUSTED_COMMANDS] };
     md.appendMarkdown(
       `**${t('hover.sectionPrefix', t('hover.title.selection'))}**${fromCache ? t('hover.invalidCache') : ''}\n\n` +
-        `${t('hover.selection.emptyHint')} [log](command:aiTranslate.showLog)`,
+        `${t('hover.selection.emptyHint')} [log](command:linguaLens.showLog)`,
     );
     return new vscode.Hover(md, range);
   }

@@ -2,7 +2,7 @@
 
 ## Goal
 
-Set the translation target language (`aiTranslate.targetLanguage`), understand first-run bootstrap from the editor UI locale, and use localized extension UI strings via the `l10n` bundle.
+Set the translation target language (`linguaLens.targetLanguage`), understand first-run bootstrap from the editor UI locale, and use localized extension UI strings via the `l10n` bundle.
 
 ## Prerequisites
 
@@ -21,7 +21,7 @@ Prompts and detection families map variants (e.g. both Chinese targets share `zh
 
 1. Click the language segment on the status bar (**LinguaLens: Select Target Language**).
 2. Pick a language from the quick pick.
-3. `config.onDidChange` for `targetLanguage` resets UI l10n cache, refreshes CodeLens, status bar, and all `aitranslate:` previews.
+3. `config.onDidChange` for `targetLanguage` resets UI l10n cache, refreshes CodeLens, status bar, and all `lingualens:` previews.
 
 ## Step 2: Change target in settings JSON
 
@@ -29,7 +29,7 @@ Resource scope (per workspace/folder/file overrides supported):
 
 ```json
 {
-  "aiTranslate.targetLanguage": "ja"
+  "linguaLens.targetLanguage": "ja"
 }
 ```
 
@@ -74,7 +74,7 @@ Extension UI language follows target selection for in-extension messages (`t('�
 
 ```json
 {
-  "aiTranslate.detection.strictChineseVariant": false
+  "linguaLens.detection.strictChineseVariant": false
 }
 ```
 
@@ -92,7 +92,7 @@ Documented for distinguishing simplified vs traditional in detection. **Current 
 
 ## Multi-root workspaces
 
-When multiple folders are open, `aiTranslate.targetLanguage` can differ per folder via `.vscode/settings.json` in each root. The status bar reflects the active editor’s resolved configuration (`ConfigService.get(uri)`). Switching editors may change the displayed target without a manual picker action — this is expected VS Code configuration inheritance, not a bug in the extension.
+When multiple folders are open, `linguaLens.targetLanguage` can differ per folder via `.vscode/settings.json` in each root. The status bar reflects the active editor’s resolved configuration (`ConfigService.get(uri)`). Switching editors may change the displayed target without a manual picker action — this is expected VS Code configuration inheritance, not a bug in the extension.
 
 ## Related documentation
 

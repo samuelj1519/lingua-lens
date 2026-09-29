@@ -8,7 +8,7 @@ LinguaLens caches LLM **model output strings** (before placeholder restore in me
 
 1. **text** — source segment or unit text (placeholders already extracted in unit.text for hover).
 2. **targetLang** — e.g. `zh-CN`.
-3. **model** — `aiTranslate.llm.model`.
+3. **model** — `linguaLens.llm.model`.
 4. **promptVersion** — from `PromptBuilder.promptVersion()` (kind, target, glossary hash, custom system prompt).
 5. **baseUrl** — full configured base URL string.
 6. **extraBodyHash** — first 16 hex chars of SHA-256 of `JSON.stringify(extraBody ?? {})`.

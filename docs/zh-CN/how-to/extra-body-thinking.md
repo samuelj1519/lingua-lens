@@ -2,7 +2,7 @@
 
 ## 目标
 
-通过 `aiTranslate.llm.extraBody` 将厂商特定字段合并到每次 chat completions 请求，尤其是**关闭 DeepSeek 与 Qwen 的「思考」**或扩展推理，使译文简洁且文档 JSON 批量可可靠解析。
+通过 `linguaLens.llm.extraBody` 将厂商特定字段合并到每次 chat completions 请求，尤其是**关闭 DeepSeek 与 Qwen 的「思考」**或扩展推理，使译文简洁且文档 JSON 批量可可靠解析。
 
 ## 前提
 
@@ -11,7 +11,7 @@
 
 ## extra body 如何工作
 
-`aiTranslate.llm.extraBody` 为 JSON 对象（默认 `{}`）。请求时扩展将其展开到 POST 体。任何对您提供商 OpenAI 兼容 API 有效的键均可传入：`top_p`、`presence_penalty`、提供商标志等。
+`linguaLens.llm.extraBody` 为 JSON 对象（默认 `{}`）。请求时扩展将其展开到 POST 体。任何对您提供商 OpenAI 兼容 API 有效的键均可传入：`top_p`、`presence_penalty`、提供商标志等。
 
 **缓存影响：** 自 0.4.3 起，`TranslationService` 将 `JSON.stringify(extraBody ?? {})` 的 SHA-256 前缀（16 字符）与文本、目标语言、模型、提示词版本、`baseUrl` 一并哈希进缓存键。更改 `extraBody` 会使新查找自动失效，无需手动清磁盘缓存。
 
@@ -21,9 +21,9 @@
 
 ```json
 {
-  "aiTranslate.llm.baseUrl": "https://api.deepseek.com/v1",
-  "aiTranslate.llm.model": "deepseek-chat",
-  "aiTranslate.llm.extraBody": {
+  "linguaLens.llm.baseUrl": "https://api.deepseek.com/v1",
+  "linguaLens.llm.model": "deepseek-chat",
+  "linguaLens.llm.extraBody": {
     "thinking": {
       "type": "disabled"
     }
@@ -37,9 +37,9 @@
 
 ```json
 {
-  "aiTranslate.llm.baseUrl": "https://dashscope.aliyuncs.com/compatible-mode/v1",
-  "aiTranslate.llm.model": "qwen-plus",
-  "aiTranslate.llm.extraBody": {
+  "linguaLens.llm.baseUrl": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+  "linguaLens.llm.model": "qwen-plus",
+  "linguaLens.llm.extraBody": {
     "enable_thinking": false
   }
 }
@@ -53,9 +53,9 @@ OpenAI 公开 API 不使用 DeepSeek/Qwen 思考字段。仍可传入：
 
 ```json
 {
-  "aiTranslate.llm.baseUrl": "https://api.openai.com/v1",
-  "aiTranslate.llm.model": "gpt-4o-mini",
-  "aiTranslate.llm.extraBody": {
+  "linguaLens.llm.baseUrl": "https://api.openai.com/v1",
+  "linguaLens.llm.model": "gpt-4o-mini",
+  "linguaLens.llm.extraBody": {
     "seed": 42
   }
 }
@@ -69,9 +69,9 @@ OpenAI 公开 API 不使用 DeepSeek/Qwen 思考字段。仍可传入：
 
 ```json
 {
-  "aiTranslate.llm.baseUrl": "https://ark.cn-beijing.volces.com/api/v3",
-  "aiTranslate.llm.model": "ep-xxxxxxxxxxxxxxxx",
-  "aiTranslate.llm.extraBody": {}
+  "linguaLens.llm.baseUrl": "https://ark.cn-beijing.volces.com/api/v3",
+  "linguaLens.llm.model": "ep-xxxxxxxxxxxxxxxx",
+  "linguaLens.llm.extraBody": {}
 }
 ```
 

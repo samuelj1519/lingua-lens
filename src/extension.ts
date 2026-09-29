@@ -32,6 +32,7 @@ import { countConfigurationProperties } from './settingsPanel/countSettings';
 import { applyTargetLanguageCursorUiBootstrap } from './l10n/targetLanguageBootstrap';
 import { initUiL10n, resetUiL10nCache, t } from './l10n/uiL10n';
 import { EXTENSION_SETTINGS_FILTER } from './constants/extensionId';
+import { migrateLegacySettings } from './migration/settingsMigration';
 
 let parserService: ParserService | undefined;
 let cacheService: CacheService | undefined;
@@ -39,6 +40,10 @@ let cacheService: CacheService | undefined;
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
   const config = new ConfigService();
   initUiL10n(context.extensionPath, () => config.getRawTargetLanguage());
+  const migratedCount = await migrateLegacySettings(context);
+  if (migratedCount > 0) {
+    void vscode.window.setStatusBarMessage(t('msg.settingsMigrated', String(migratedCount)), 5000);
+  }
   await applyTargetLanguageCursorUiBootstrap(context);
   const logger = new Logger(() => config.get().log.level);
   const stats = new StatsService();
@@ -49,13 +54,13 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     const port = process.env.AITRANSLATE_MOCK_PORT ?? '18765';
     const baseUrl = `http://127.0.0.1:${port}/v1`;
     await vscode.workspace
-      .getConfiguration('aiTranslate')
+      .getConfiguration('linguaLens')
       .update('llm.baseUrl', baseUrl, vscode.ConfigurationTarget.Global);
     await vscode.workspace
-      .getConfiguration('aiTranslate')
+      .getConfiguration('linguaLens')
       .update('llm.model', 'mock', vscode.ConfigurationTarget.Global);
     await vscode.workspace
-      .getConfiguration('aiTranslate')
+      .getConfiguration('linguaLens')
       .update('hover.extraDelayMs', 0, vscode.ConfigurationTarget.Global);
     await apiKeys.set(baseUrl, 'integration-test-key');
     logger.info(`Integration test mode: LLM -> ${baseUrl}`);
@@ -85,7 +90,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   const statusBar = new StatusBarController(config, stats, apiKeys);
   preview.setPreviewStyle(config.get().document.previewStyle);
   config.onDidChange((e) => {
-    if (e.affectsConfiguration('aiTranslate.targetLanguage')) {
+    if (e.affectsConfiguration('linguaLens.targetLanguage')) {
       resetUiL10nCache();
       codeLensRegistration.provider.refresh();
       void statusBar.refresh();
@@ -97,7 +102,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     config,
     glossary,
     statusBar,
-    vscode.workspace.registerTextDocumentContentProvider('aitranslate', preview),
+    vscode.workspace.registerTextDocumentContentProvider('lingualens', preview),
     createHoverProvider(config, guard, extractor, translation, stats, hoverRegistry, logger),
     createSelectionHoverProvider(config, guard, translation, hoverRegistry),
     codeLensRegistration.disposable,
@@ -109,23 +114,28 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     }),
     vscode.workspace.onDidCloseTextDocument((d) => {
       parserService?.release(d.uri.toString());
-      if (d.uri.scheme === 'aitranslate') docService.onClosePreview(d.uri);
+      if (d.uri.scheme === 'lingualens') docService.onClosePreview(d.uri);
     }),
   );
 
   const reg = (id: string, fn: (...args: never[]) => unknown) => {
-    context.subscriptions.push(vscode.commands.registerCommand(id, fn as (...args: unknown[]) => unknown));
+    const handler = fn as (...args: unknown[]) => unknown;
+    context.subscriptions.push(vscode.commands.registerCommand(id, handler));
+    if (id.startsWith('linguaLens.')) {
+      const legacyId = `aiTranslate.${id.slice('linguaLens.'.length)}`;
+      context.subscriptions.push(vscode.commands.registerCommand(legacyId, handler));
+    }
   };
 
-  reg('aiTranslate.toggle', async () => {
+  reg('linguaLens.toggle', async () => {
     const c = config.get();
     await config.setEnabled(!c.enabled);
     await statusBar.refresh();
   });
 
-  reg('aiTranslate.selectTargetLanguage', () => statusBar.pickLanguage());
+  reg('linguaLens.selectTargetLanguage', () => statusBar.pickLanguage());
 
-  reg('aiTranslate.setApiKey', async () => {
+  reg('linguaLens.setApiKey', async () => {
     const c = config.get();
     const origin = new URL(c.llm.baseUrl).origin;
     const key = await vscode.window.showInputBox({
@@ -140,7 +150,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     }
   });
 
-  reg('aiTranslate.clearApiKey', async () => {
+  reg('linguaLens.clearApiKey', async () => {
     const pick = await vscode.window.showQuickPick(
       [t('msg.clearApiKey.current'), t('msg.clearApiKey.all')],
       { title: t('msg.clearApiKey.title') },
@@ -154,13 +164,13 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     await statusBar.refresh();
   });
 
-  reg('aiTranslate.testConnection', async () => {
+  reg('linguaLens.testConnection', async () => {
     const r = await llm.testConnection();
     if (r.ok) void vscode.window.showInformationMessage(r.message);
     else void vscode.window.showErrorMessage(r.message);
   });
 
-  reg('aiTranslate.translateSelection', async () => {
+  reg('linguaLens.translateSelection', async () => {
     const editor = vscode.window.activeTextEditor;
     if (!editor || editor.selection.isEmpty) return;
     const doc = editor.document;
@@ -208,32 +218,32 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     }
   });
 
-  reg('aiTranslate.translateDocument', () => {
+  reg('linguaLens.translateDocument', () => {
     const editor = vscode.window.activeTextEditor;
     if (!editor) return;
     return docService.openPreview(editor.document);
   });
 
-  reg('aiTranslate.refreshPreview', () => {
+  reg('linguaLens.refreshPreview', () => {
     const editor = vscode.window.activeTextEditor;
-    if (editor?.document.uri.scheme === 'aitranslate') {
+    if (editor?.document.uri.scheme === 'lingualens') {
       return docService.refresh(editor.document.uri, { bypassCache: true });
     }
   });
 
-  reg('aiTranslate.refreshDocumentTranslation', () => {
+  reg('linguaLens.refreshDocumentTranslation', () => {
     const editor = vscode.window.activeTextEditor;
     if (!editor) return;
     return docService.refreshDocumentTranslation(editor.document);
   });
 
-  reg('aiTranslate.generateSideFile', () => {
+  reg('linguaLens.generateSideFile', () => {
     const editor = vscode.window.activeTextEditor;
     if (!editor) return;
     return docService.generateSideFile(editor.document);
   });
 
-  reg('aiTranslate.clearCache', async () => {
+  reg('linguaLens.clearCache', async () => {
     const clearLabel = t('msg.clearCacheYes');
     const ok = await vscode.window.showWarningMessage(t('msg.clearCacheConfirm'), { modal: true }, clearLabel);
     if (ok === clearLabel) {
@@ -242,20 +252,20 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     }
   });
 
-  reg('aiTranslate.disableForWorkspace', async () => {
+  reg('linguaLens.disableForWorkspace', async () => {
     const folder = vscode.workspace.workspaceFolders?.[0]?.uri;
     await config.setEnabled(false, folder);
     await statusBar.refresh();
   });
 
-  reg('aiTranslate.enableForWorkspace', async () => {
+  reg('linguaLens.enableForWorkspace', async () => {
     const folder = vscode.workspace.workspaceFolders?.[0]?.uri;
-    const cfgWs = vscode.workspace.getConfiguration('aiTranslate', folder);
+    const cfgWs = vscode.workspace.getConfiguration('linguaLens', folder);
     await cfgWs.update('enabled', undefined, vscode.ConfigurationTarget.WorkspaceFolder);
     await statusBar.refresh();
   });
 
-  reg('aiTranslate.openGlossary', async () => {
+  reg('linguaLens.openGlossary', async () => {
     const folder = vscode.workspace.workspaceFolders?.[0]?.uri;
     if (!folder) return;
     const rel = config.get(folder).glossary.path;
@@ -273,30 +283,30 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     await vscode.window.showTextDocument(uri);
   });
 
-  reg('aiTranslate.showLog', () => logger.show());
-  reg('aiTranslate.openSettings', () =>
+  reg('linguaLens.showLog', () => logger.show());
+  reg('linguaLens.openSettings', () =>
     vscode.commands.executeCommand(
       'workbench.action.openSettings',
       EXTENSION_SETTINGS_FILTER,
     ),
   );
 
-  reg('aiTranslate.openSettingsPanel', () => settingsPanel.reveal());
+  reg('linguaLens.openSettingsPanel', () => settingsPanel.reveal());
 
-  reg('aiTranslate.translateClipboardOrSelection', () =>
+  reg('linguaLens.translateClipboardOrSelection', () =>
     translateClipboardOrSelection(config, guard, translation),
   );
 
-  reg('aiTranslate.translateReplaceSelection', () =>
+  reg('linguaLens.translateReplaceSelection', () =>
     translateReplaceSelection(config, guard, translation),
   );
 
-  reg('aiTranslate.translateInsertBelow', () => translateInsertBelow(config, guard, translation));
+  reg('linguaLens.translateInsertBelow', () => translateInsertBelow(config, guard, translation));
 
-  reg('aiTranslate.showQuickPick', () => showAiTranslateQuickPick(config, docService));
-  reg('aiTranslate.translateSelectionPopup', () => translateSelectionPopup(config, guard, translation));
+  reg('linguaLens.showQuickPick', () => showAiTranslateQuickPick(config, docService));
+  reg('linguaLens.translateSelectionPopup', () => translateSelectionPopup(config, guard, translation));
 
-  reg('aiTranslate.selection.replace', async (...args: unknown[]) => {
+  reg('linguaLens.selection.replace', async (...args: unknown[]) => {
     const id = args[0] as string;
     const action = hoverRegistry.get(id);
     if (!action) return;
@@ -307,7 +317,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     await editor.edit((eb) => eb.replace(new vscode.Range(start, end), action.translation));
   });
 
-  reg('aiTranslate.selection.insertBelow', async (...args: unknown[]) => {
+  reg('linguaLens.selection.insertBelow', async (...args: unknown[]) => {
     const id = args[0] as string;
     const action = hoverRegistry.get(id);
     if (!action) return;
@@ -320,29 +330,29 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     await editor.edit((eb) => eb.insert(new vscode.Position(insertLine, 0), indent + action.translation + '\n'));
   });
 
-  reg('aiTranslate.translateGitCommitAtLine', () =>
+  reg('linguaLens.translateGitCommitAtLine', () =>
     translateGitCommitAtLine(config, guard, translation),
   );
-  reg('aiTranslate.translateScmInput', () => translateScmInput(config, guard, translation));
-  reg('aiTranslate.generateLocaleFile', async () => {
+  reg('linguaLens.translateScmInput', () => translateScmInput(config, guard, translation));
+  reg('linguaLens.generateLocaleFile', async () => {
     const uri = vscode.window.activeTextEditor?.document.uri;
     if (!uri) return;
     return generateLocaleFile(uri, config, guard, translation);
   });
-  reg('aiTranslate.suggestVariableNames', () => suggestVariableNames(config, guard, llm));
+  reg('linguaLens.suggestVariableNames', () => suggestVariableNames(config, guard, llm));
 
-  reg('aiTranslate.acknowledgePrivacy', async () => {
+  reg('linguaLens.acknowledgePrivacy', async () => {
     await guard.acknowledgeOrigin();
     void vscode.window.showInformationMessage(t('msg.privacyAcknowledged'));
   });
 
-  reg('aiTranslate.hover.copy', async (...args: unknown[]) => {
+  reg('linguaLens.hover.copy', async (...args: unknown[]) => {
     const id = args[0] as string;
     const action = hoverRegistry.get(id);
     if (action) await vscode.env.clipboard.writeText(action.translation);
   });
 
-  reg('aiTranslate.hover.insertComment', async (...args: unknown[]) => {
+  reg('linguaLens.hover.insertComment', async (...args: unknown[]) => {
     const id = args[0] as string;
     const action = hoverRegistry.get(id);
     if (!action) return;
@@ -362,12 +372,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     });
   });
 
-  reg('aiTranslate.hover.refresh', async (...args: unknown[]) => {
+  reg('linguaLens.hover.refresh', async (...args: unknown[]) => {
     const id = args[0] as string;
     await refreshHoverTranslation(id, config, translation, hoverRegistry);
   });
 
-  reg('aiTranslate.hover.retranslate', async (...args: unknown[]) => {
+  reg('linguaLens.hover.retranslate', async (...args: unknown[]) => {
     const id = args[0] as string;
     await refreshHoverTranslation(id, config, translation, hoverRegistry);
   });

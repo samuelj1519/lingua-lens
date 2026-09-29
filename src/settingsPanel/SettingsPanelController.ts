@@ -39,9 +39,9 @@ export class SettingsPanelController {
     this.totalNativeSettings = totalNativeSettings;
     context.subscriptions.push(
       vscode.workspace.onDidChangeConfiguration((e) => {
-        if (e.affectsConfiguration('aiTranslate') && this.panel) {
+        if (e.affectsConfiguration('linguaLens') && this.panel) {
           void this.postState();
-          if (e.affectsConfiguration('aiTranslate.targetLanguage')) {
+          if (e.affectsConfiguration('linguaLens.targetLanguage')) {
             void this.postLocaleUpdate();
           }
         }
@@ -59,7 +59,7 @@ export class SettingsPanelController {
       return;
     }
     this.panel = vscode.window.createWebviewPanel(
-      'aiTranslate.settingsPanel',
+      'linguaLens.settingsPanel',
       'LinguaLens',
       vscode.ViewColumn.One,
       { enableScripts: true, retainContextWhenHidden: true, localResourceRoots: [this.context.extensionUri] },
@@ -244,7 +244,7 @@ export class SettingsPanelController {
         );
         break;
       case 'openSetApiKey':
-        await vscode.commands.executeCommand('aiTranslate.setApiKey');
+        await vscode.commands.executeCommand('linguaLens.setApiKey');
         await this.postState();
         break;
     }

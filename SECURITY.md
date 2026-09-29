@@ -8,12 +8,12 @@ If you believe you found a security issue, open a private report with the reposi
 
 ## Data sent to LLMs
 
-LinguaLens sends text you explicitly hover, select, or translate (comments, strings, document segments, Git messages, etc.) to the HTTP endpoint configured in `aiTranslate.llm.baseUrl`. It does not upload your whole workspace.
+LinguaLens sends text you explicitly hover, select, or translate (comments, strings, document segments, Git messages, etc.) to the HTTP endpoint configured in `linguaLens.llm.baseUrl`. It does not upload your whole workspace.
 
 ## Secrets
 
 - API keys are stored in VS Code **SecretStorage**, keyed by API origin.
-- `aiTranslate.privacy.blockSecrets` tries to block obvious secrets from being sent.
+- `linguaLens.privacy.blockSecrets` tries to block obvious secrets from being sent.
 - `.env` and excluded globs are not translated.
 
 ## Settings webview

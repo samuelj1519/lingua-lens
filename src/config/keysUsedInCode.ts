@@ -1,4 +1,4 @@
-/** Relative keys under `aiTranslate.*` read by ConfigService (keep in sync with tests). */
+/** Relative keys under `linguaLens.*` read by ConfigService (keep in sync with tests). */
 export const CONFIG_KEYS_USED_IN_CODE: string[] = [
   'enabled',
   'targetLanguage',

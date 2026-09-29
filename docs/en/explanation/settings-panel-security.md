@@ -1,6 +1,6 @@
 # Settings panel security
 
-The **LinguaLens: Open Settings Panel** command opens a Webview-based UI (`SettingsPanelController` + `settingsPanel/webview/main.ts`) for editing many `aiTranslate.*` keys without hand-editing JSON. This page explains how that UI is hardened and what secrets it never touches.
+The **LinguaLens: Open Settings Panel** command opens a Webview-based UI (`SettingsPanelController` + `settingsPanel/webview/main.ts`) for editing many `linguaLens.*` keys without hand-editing JSON. This page explains how that UI is hardened and what secrets it never touches.
 
 ## Threat model (practical)
 

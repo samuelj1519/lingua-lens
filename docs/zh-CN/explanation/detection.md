@@ -15,23 +15,23 @@
 
 | 设置 | 字段 | 默认值 |
 |------|------|--------|
-| `aiTranslate.targetLanguage` | `target` | `zh-CN` |
-| `aiTranslate.detection.minLength` | `minLength` | 3 |
-| `aiTranslate.detection.targetRatio` | `targetRatio` | 0.6 |
-| `aiTranslate.detection.reliableMinLength` | `reliableMinLength` | 20 |
-| `aiTranslate.detection.skipPatterns` | `userSkipPatterns` | `[]` |
-| `aiTranslate.privacy.blockSecrets` | `blockSecrets` | true |
-| `aiTranslate.detection.strictChineseVariant` | `strictChineseVariant` | false |
+| `linguaLens.targetLanguage` | `target` | `zh-CN` |
+| `linguaLens.detection.minLength` | `minLength` | 3 |
+| `linguaLens.detection.targetRatio` | `targetRatio` | 0.6 |
+| `linguaLens.detection.reliableMinLength` | `reliableMinLength` | 20 |
+| `linguaLens.detection.skipPatterns` | `userSkipPatterns` | `[]` |
+| `linguaLens.privacy.blockSecrets` | `blockSecrets` | true |
+| `linguaLens.detection.strictChineseVariant` | `strictChineseVariant` | false |
 
 ### strictChineseVariant（重要）
 
-设置项 **`aiTranslate.detection.strictChineseVariant`** 已暴露，供将来在跳过与翻译之间区分简体与繁体中文。
+设置项 **`linguaLens.detection.strictChineseVariant`** 已暴露，供将来在跳过与翻译之间区分简体与繁体中文。
 
 **当前实现：** `decide()` 在 `DetectOptions` 中接受 `strictChineseVariant`，但**未实现变体拆分**。简体与繁体均通过 `familyOf()` 映射到 `zh` 语族。实际影响：
 
 - 目标 `zh-CN` 时，多数汉字文本会因已是中文而被跳过。
 - 目标 `zh-TW` 时脚本统计行为相同——不适合 zh-CN→zh-TW 转换场景。
-- 在变体逻辑落地前，文档工作流请使用 `aiTranslate.document.forceTranslate`。
+- 在变体逻辑落地前，文档工作流请使用 `linguaLens.document.forceTranslate`。
 
 这与工程决策 D8（简繁在跳过逻辑中视为同一语族）一致。
 
@@ -120,7 +120,7 @@ flowchart TD
 
 ## 日志与调试
 
-在 `aiTranslate.log.level` 为 `debug` 时，`LanguageDetector` 可将 `reason`（如 `tooShort`、`targetRatio`、`sameFamily`）写入输出通道，帮助判断「为何未翻译」。悬停 UI 默认不展示原因，以免干扰阅读。文档计划器在跳过段时同样记录 reason，可与分段 id 关联。若误判频繁，建议先调整 `skipPatterns` 与 `targetRatio`，再考虑 `forceTranslate`，以免对所有段落无差别调用 API。
+在 `linguaLens.log.level` 为 `debug` 时，`LanguageDetector` 可将 `reason`（如 `tooShort`、`targetRatio`、`sameFamily`）写入输出通道，帮助判断「为何未翻译」。悬停 UI 默认不展示原因，以免干扰阅读。文档计划器在跳过段时同样记录 reason，可与分段 id 关联。若误判频繁，建议先调整 `skipPatterns` 与 `targetRatio`，再考虑 `forceTranslate`，以免对所有段落无差别调用 API。
 
 ## 与术语表、占位符的边界
 

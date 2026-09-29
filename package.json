@@ -41,8 +41,8 @@
       "supported": "limited",
       "description": "Glossary path is not read in restricted untrusted workspaces",
       "restrictedConfigurations": [
-        "aiTranslate.glossary.path",
-        "aiTranslate.detection.skipPatterns"
+        "linguaLens.glossary.path",
+        "linguaLens.detection.skipPatterns"
       ]
     },
     "virtualWorkspaces": {
@@ -52,6 +52,171 @@
   },
   "contributes": {
     "commands": [
+      {
+        "command": "linguaLens.toggle",
+        "title": "%command.toggle%",
+        "category": "LinguaLens"
+      },
+      {
+        "command": "linguaLens.selectTargetLanguage",
+        "title": "%command.selectTargetLanguage%",
+        "category": "LinguaLens"
+      },
+      {
+        "command": "linguaLens.setApiKey",
+        "title": "%command.setApiKey%",
+        "category": "LinguaLens"
+      },
+      {
+        "command": "linguaLens.clearApiKey",
+        "title": "%command.clearApiKey%",
+        "category": "LinguaLens"
+      },
+      {
+        "command": "linguaLens.testConnection",
+        "title": "%command.testConnection%",
+        "category": "LinguaLens"
+      },
+      {
+        "command": "linguaLens.translateSelection",
+        "title": "%command.translateSelection%",
+        "category": "LinguaLens"
+      },
+      {
+        "command": "linguaLens.translateDocument",
+        "title": "%command.translateDocument%",
+        "category": "LinguaLens"
+      },
+      {
+        "command": "linguaLens.refreshPreview",
+        "title": "%command.refreshPreview%",
+        "category": "LinguaLens"
+      },
+      {
+        "command": "linguaLens.refreshDocumentTranslation",
+        "title": "%command.refreshDocumentTranslation%",
+        "category": "LinguaLens"
+      },
+      {
+        "command": "linguaLens.hover.refresh",
+        "title": "%command.hoverRefresh%",
+        "category": "LinguaLens"
+      },
+      {
+        "command": "linguaLens.showQuickPick",
+        "title": "%command.showQuickPick%",
+        "category": "LinguaLens"
+      },
+      {
+        "command": "linguaLens.translateSelectionPopup",
+        "title": "%command.translateSelectionPopup%",
+        "category": "LinguaLens"
+      },
+      {
+        "command": "linguaLens.selection.replace",
+        "title": "%command.selectionReplace%",
+        "category": "LinguaLens"
+      },
+      {
+        "command": "linguaLens.selection.insertBelow",
+        "title": "%command.selectionInsertBelow%",
+        "category": "LinguaLens"
+      },
+      {
+        "command": "linguaLens.generateSideFile",
+        "title": "%command.generateSideFile%",
+        "category": "LinguaLens"
+      },
+      {
+        "command": "linguaLens.clearCache",
+        "title": "%command.clearCache%",
+        "category": "LinguaLens"
+      },
+      {
+        "command": "linguaLens.disableForWorkspace",
+        "title": "%command.disableForWorkspace%",
+        "category": "LinguaLens"
+      },
+      {
+        "command": "linguaLens.enableForWorkspace",
+        "title": "%command.enableForWorkspace%",
+        "category": "LinguaLens"
+      },
+      {
+        "command": "linguaLens.openGlossary",
+        "title": "%command.openGlossary%",
+        "category": "LinguaLens"
+      },
+      {
+        "command": "linguaLens.showLog",
+        "title": "%command.showLog%",
+        "category": "LinguaLens"
+      },
+      {
+        "command": "linguaLens.openSettings",
+        "title": "%command.openSettings%",
+        "category": "LinguaLens"
+      },
+      {
+        "command": "linguaLens.openSettingsPanel",
+        "title": "%command.openSettingsPanel%",
+        "category": "LinguaLens"
+      },
+      {
+        "command": "linguaLens.acknowledgePrivacy",
+        "title": "%command.acknowledgePrivacy%",
+        "category": "LinguaLens"
+      },
+      {
+        "command": "linguaLens.hover.copy",
+        "title": "%command.hoverCopy%",
+        "category": "LinguaLens"
+      },
+      {
+        "command": "linguaLens.hover.insertComment",
+        "title": "%command.hoverInsertComment%",
+        "category": "LinguaLens"
+      },
+      {
+        "command": "linguaLens.hover.retranslate",
+        "title": "%command.hoverRetranslate%",
+        "category": "LinguaLens"
+      },
+      {
+        "command": "linguaLens.translateClipboardOrSelection",
+        "title": "%command.translateClipboardOrSelection%",
+        "category": "LinguaLens"
+      },
+      {
+        "command": "linguaLens.translateReplaceSelection",
+        "title": "%command.translateReplaceSelection%",
+        "category": "LinguaLens"
+      },
+      {
+        "command": "linguaLens.translateInsertBelow",
+        "title": "%command.translateInsertBelow%",
+        "category": "LinguaLens"
+      },
+      {
+        "command": "linguaLens.translateGitCommitAtLine",
+        "title": "%command.translateGitCommitAtLine%",
+        "category": "LinguaLens"
+      },
+      {
+        "command": "linguaLens.translateScmInput",
+        "title": "%command.translateScmInput%",
+        "category": "LinguaLens"
+      },
+      {
+        "command": "linguaLens.generateLocaleFile",
+        "title": "%command.generateLocaleFile%",
+        "category": "LinguaLens"
+      },
+      {
+        "command": "linguaLens.suggestVariableNames",
+        "title": "%command.suggestVariableNames%",
+        "category": "LinguaLens"
+      },
       {
         "command": "aiTranslate.toggle",
         "title": "%command.toggle%",
@@ -220,36 +385,36 @@
     ],
     "keybindings": [
       {
-        "command": "aiTranslate.translateSelection",
+        "command": "linguaLens.translateSelection",
         "key": "ctrl+alt+shift+t",
         "mac": "cmd+alt+shift+t",
         "when": "editorTextFocus && editorHasSelection"
       },
       {
-        "command": "aiTranslate.translateClipboardOrSelection",
+        "command": "linguaLens.translateClipboardOrSelection",
         "key": "ctrl+alt+shift+y",
         "mac": "cmd+alt+shift+y"
       },
       {
-        "command": "aiTranslate.translateReplaceSelection",
+        "command": "linguaLens.translateReplaceSelection",
         "key": "ctrl+alt+shift+r",
         "mac": "cmd+alt+shift+r",
         "when": "editorTextFocus && editorHasSelection"
       },
       {
-        "command": "aiTranslate.translateInsertBelow",
+        "command": "linguaLens.translateInsertBelow",
         "key": "ctrl+alt+shift+b",
         "mac": "cmd+alt+shift+b",
         "when": "editorTextFocus && editorHasSelection"
       },
       {
-        "command": "aiTranslate.translateDocument",
+        "command": "linguaLens.translateDocument",
         "key": "ctrl+alt+shift+d",
         "mac": "cmd+alt+shift+d",
         "when": "editorTextFocus && resourceLangId =~ /(markdown|plaintext)/"
       },
       {
-        "command": "aiTranslate.translateSelectionPopup",
+        "command": "linguaLens.translateSelectionPopup",
         "key": "ctrl+alt+shift+p",
         "mac": "cmd+alt+shift+p",
         "when": "editorTextFocus && editorHasSelection"
@@ -257,6 +422,122 @@
     ],
     "menus": {
       "commandPalette": [
+        {
+          "command": "linguaLens.acknowledgePrivacy",
+          "when": "false"
+        },
+        {
+          "command": "linguaLens.hover.copy",
+          "when": "false"
+        },
+        {
+          "command": "linguaLens.hover.insertComment",
+          "when": "false"
+        },
+        {
+          "command": "linguaLens.hover.retranslate",
+          "when": "false"
+        },
+        {
+          "command": "linguaLens.hover.refresh",
+          "when": "false"
+        },
+        {
+          "command": "linguaLens.refreshPreview",
+          "when": "resourceScheme == lingualens"
+        },
+        {
+          "command": "linguaLens.translateSelection",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "aiTranslate.toggle",
+          "when": "false"
+        },
+        {
+          "command": "aiTranslate.selectTargetLanguage",
+          "when": "false"
+        },
+        {
+          "command": "aiTranslate.setApiKey",
+          "when": "false"
+        },
+        {
+          "command": "aiTranslate.clearApiKey",
+          "when": "false"
+        },
+        {
+          "command": "aiTranslate.testConnection",
+          "when": "false"
+        },
+        {
+          "command": "aiTranslate.translateSelection",
+          "when": "false"
+        },
+        {
+          "command": "aiTranslate.translateDocument",
+          "when": "false"
+        },
+        {
+          "command": "aiTranslate.refreshPreview",
+          "when": "false"
+        },
+        {
+          "command": "aiTranslate.refreshDocumentTranslation",
+          "when": "false"
+        },
+        {
+          "command": "aiTranslate.hover.refresh",
+          "when": "false"
+        },
+        {
+          "command": "aiTranslate.showQuickPick",
+          "when": "false"
+        },
+        {
+          "command": "aiTranslate.translateSelectionPopup",
+          "when": "false"
+        },
+        {
+          "command": "aiTranslate.selection.replace",
+          "when": "false"
+        },
+        {
+          "command": "aiTranslate.selection.insertBelow",
+          "when": "false"
+        },
+        {
+          "command": "aiTranslate.generateSideFile",
+          "when": "false"
+        },
+        {
+          "command": "aiTranslate.clearCache",
+          "when": "false"
+        },
+        {
+          "command": "aiTranslate.disableForWorkspace",
+          "when": "false"
+        },
+        {
+          "command": "aiTranslate.enableForWorkspace",
+          "when": "false"
+        },
+        {
+          "command": "aiTranslate.openGlossary",
+          "when": "false"
+        },
+        {
+          "command": "aiTranslate.showLog",
+          "when": "false"
+        },
+        {
+          "command": "aiTranslate.openSettings",
+          "when": "false"
+        },
+        {
+          "command": "aiTranslate.openSettingsPanel",
+          "when": "false"
+        },
         {
           "command": "aiTranslate.acknowledgePrivacy",
           "when": "false"
@@ -274,64 +555,80 @@
           "when": "false"
         },
         {
-          "command": "aiTranslate.hover.refresh",
+          "command": "aiTranslate.translateClipboardOrSelection",
           "when": "false"
         },
         {
-          "command": "aiTranslate.refreshPreview",
-          "when": "resourceScheme == aitranslate"
+          "command": "aiTranslate.translateReplaceSelection",
+          "when": "false"
         },
         {
-          "command": "aiTranslate.translateSelection",
-          "when": "editorHasSelection"
+          "command": "aiTranslate.translateInsertBelow",
+          "when": "false"
+        },
+        {
+          "command": "aiTranslate.translateGitCommitAtLine",
+          "when": "false"
+        },
+        {
+          "command": "aiTranslate.translateScmInput",
+          "when": "false"
+        },
+        {
+          "command": "aiTranslate.generateLocaleFile",
+          "when": "false"
+        },
+        {
+          "command": "aiTranslate.suggestVariableNames",
+          "when": "false"
         }
       ],
       "editor/context": [
         {
-          "command": "aiTranslate.translateSelection",
+          "command": "linguaLens.translateSelection",
           "when": "editorHasSelection",
           "group": "navigation@90"
         },
         {
-          "command": "aiTranslate.translateDocument",
-          "when": "resourceScheme != aitranslate && (resourceLangId == markdown || resourceLangId == plaintext)",
+          "command": "linguaLens.translateDocument",
+          "when": "resourceScheme != lingualens && (resourceLangId == markdown || resourceLangId == plaintext)",
           "group": "navigation@89"
         },
         {
-          "command": "aiTranslate.generateSideFile",
-          "when": "resourceScheme != aitranslate && (resourceLangId == markdown || resourceLangId == plaintext)",
+          "command": "linguaLens.generateSideFile",
+          "when": "resourceScheme != lingualens && (resourceLangId == markdown || resourceLangId == plaintext)",
           "group": "navigation@88"
         }
       ],
       "editor/title": [
         {
-          "command": "aiTranslate.translateDocument",
-          "when": "resourceScheme != aitranslate && (resourceLangId == markdown || resourceLangId == plaintext)",
+          "command": "linguaLens.translateDocument",
+          "when": "resourceScheme != lingualens && (resourceLangId == markdown || resourceLangId == plaintext)",
           "group": "navigation@1",
           "icon": "$(globe)"
         },
         {
-          "command": "aiTranslate.refreshPreview",
-          "when": "resourceScheme == aitranslate",
+          "command": "linguaLens.refreshPreview",
+          "when": "resourceScheme == lingualens",
           "group": "navigation@1",
           "icon": "$(refresh)"
         },
         {
-          "command": "aiTranslate.generateSideFile",
-          "when": "resourceScheme != aitranslate && (resourceLangId == markdown || resourceLangId == plaintext)",
-          "group": "1_aiTranslate"
+          "command": "linguaLens.generateSideFile",
+          "when": "resourceScheme != lingualens && (resourceLangId == markdown || resourceLangId == plaintext)",
+          "group": "1_linguaLens"
         }
       ],
       "explorer/context": [
         {
-          "command": "aiTranslate.translateDocument",
+          "command": "linguaLens.translateDocument",
           "when": "resourceExtname =~ /\\.(md|markdown|txt)$/",
-          "group": "7_aiTranslate"
+          "group": "7_linguaLens"
         },
         {
-          "command": "aiTranslate.generateSideFile",
+          "command": "linguaLens.generateSideFile",
           "when": "resourceExtname =~ /\\.(md|markdown|txt)$/",
-          "group": "7_aiTranslate"
+          "group": "7_linguaLens"
         }
       ]
     },
@@ -340,14 +637,14 @@
         "title": "%config.section.general.title%",
         "order": 1,
         "properties": {
-          "aiTranslate.enabled": {
+          "linguaLens.enabled": {
             "type": "boolean",
             "default": true,
             "scope": "resource",
             "order": 1,
             "markdownDescription": "%config.enabled.markdownDescription%"
           },
-          "aiTranslate.targetLanguage": {
+          "linguaLens.targetLanguage": {
             "type": "string",
             "default": "zh-CN",
             "enum": [
@@ -376,14 +673,14 @@
             "order": 2,
             "markdownDescription": "%config.targetLanguage.markdownDescription%"
           },
-          "aiTranslate.detection.strictChineseVariant": {
+          "linguaLens.detection.strictChineseVariant": {
             "type": "boolean",
             "default": false,
             "scope": "resource",
             "order": 3,
             "markdownDescription": "%config.detection.strictChineseVariant.markdownDescription%"
           },
-          "aiTranslate.detection.minLength": {
+          "linguaLens.detection.minLength": {
             "type": "number",
             "default": 3,
             "minimum": 1,
@@ -395,7 +692,7 @@
             ],
             "markdownDescription": "%config.detection.minLength.markdownDescription%"
           },
-          "aiTranslate.detection.targetRatio": {
+          "linguaLens.detection.targetRatio": {
             "type": "number",
             "default": 0.6,
             "minimum": 0,
@@ -407,7 +704,7 @@
             ],
             "markdownDescription": "%config.detection.targetRatio.markdownDescription%"
           },
-          "aiTranslate.detection.reliableMinLength": {
+          "linguaLens.detection.reliableMinLength": {
             "type": "number",
             "default": 20,
             "minimum": 1,
@@ -419,7 +716,7 @@
             ],
             "markdownDescription": "%config.detection.reliableMinLength.markdownDescription%"
           },
-          "aiTranslate.detection.skipPatterns": {
+          "linguaLens.detection.skipPatterns": {
             "type": "array",
             "items": {
               "type": "string"
@@ -432,7 +729,7 @@
             ],
             "markdownDescription": "%config.detection.skipPatterns.markdownDescription%"
           },
-          "aiTranslate.selection.output": {
+          "linguaLens.selection.output": {
             "type": "string",
             "enum": [
               "auto",
@@ -449,7 +746,7 @@
             "order": 20,
             "markdownDescription": "%config.selection.output.markdownDescription%"
           },
-          "aiTranslate.privacy.exclude": {
+          "linguaLens.privacy.exclude": {
             "type": "array",
             "items": {
               "type": "string"
@@ -469,7 +766,7 @@
             "order": 30,
             "markdownDescription": "%config.privacy.exclude.markdownDescription%"
           },
-          "aiTranslate.statusBar.enabled": {
+          "linguaLens.statusBar.enabled": {
             "type": "boolean",
             "default": true,
             "scope": "application",
@@ -482,7 +779,7 @@
         "title": "%config.section.llm.title%",
         "order": 2,
         "properties": {
-          "aiTranslate.llm.baseUrl": {
+          "linguaLens.llm.baseUrl": {
             "type": "string",
             "default": "https://api.openai.com/v1",
             "scope": "application",
@@ -490,28 +787,28 @@
             "order": 1,
             "markdownDescription": "%config.llm.baseUrl.markdownDescription%"
           },
-          "aiTranslate.llm.model": {
+          "linguaLens.llm.model": {
             "type": "string",
             "default": "",
             "scope": "application",
             "order": 2,
             "markdownDescription": "%config.llm.model.markdownDescription%"
           },
-          "aiTranslate.llm.stream": {
+          "linguaLens.llm.stream": {
             "type": "boolean",
             "default": false,
             "scope": "application",
             "order": 3,
             "markdownDescription": "%config.llm.stream.markdownDescription%"
           },
-          "aiTranslate.llm.extraBody": {
+          "linguaLens.llm.extraBody": {
             "type": "object",
             "default": {},
             "scope": "application",
             "order": 4,
             "markdownDescription": "%config.llm.extraBody.markdownDescription%"
           },
-          "aiTranslate.llm.systemPrompt": {
+          "linguaLens.llm.systemPrompt": {
             "type": "string",
             "default": "",
             "editPresentation": "multilineText",
@@ -519,14 +816,14 @@
             "order": 5,
             "markdownDescription": "%config.llm.systemPrompt.markdownDescription%"
           },
-          "aiTranslate.glossary.path": {
+          "linguaLens.glossary.path": {
             "type": "string",
             "default": ".translate-glossary.json",
             "scope": "resource",
             "order": 10,
             "markdownDescription": "%config.glossary.path.markdownDescription%"
           },
-          "aiTranslate.glossary.maxTerms": {
+          "linguaLens.glossary.maxTerms": {
             "type": "number",
             "default": 50,
             "minimum": 0,
@@ -535,7 +832,7 @@
             "order": 11,
             "markdownDescription": "%config.glossary.maxTerms.markdownDescription%"
           },
-          "aiTranslate.llm.temperature": {
+          "linguaLens.llm.temperature": {
             "type": "number",
             "default": 0.2,
             "minimum": 0,
@@ -547,7 +844,7 @@
             ],
             "markdownDescription": "%config.llm.temperature.markdownDescription%"
           },
-          "aiTranslate.llm.timeoutMs": {
+          "linguaLens.llm.timeoutMs": {
             "type": "number",
             "default": 30000,
             "minimum": 1000,
@@ -556,7 +853,7 @@
             "order": 21,
             "markdownDescription": "%config.llm.timeoutMs.markdownDescription%"
           },
-          "aiTranslate.llm.maxConcurrency": {
+          "linguaLens.llm.maxConcurrency": {
             "type": "number",
             "default": 4,
             "minimum": 1,
@@ -565,7 +862,7 @@
             "order": 22,
             "markdownDescription": "%config.llm.maxConcurrency.markdownDescription%"
           },
-          "aiTranslate.llm.maxTokens": {
+          "linguaLens.llm.maxTokens": {
             "type": "number",
             "default": 4096,
             "minimum": 64,
@@ -574,7 +871,7 @@
             "order": 23,
             "markdownDescription": "%config.llm.maxTokens.markdownDescription%"
           },
-          "aiTranslate.llm.maxRetries": {
+          "linguaLens.llm.maxRetries": {
             "type": "number",
             "default": 3,
             "minimum": 0,
@@ -586,7 +883,7 @@
             ],
             "markdownDescription": "%config.llm.maxRetries.markdownDescription%"
           },
-          "aiTranslate.llm.extraHeaders": {
+          "linguaLens.llm.extraHeaders": {
             "type": "object",
             "default": {},
             "additionalProperties": {
@@ -599,7 +896,7 @@
             ],
             "markdownDescription": "%config.llm.extraHeaders.markdownDescription%"
           },
-          "aiTranslate.llm.jsonMode": {
+          "linguaLens.llm.jsonMode": {
             "type": "string",
             "enum": [
               "auto",
@@ -625,14 +922,14 @@
         "title": "%config.section.hover.title%",
         "order": 3,
         "properties": {
-          "aiTranslate.hover.enabled": {
+          "linguaLens.hover.enabled": {
             "type": "boolean",
             "default": true,
             "scope": "resource",
             "order": 1,
             "markdownDescription": "%config.hover.enabled.markdownDescription%"
           },
-          "aiTranslate.hover.extraDelayMs": {
+          "linguaLens.hover.extraDelayMs": {
             "type": "number",
             "default": 700,
             "minimum": 0,
@@ -641,63 +938,63 @@
             "order": 2,
             "markdownDescription": "%config.hover.extraDelayMs.markdownDescription%"
           },
-          "aiTranslate.hover.comments": {
+          "linguaLens.hover.comments": {
             "type": "boolean",
             "default": true,
             "scope": "resource",
             "order": 10,
             "markdownDescription": "%config.hover.comments.markdownDescription%"
           },
-          "aiTranslate.hover.strings": {
+          "linguaLens.hover.strings": {
             "type": "boolean",
             "default": true,
             "scope": "resource",
             "order": 11,
             "markdownDescription": "%config.hover.strings.markdownDescription%"
           },
-          "aiTranslate.hover.documents": {
+          "linguaLens.hover.documents": {
             "type": "boolean",
             "default": true,
             "scope": "resource",
             "order": 12,
             "markdownDescription": "%config.hover.documents.markdownDescription%"
           },
-          "aiTranslate.hover.configKeys": {
+          "linguaLens.hover.configKeys": {
             "type": "boolean",
             "default": true,
             "scope": "resource",
             "order": 13,
             "markdownDescription": "%config.hover.configKeys.markdownDescription%"
           },
-          "aiTranslate.hover.diagnostics": {
+          "linguaLens.hover.diagnostics": {
             "type": "boolean",
             "default": true,
             "scope": "resource",
             "order": 14,
             "markdownDescription": "%config.hover.diagnostics.markdownDescription%"
           },
-          "aiTranslate.hover.symbolDocs": {
+          "linguaLens.hover.symbolDocs": {
             "type": "boolean",
             "default": true,
             "scope": "resource",
             "order": 15,
             "markdownDescription": "%config.hover.symbolDocs.markdownDescription%"
           },
-          "aiTranslate.hover.gitCommitMessage": {
+          "linguaLens.hover.gitCommitMessage": {
             "type": "boolean",
             "default": true,
             "scope": "resource",
             "order": 16,
             "markdownDescription": "%config.hover.gitCommitMessage.markdownDescription%"
           },
-          "aiTranslate.hover.selection": {
+          "linguaLens.hover.selection": {
             "type": "boolean",
             "default": true,
             "scope": "resource",
             "order": 17,
             "markdownDescription": "%config.hover.selection.markdownDescription%"
           },
-          "aiTranslate.hover.maxChars": {
+          "linguaLens.hover.maxChars": {
             "type": "number",
             "default": 4000,
             "minimum": 100,
@@ -706,7 +1003,7 @@
             "order": 20,
             "markdownDescription": "%config.hover.maxChars.markdownDescription%"
           },
-          "aiTranslate.hover.showOriginal": {
+          "linguaLens.hover.showOriginal": {
             "type": "boolean",
             "default": false,
             "scope": "resource",
@@ -722,7 +1019,7 @@
         "title": "%config.section.document.title%",
         "order": 4,
         "properties": {
-          "aiTranslate.document.previewStyle": {
+          "linguaLens.document.previewStyle": {
             "type": "string",
             "enum": [
               "interleaved",
@@ -737,21 +1034,21 @@
             "order": 1,
             "markdownDescription": "%config.document.previewStyle.markdownDescription%"
           },
-          "aiTranslate.document.codeLens": {
+          "linguaLens.document.codeLens": {
             "type": "boolean",
             "default": true,
             "scope": "resource",
             "order": 2,
             "markdownDescription": "%config.document.codeLens.markdownDescription%"
           },
-          "aiTranslate.document.forceTranslate": {
+          "linguaLens.document.forceTranslate": {
             "type": "boolean",
             "default": false,
             "scope": "resource",
             "order": 3,
             "markdownDescription": "%config.document.forceTranslate.markdownDescription%"
           },
-          "aiTranslate.document.batchSize": {
+          "linguaLens.document.batchSize": {
             "type": "number",
             "default": 8,
             "minimum": 1,
@@ -760,7 +1057,7 @@
             "order": 10,
             "markdownDescription": "%config.document.batchSize.markdownDescription%"
           },
-          "aiTranslate.document.maxBatchChars": {
+          "linguaLens.document.maxBatchChars": {
             "type": "number",
             "default": 4000,
             "minimum": 500,
@@ -769,14 +1066,14 @@
             "order": 11,
             "markdownDescription": "%config.document.maxBatchChars.markdownDescription%"
           },
-          "aiTranslate.document.sideFileNamePattern": {
+          "linguaLens.document.sideFileNamePattern": {
             "type": "string",
             "default": "${fileBasenameNoExtension}.${lang}${fileExtname}",
             "scope": "resource",
             "order": 20,
             "markdownDescription": "%config.document.sideFileNamePattern.markdownDescription%"
           },
-          "aiTranslate.document.sideFileContent": {
+          "linguaLens.document.sideFileContent": {
             "type": "string",
             "enum": [
               "translated",
@@ -791,7 +1088,7 @@
             "order": 21,
             "markdownDescription": "%config.document.sideFileContent.markdownDescription%"
           },
-          "aiTranslate.document.autoRefresh": {
+          "linguaLens.document.autoRefresh": {
             "type": "boolean",
             "default": false,
             "scope": "resource",
@@ -807,7 +1104,7 @@
         "title": "%config.section.markdown.title%",
         "order": 5,
         "properties": {
-          "aiTranslate.markdown.frontmatterFields": {
+          "linguaLens.markdown.frontmatterFields": {
             "type": "array",
             "items": {
               "type": "string"
@@ -830,14 +1127,14 @@
         "title": "%config.section.cache.title%",
         "order": 6,
         "properties": {
-          "aiTranslate.cache.enabled": {
+          "linguaLens.cache.enabled": {
             "type": "boolean",
             "default": true,
             "scope": "application",
             "order": 1,
             "markdownDescription": "%config.cache.enabled.markdownDescription%"
           },
-          "aiTranslate.cache.memoryEntries": {
+          "linguaLens.cache.memoryEntries": {
             "type": "number",
             "default": 2000,
             "minimum": 0,
@@ -849,7 +1146,7 @@
             ],
             "markdownDescription": "%config.cache.memoryEntries.markdownDescription%"
           },
-          "aiTranslate.cache.maxDiskMB": {
+          "linguaLens.cache.maxDiskMB": {
             "type": "number",
             "default": 50,
             "minimum": 0,
@@ -867,14 +1164,14 @@
         "title": "%config.section.advanced.title%",
         "order": 7,
         "properties": {
-          "aiTranslate.privacy.blockSecrets": {
+          "linguaLens.privacy.blockSecrets": {
             "type": "boolean",
             "default": true,
             "scope": "application",
             "order": 1,
             "markdownDescription": "%config.privacy.blockSecrets.markdownDescription%"
           },
-          "aiTranslate.privacy.allowedSchemes": {
+          "linguaLens.privacy.allowedSchemes": {
             "type": "array",
             "items": {
               "type": "string"
@@ -892,7 +1189,7 @@
             ],
             "markdownDescription": "%config.privacy.allowedSchemes.markdownDescription%"
           },
-          "aiTranslate.parser.maxFileSizeKB": {
+          "linguaLens.parser.maxFileSizeKB": {
             "type": "number",
             "default": 1024,
             "minimum": 16,
@@ -904,7 +1201,7 @@
             ],
             "markdownDescription": "%config.parser.maxFileSizeKB.markdownDescription%"
           },
-          "aiTranslate.log.level": {
+          "linguaLens.log.level": {
             "type": "string",
             "enum": [
               "trace",

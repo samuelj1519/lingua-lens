@@ -40,7 +40,7 @@ const zhReadme = `# LinguaLens (lingua-lens)
 
 ## 功能
 
-- **悬停翻译**：代码、配置与文档；\`aiTranslate.log.level\` 可设为 debug
+- **悬停翻译**：代码、配置与文档；\`linguaLens.log.level\` 可设为 debug
 `;
 
 describe('isDocumentAlreadyInTargetLanguage', () => {

@@ -30,7 +30,7 @@ sequenceDiagram
 
 | 组件 | 职责 |
 |------|------|
-| `ConfigService` | 按资源 URI 合并 `aiTranslate.*` 设置 |
+| `ConfigService` | 按资源 URI 合并 `linguaLens.*` 设置 |
 | `ApiKeyStore` | 按 `baseUrl` 源（origin）存储密钥 |
 | `LlmClient` | HTTP chat completions、重试、信号量、流式 |
 | `CacheService` | SHA-256 键、LRU 内存、分片 JSONL 磁盘 |
@@ -81,7 +81,7 @@ flowchart TB
   PT --> P
   P --> TB
   TB --> PR
-  PR --> PV[aitranslate: 虚拟 URI]
+  PR --> PV[lingualens: 虚拟 URI]
 ```
 
 会话（`DocSession`）保存分段、每段结果、取消状态，并将预览 URI 链接到源 URI。`DocumentAssembler` 按源顺序遍历分段，用于交错/追加式渲染。
@@ -114,7 +114,7 @@ API 密钥从不经过设置面板 webview；仅扩展宿主中的 `ApiKeyStore`
 
 | 表面 | 机制 |
 |------|------|
-| 文档预览 | `TextDocumentContentProvider`，scheme `aitranslate:`（D10） |
+| 文档预览 | `TextDocumentContentProvider`，scheme `lingualens:`（D10） |
 | 长选区输出 | 侧栏虚拟 Markdown 文档（D11） |
 | 设置面板 | Webview + CSP nonce（`panelHtml.ts`） |
 | 状态栏 | 目标语言、开关、连接提示 |
@@ -145,7 +145,7 @@ API 密钥从不经过设置面板 webview；仅扩展宿主中的 `ApiKeyStore`
 
 ## 配置热更新
 
-`ConfigService` 监听 `onDidChangeConfiguration`，过滤 `aiTranslate` 前缀。`targetLanguage`、`cache.*`、`llm.model` 等变更会触发缓存 `configure()`、预览刷新、状态栏与 UI l10n 重置。`llm.baseUrl` 变更不自动迁移 SecretStorage 密钥——用户须对新源运行 **Set API Key**，这与按 origin 存储的设计一致。
+`ConfigService` 监听 `onDidChangeConfiguration`，过滤 `linguaLens` 前缀。`targetLanguage`、`cache.*`、`llm.model` 等变更会触发缓存 `configure()`、预览刷新、状态栏与 UI l10n 重置。`llm.baseUrl` 变更不自动迁移 SecretStorage 密钥——用户须对新源运行 **Set API Key**，这与按 origin 存储的设计一致。
 
 ## 相关文档
 

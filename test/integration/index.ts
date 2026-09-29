@@ -22,11 +22,11 @@ export async function run(): Promise<void> {
   assert.ok(ext, 'extension should be loaded');
   await ext.activate();
 
-  await vscode.workspace.getConfiguration('aiTranslate').update('log.level', 'debug', true);
-  await vscode.workspace.getConfiguration('aiTranslate').update('hover.extraDelayMs', 0, true);
-  await vscode.workspace.getConfiguration('aiTranslate').update('hover.documents', true, true);
-  await vscode.workspace.getConfiguration('aiTranslate').update('hover.configKeys', true, true);
-  await vscode.commands.executeCommand('aiTranslate.acknowledgePrivacy');
+  await vscode.workspace.getConfiguration('linguaLens').update('log.level', 'debug', true);
+  await vscode.workspace.getConfiguration('linguaLens').update('hover.extraDelayMs', 0, true);
+  await vscode.workspace.getConfiguration('linguaLens').update('hover.documents', true, true);
+  await vscode.workspace.getConfiguration('linguaLens').update('hover.configKeys', true, true);
+  await vscode.commands.executeCommand('linguaLens.acknowledgePrivacy');
 
   const root = path.join(ext.extensionPath, 'test', 'fixtures', 'hover');
 

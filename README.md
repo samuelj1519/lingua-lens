@@ -15,15 +15,15 @@ LinguaLens (`samuel-j.lingua-lens`) adds hover translation, selection and clipbo
 | Capability | What you get |
 | --- | --- |
 | **Hover translation** | Tree-sitter (with regex fallback) extracts comments, strings, Markdown paragraphs, config values/keys, template UI text, and more. Optional blocks for diagnostics, symbol docs, Git commit messages, and active selections. |
-| **Document preview** | `aitranslate:` virtual document with interleaved or append layout; progress per translatable segment; side files such as `README.zh-CN.md`. |
+| **Document preview** | `lingualens:` virtual document with interleaved or append layout; progress per translatable segment; side files such as `README.zh-CN.md`. |
 | **Editor workflows** | Keybindings for selection, clipboard/terminal, replace/insert, and popup translation. CodeLens on Markdown for translate / refresh / side file. |
 | **Operations** | Per-origin API keys, connection test, cache clear, workspace disable, privacy acknowledgement, secret blocking, and exclude globs. |
-| **i18n** | Runtime UI follows `aiTranslate.targetLanguage` (`l10n/bundle`); built-in settings labels follow the editor UI language (`package.nls`). |
+| **i18n** | Runtime UI follows `linguaLens.targetLanguage` (`l10n/bundle`); built-in settings labels follow the editor UI language (`package.nls`). |
 
 ## Quick start
 
 1. Install the `.vsix` (`npm run package` in this repo) or launch from **F5** after `npm install && npm run build`.
-2. Set `aiTranslate.llm.baseUrl` and `aiTranslate.llm.model` in settings (see table below).
+2. Set `linguaLens.llm.baseUrl` and `linguaLens.llm.model` in settings (see table below).
 3. Run **LinguaLens: Set API Key** and **LinguaLens: Test Connection**.
 4. Hover a comment or run **Translate document (preview)** on a `.md` file.
 
@@ -33,7 +33,7 @@ Step-by-step tutorial: [Getting started](docs/en/tutorials/getting-started.md).
 
 All providers use `POST {baseUrl}/chat/completions` with a Bearer token from **Set API Key**.
 
-| Provider | Example `aiTranslate.llm.baseUrl` | Notes |
+| Provider | Example `linguaLens.llm.baseUrl` | Notes |
 | --- | --- | --- |
 | OpenAI | `https://api.openai.com/v1` | Default in `package.json`. |
 | DeepSeek | `https://api.deepseek.com/v1` | Often needs `extraBody` to disable thinking. |
@@ -44,12 +44,12 @@ Example `settings.json` (User):
 
 ```json
 {
-  "aiTranslate.llm.baseUrl": "https://api.deepseek.com/v1",
-  "aiTranslate.llm.model": "deepseek-chat",
-  "aiTranslate.llm.extraBody": {
+  "linguaLens.llm.baseUrl": "https://api.deepseek.com/v1",
+  "linguaLens.llm.model": "deepseek-chat",
+  "linguaLens.llm.extraBody": {
     "thinking": { "type": "disabled" }
   },
-  "aiTranslate.targetLanguage": "zh-CN"
+  "linguaLens.targetLanguage": "zh-CN"
 }
 ```
 
@@ -59,14 +59,14 @@ Details and pitfalls: [Configure providers](docs/en/how-to/configure-providers.m
 
 | Setting | Default | Purpose |
 | --- | --- | --- |
-| `aiTranslate.enabled` | `true` | Master switch per resource. |
-| `aiTranslate.targetLanguage` | `zh-CN` | Translation output + extension-owned UI language. |
-| `aiTranslate.llm.baseUrl` | `https://api.openai.com/v1` | API root (include `/v1` when required). |
-| `aiTranslate.llm.model` | _(empty)_ | Required before any LLM call. |
-| `aiTranslate.llm.extraBody` | `{}` | Merged into chat JSON (thinking flags, etc.). |
-| `aiTranslate.hover.enabled` | `true` | Hover translation master switch. |
-| `aiTranslate.document.forceTranslate` | `false` | Skip language detection for whole documents. |
-| `aiTranslate.cache.enabled` | `true` | Memory LRU + disk JSONL under global storage. |
+| `linguaLens.enabled` | `true` | Master switch per resource. |
+| `linguaLens.targetLanguage` | `zh-CN` | Translation output + extension-owned UI language. |
+| `linguaLens.llm.baseUrl` | `https://api.openai.com/v1` | API root (include `/v1` when required). |
+| `linguaLens.llm.model` | _(empty)_ | Required before any LLM call. |
+| `linguaLens.llm.extraBody` | `{}` | Merged into chat JSON (thinking flags, etc.). |
+| `linguaLens.hover.enabled` | `true` | Hover translation master switch. |
+| `linguaLens.document.forceTranslate` | `false` | Skip language detection for whole documents. |
+| `linguaLens.cache.enabled` | `true` | Memory LRU + disk JSONL under global storage. |
 
 Full list (52 keys, seven UI sections): [Settings reference](docs/en/reference/settings.md) (auto-generated).
 
@@ -74,28 +74,28 @@ Full list (52 keys, seven UI sections): [Settings reference](docs/en/reference/s
 
 | Command | Default key | When |
 | --- | --- | --- |
-| `aiTranslate.setApiKey` | — | Always (palette / status bar). |
-| `aiTranslate.translateSelection` | `Ctrl+Alt+Shift+T` | Editor with selection. |
-| `aiTranslate.translateDocument` | `Ctrl+Alt+Shift+D` | Markdown / plain text editor. |
-| `aiTranslate.translateClipboardOrSelection` | `Ctrl+Alt+Shift+Y` | Terminal selection or clipboard. |
-| `aiTranslate.openSettingsPanel` | — | QuickPick / palette. |
-| `aiTranslate.clearCache` | — | Palette / status bar tooltip link. |
+| `linguaLens.setApiKey` | — | Always (palette / status bar). |
+| `linguaLens.translateSelection` | `Ctrl+Alt+Shift+T` | Editor with selection. |
+| `linguaLens.translateDocument` | `Ctrl+Alt+Shift+D` | Markdown / plain text editor. |
+| `linguaLens.translateClipboardOrSelection` | `Ctrl+Alt+Shift+Y` | Terminal selection or clipboard. |
+| `linguaLens.openSettingsPanel` | — | QuickPick / palette. |
+| `linguaLens.clearCache` | — | Palette / status bar tooltip link. |
 
 All commands, CodeLens, and context menus: [Commands reference](docs/en/reference/commands.md).
 
 ## FAQ
 
-**Hover shows nothing** — Check `aiTranslate.enabled`, file exclude globs, privacy acknowledgement, and whether detection skipped the fragment (already in target language). Enable `aiTranslate.log.level`: `debug` and open **LinguaLens: Show Log**.
+**Hover shows nothing** — Check `linguaLens.enabled`, file exclude globs, privacy acknowledgement, and whether detection skipped the fragment (already in target language). Enable `linguaLens.log.level`: `debug` and open **LinguaLens: Show Log**.
 
 **401 / connection errors** — Confirm `baseUrl` includes `/v1` if your vendor requires it, model id is set, and the key matches that origin. See [Troubleshoot connection](docs/en/how-to/troubleshoot-connection.md).
 
-**Document already in Chinese but still translating** — Turn off `aiTranslate.document.forceTranslate`. Detection uses the same rules as hover unless forced.
+**Document already in Chinese but still translating** — Turn off `linguaLens.document.forceTranslate`. Detection uses the same rules as hover unless forced.
 
 **Stale translation after changing model** — Cache keys include `model`, `baseUrl`, and `extraBody` hash; use **Refresh** on hover or **Clear cache** if needed. See [Caching](docs/en/explanation/caching.md).
 
 ## Privacy and security
 
-- Text under the cursor, in selections, or in document segments you translate is sent to `aiTranslate.llm.baseUrl`.
+- Text under the cursor, in selections, or in document segments you translate is sent to `linguaLens.llm.baseUrl`.
 - API keys never appear in `settings.json` or settings panel HTML ([CSP](docs/en/explanation/settings-panel-security.md)).
 - `.env`, keys, and custom exclude globs are not read for translation.
 - Disk cache lives under the extension global storage path (`cache/v2`).
@@ -111,7 +111,7 @@ All commands, CodeLens, and context menus: [Commands reference](docs/en/referenc
 
 1. Uninstall the old extension **`cursor-ai-translate.cursor-ai-translate`** from the Extensions view.
 2. Install **`lingua-lens-0.7.0.vsix`** (or the current build from `npm run package`).
-3. Reload the window. Your **`aiTranslate.*` settings are unchanged** (same configuration keys).
+3. Reload the window. LinguaLens **migrates** any remaining **`aiTranslate.*` settings** into **`linguaLens.*`** on first activation (then removes legacy keys).
 4. Disk translation cache is stored per extension ID in global storage—it **does not carry over**; expect cache misses until new entries are written. API keys in SecretStorage are per API origin and remain available.
 
 ## Development

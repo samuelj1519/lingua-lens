@@ -7,16 +7,16 @@
 ## 前提
 
 - 知晓预期的 `baseUrl` 与 `model`（[配置提供商](./configure-providers.md)）。
-- 能打开 **LinguaLens: Show Log** 并临时将 `aiTranslate.log.level` 设为 `debug`。
+- 能打开 **LinguaLens: Show Log** 并临时将 `linguaLens.log.level` 设为 `debug`。
 
 ## 步骤 1：确认配置
 
 ```json
 {
-  "aiTranslate.llm.baseUrl": "https://api.openai.com/v1",
-  "aiTranslate.llm.model": "gpt-4o-mini",
-  "aiTranslate.llm.timeoutMs": 30000,
-  "aiTranslate.llm.maxRetries": 3
+  "linguaLens.llm.baseUrl": "https://api.openai.com/v1",
+  "linguaLens.llm.model": "gpt-4o-mini",
+  "linguaLens.llm.timeoutMs": 30000,
+  "linguaLens.llm.maxRetries": 3
 }
 ```
 
@@ -43,7 +43,7 @@
 
 ### `Model name is not configured`（`noModel`）
 
-将 `aiTranslate.llm.model` 设为端点有效 id。
+将 `linguaLens.llm.model` 设为端点有效 id。
 
 ### 鉴权错误（`auth`）
 
@@ -73,8 +73,8 @@
 
 ```json
 {
-  "aiTranslate.llm.baseUrl": "https://api.openai.com/v1",
-  "aiTranslate.llm.model": "gpt-4o-mini"
+  "linguaLens.llm.baseUrl": "https://api.openai.com/v1",
+  "linguaLens.llm.model": "gpt-4o-mini"
 }
 ```
 
@@ -82,9 +82,9 @@
 
 ```json
 {
-  "aiTranslate.llm.baseUrl": "https://api.deepseek.com/v1",
-  "aiTranslate.llm.model": "deepseek-chat",
-  "aiTranslate.llm.extraBody": { "thinking": { "type": "disabled" } }
+  "linguaLens.llm.baseUrl": "https://api.deepseek.com/v1",
+  "linguaLens.llm.model": "deepseek-chat",
+  "linguaLens.llm.extraBody": { "thinking": { "type": "disabled" } }
 }
 ```
 
@@ -92,9 +92,9 @@
 
 ```json
 {
-  "aiTranslate.llm.baseUrl": "https://dashscope.aliyuncs.com/compatible-mode/v1",
-  "aiTranslate.llm.model": "qwen-plus",
-  "aiTranslate.llm.extraBody": { "enable_thinking": false }
+  "linguaLens.llm.baseUrl": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+  "linguaLens.llm.model": "qwen-plus",
+  "linguaLens.llm.extraBody": { "enable_thinking": false }
 }
 ```
 
@@ -102,8 +102,8 @@
 
 ```json
 {
-  "aiTranslate.llm.baseUrl": "https://ark.cn-beijing.volces.com/api/v3",
-  "aiTranslate.llm.model": "ep-xxxxxxxxxxxxxxxx"
+  "linguaLens.llm.baseUrl": "https://ark.cn-beijing.volces.com/api/v3",
+  "linguaLens.llm.model": "ep-xxxxxxxxxxxxxxxx"
 }
 ```
 
@@ -144,7 +144,7 @@ curl -sS "${BASE_URL%/}/chat/completions" \
 | 流式模式 | `llm.stream` true 改变响应处理；调试时关闭以简化。 |
 | JSON 模式自动关闭 | 客户端按能力键记住拒绝 `response_format` 的模型。 |
 | 日志中的密钥 | 生产用 `info`；`trace` 可能记录请求元数据——共享机器勿用。 |
-| 工作区禁用 | `aiTranslate.enabled` false — 命令提前返回且不调用 LLM。 |
+| 工作区禁用 | `linguaLens.enabled` false — 命令提前返回且不调用 LLM。 |
 
 ## 代理、证书与企业网络
 
@@ -158,7 +158,7 @@ curl -sS "${BASE_URL%/}/chat/completions" \
 
 | 步骤 | 操作 |
 |------|------|
-| 1 | 确认 `aiTranslate.enabled` 与工作区未禁用 |
+| 1 | 确认 `linguaLens.enabled` 与工作区未禁用 |
 | 2 | 确认 `llm.model` 非空字符串 |
 | 3 | 对当前 `baseUrl` 源 **Set API Key** |
 | 4 | **Test Connection** |

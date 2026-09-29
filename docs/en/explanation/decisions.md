@@ -13,7 +13,7 @@ This document mirrors and extends `docs/DECISIONS.md` for English readers. Statu
 | D7 | Cache key includes `baseUrl` | Originally **excluded** | **Superseded** |
 | D8 | `strictChineseVariant` | Not implemented in `decide()`; zh-CN/zh-TW share `zh` family | Active |
 | D9 | JSX text nodes | Default **do not translate** | Active |
-| D10 | Document preview | Virtual `aitranslate:` URI, not Webview | Active |
+| D10 | Document preview | Virtual `lingualens:` URI, not Webview | Active |
 | D11 | Long selection output | Virtual Markdown document beside editor | Active |
 
 ## D7 (superseded): Cache key and endpoint
@@ -31,7 +31,7 @@ This document mirrors and extends `docs/DECISIONS.md` for English readers. Statu
 
 ## D8: Chinese variants
 
-Configuration exposes `aiTranslate.detection.strictChineseVariant` for future simplified/traditional handling. `LanguageDetector.decide()` does not branch on it today. Both `zh-CN` and `zh-TW` targets use Han script statistics under family `zh`. Users who need conversion between variants should use `document.forceTranslate` or explicit selection translate until variant logic ships.
+Configuration exposes `linguaLens.detection.strictChineseVariant` for future simplified/traditional handling. `LanguageDetector.decide()` does not branch on it today. Both `zh-CN` and `zh-TW` targets use Han script statistics under family `zh`. Users who need conversion between variants should use `document.forceTranslate` or explicit selection translate until variant logic ships.
 
 ## D10: Why virtual documents for preview
 

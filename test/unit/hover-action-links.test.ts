@@ -18,7 +18,7 @@ describe('hoverActionLinks', () => {
       refresh: true,
     });
     expect(links).toContain(t('hover.action.refresh'));
-    expect(links).toContain('aiTranslate.hover.refresh');
+    expect(links).toContain('linguaLens.hover.refresh');
     expect(links).toContain(t('hover.action.copy'));
     expect(links).toContain(t('hover.action.replaceSelection'));
     expect(links).toContain(t('hover.action.insertBelow'));

@@ -7,7 +7,7 @@
 ## 前提
 
 - 带可选 `---` / `+++` / `;;;` 风格 frontmatter 块的 Markdown（由 `detectFrontmatterBlock` 检测）。
-- `aiTranslate.markdown.frontmatterFields` 列出候选翻译键。
+- `linguaLens.markdown.frontmatterFields` 列出候选翻译键。
 - 已启动或计划文档翻译流程（[翻译 Markdown](./translate-markdown.md)）。
 
 ## 默认字段
@@ -16,7 +16,7 @@
 
 ```json
 {
-  "aiTranslate.markdown.frontmatterFields": [
+  "linguaLens.markdown.frontmatterFields": [
     "description",
     "title",
     "summary",
@@ -66,7 +66,7 @@ Frontmatter 批量使用缓存 kind `documentFrontmatterBatch`（与正文 `docu
 
 ```json
 {
-  "aiTranslate.markdown.frontmatterFields": [
+  "linguaLens.markdown.frontmatterFields": [
     "title",
     "seoDescription",
     "heroTitle",
@@ -103,17 +103,17 @@ Frontmatter 批量使用缓存 kind `documentFrontmatterBatch`（与正文 `docu
 
 ```json
 {
-  "aiTranslate.targetLanguage": "en",
-  "aiTranslate.markdown.frontmatterFields": [
+  "linguaLens.targetLanguage": "en",
+  "linguaLens.markdown.frontmatterFields": [
     "title",
     "description",
     "og_title",
     "og_description",
     "twitter_description"
   ],
-  "aiTranslate.document.forceTranslate": false,
-  "aiTranslate.llm.baseUrl": "https://api.openai.com/v1",
-  "aiTranslate.llm.model": "gpt-4o-mini"
+  "linguaLens.document.forceTranslate": false,
+  "linguaLens.llm.baseUrl": "https://api.openai.com/v1",
+  "linguaLens.llm.model": "gpt-4o-mini"
 }
 ```
 

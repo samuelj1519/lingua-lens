@@ -174,7 +174,7 @@ export async function buildSupplementalHoverBlocks(
       log.warn(`hover supplemental failed: ${e instanceof Error ? e.message : e}`);
       if (e instanceof LlmError && e.kind === 'noKey') {
         const md = new vscode.MarkdownString(`**${t('hover.sectionPrefix', item.title)}**\n\n${e.message}`);
-        md.isTrusted = { enabledCommands: ['aiTranslate.setApiKey'] };
+        md.isTrusted = { enabledCommands: ['linguaLens.setApiKey'] };
         blocks.push({ markdown: md, range: item.range });
       }
     }

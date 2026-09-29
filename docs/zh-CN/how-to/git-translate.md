@@ -7,7 +7,7 @@
 ## 前提
 
 - 已启用 Git 集成的仓库（`vscode.git` 扩展活动）。
-- `aiTranslate.hover.gitCommitMessage` 启用（默认 true）以在提交行悬停；命令可独立使用。
+- `linguaLens.hover.gitCommitMessage` 启用（默认 true）以在提交行悬停；命令可独立使用。
 - 已配置 LLM（[配置提供商](./configure-providers.md)）。
 - 已确认隐私。
 
@@ -48,14 +48,14 @@ git.getAPI(1).repositories[0].inputBox.value = result.text;
 
 ## 步骤 3：Git 文本的目标语言
 
-`resolveSelectionTargetLanguage` 可能根据消息内容调整目标（与其他选区流程相同辅助函数）。工作区 `aiTranslate.targetLanguage` 为基线。
+`resolveSelectionTargetLanguage` 可能根据消息内容调整目标（与其他选区流程相同辅助函数）。工作区 `linguaLens.targetLanguage` 为基线。
 
 用户设置示例：
 
 ```json
 {
-  "aiTranslate.targetLanguage": "en",
-  "aiTranslate.hover.gitCommitMessage": true
+  "linguaLens.targetLanguage": "en",
+  "linguaLens.hover.gitCommitMessage": true
 }
 ```
 
@@ -75,9 +75,9 @@ DeepSeek：
 
 ```json
 {
-  "aiTranslate.llm.baseUrl": "https://api.deepseek.com/v1",
-  "aiTranslate.llm.model": "deepseek-chat",
-  "aiTranslate.llm.extraBody": { "thinking": { "type": "disabled" } }
+  "linguaLens.llm.baseUrl": "https://api.deepseek.com/v1",
+  "linguaLens.llm.model": "deepseek-chat",
+  "linguaLens.llm.extraBody": { "thinking": { "type": "disabled" } }
 }
 ```
 
@@ -85,9 +85,9 @@ Qwen：
 
 ```json
 {
-  "aiTranslate.llm.baseUrl": "https://dashscope.aliyuncs.com/compatible-mode/v1",
-  "aiTranslate.llm.model": "qwen-plus",
-  "aiTranslate.llm.extraBody": { "enable_thinking": false }
+  "linguaLens.llm.baseUrl": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+  "linguaLens.llm.model": "qwen-plus",
+  "linguaLens.llm.extraBody": { "enable_thinking": false }
 }
 ```
 
@@ -108,14 +108,14 @@ Git 翻译命令在命令面板 **LinguaLens** 分类下。`package.json` 未绑
 ```json
 {
   "key": "ctrl+shift+g t",
-  "command": "aiTranslate.translateScmInput",
+  "command": "linguaLens.translateScmInput",
   "when": "scmRepository"
 }
 ```
 
 ## 与悬停 Git 路径的关系
 
-除显式命令外，`aiTranslate.hover.gitCommitMessage` 可在适当时机于悬停中展示提交信息译文，延迟与 `hover.extraDelayMs`、`maxChars` 同样适用。若提交信息极长，优先使用 **Translate Git Commit at Line** 命令打开完整虚拟文档，而非依赖悬停截断。悬停与命令共享 `kind: 'selection'` 类缓存键（文本 + 目标 + 模型等），重复查看同一提交应更快。
+除显式命令外，`linguaLens.hover.gitCommitMessage` 可在适当时机于悬停中展示提交信息译文，延迟与 `hover.extraDelayMs`、`maxChars` 同样适用。若提交信息极长，优先使用 **Translate Git Commit at Line** 命令打开完整虚拟文档，而非依赖悬停截断。悬停与命令共享 `kind: 'selection'` 类缓存键（文本 + 目标 + 模型等），重复查看同一提交应更快。
 
 ## 安全与合规
 

@@ -4,7 +4,7 @@ LinguaLens (extension ID `samuel-j.lingua-lens`) brings OpenAI-compatible LLM tr
 
 ## What you need before you begin
 
-You need a running editor (VS Code **1.85+** or a compatible Cursor build), network access to an LLM provider, and an API key for that provider. The extension stores keys in the editor Secret Storage, keyed by the **origin** of `aiTranslate.llm.baseUrl` (for example `https://api.openai.com`), not in your `settings.json`.
+You need a running editor (VS Code **1.85+** or a compatible Cursor build), network access to an LLM provider, and an API key for that provider. The extension stores keys in the editor Secret Storage, keyed by the **origin** of `linguaLens.llm.baseUrl` (for example `https://api.openai.com`), not in your `settings.json`.
 
 Optional but recommended: a workspace folder open on disk so glossary files, workspace-scoped settings, and document side files resolve correctly. In **restricted untrusted** workspaces, glossary path and custom detection skip patterns are not read; hover and selection still work with limitations documented in the extension manifest.
 
@@ -13,7 +13,7 @@ Optional but recommended: a workspace folder open on disk so glossary files, wor
 1. **From a VSIX:** Run `npm run package` in the repository root to produce a `.vsix`, then install it with **Extensions: Install from VSIX…** or `code --install-extension lingua-lens-*.vsix`.
 2. **From source (development):** Run `npm install`, `npm run build`, and press **F5** to launch an Extension Development Host.
 
-After install, the extension activates on **`onStartupFinished`**. You should see **LinguaLens** in the status bar when `aiTranslate.statusBar.enabled` is true (default).
+After install, the extension activates on **`onStartupFinished`**. You should see **LinguaLens** in the status bar when `linguaLens.statusBar.enabled` is true (default).
 
 ## Configure the LLM endpoint
 
@@ -21,15 +21,15 @@ Open **Settings** (`@ext:samuel-j.lingua-lens`) or run **LinguaLens: Open Settin
 
 | Setting | Purpose |
 |--------|---------|
-| `aiTranslate.llm.baseUrl` | OpenAI-compatible API root (default `https://api.openai.com/v1`) |
-| `aiTranslate.llm.model` | Model id sent in chat requests (required before any call) |
+| `linguaLens.llm.baseUrl` | OpenAI-compatible API root (default `https://api.openai.com/v1`) |
+| `linguaLens.llm.model` | Model id sent in chat requests (required before any call) |
 
 Example for OpenAI:
 
 ```json
 {
-  "aiTranslate.llm.baseUrl": "https://api.openai.com/v1",
-  "aiTranslate.llm.model": "gpt-4o-mini"
+  "linguaLens.llm.baseUrl": "https://api.openai.com/v1",
+  "linguaLens.llm.model": "gpt-4o-mini"
 }
 ```
 
@@ -45,7 +45,7 @@ The settings panel never embeds your API key in the webview HTML; keys are only 
 
 ## Choose a target language
 
-`aiTranslate.targetLanguage` defaults to `zh-CN` in `package.json`, but on **first activation** the extension may align the target with your UI locale once if you have never set the value at any configuration layer (`applyTargetLanguageCursorUiBootstrap`). For example, English UI maps to target `en`; Traditional Chinese UI maps to `zh-TW`.
+`linguaLens.targetLanguage` defaults to `zh-CN` in `package.json`, but on **first activation** the extension may align the target with your UI locale once if you have never set the value at any configuration layer (`applyTargetLanguageCursorUiBootstrap`). For example, English UI maps to target `en`; Traditional Chinese UI maps to `zh-TW`.
 
 Change the target anytime:
 
@@ -57,13 +57,13 @@ Supported built-in targets: `zh-CN`, `zh-TW`, `en`, `ja`, `ko`, `fr`, `de`, `es`
 
 ## Acknowledge privacy (first use)
 
-Before text is sent to your LLM, **PrivacyGuard** may ask you to acknowledge that content leaves your machine. Excluded paths (default includes `.env`, `node_modules`, `.git`, keys) block translation. With `aiTranslate.privacy.blockSecrets` enabled (default), heuristic secret detection can skip hover and selection. Run **LinguaLens: Acknowledge Privacy** if you need to reset acknowledgment state.
+Before text is sent to your LLM, **PrivacyGuard** may ask you to acknowledge that content leaves your machine. Excluded paths (default includes `.env`, `node_modules`, `.git`, keys) block translation. With `linguaLens.privacy.blockSecrets` enabled (default), heuristic secret detection can skip hover and selection. Run **LinguaLens: Acknowledge Privacy** if you need to reset acknowledgment state.
 
 ## Your first hover translation
 
-1. Ensure `aiTranslate.enabled` is true and `aiTranslate.hover.enabled` is true.
+1. Ensure `linguaLens.enabled` is true and `linguaLens.hover.enabled` is true.
 2. Open a source file (TypeScript, Python, Go, and others supported via tree-sitter; see [File types](../reference/file-types.md)).
-3. Hover over a **comment** or **string literal** long enough for the editor hover delay plus `aiTranslate.hover.extraDelayMs` (default 700 ms).
+3. Hover over a **comment** or **string literal** long enough for the editor hover delay plus `linguaLens.hover.extraDelayMs` (default 700 ms).
 4. If the segment passes [language detection](../explanation/detection.md), a translation appears in the hover with actions (copy, replace, insert comment, retranslate).
 
 Toggle extension-wide translation with **LinguaLens: Toggle** or the status bar.
@@ -72,7 +72,7 @@ Toggle extension-wide translation with **LinguaLens: Toggle** or the status bar.
 
 1. Select text in the editor.
 2. Run **LinguaLens: Translate Selection** (`Ctrl+Alt+Shift+T` / `Cmd+Alt+Shift+T` when a selection exists) or use the editor context menu.
-3. Output follows `aiTranslate.selection.output`: `auto` uses a notification for short text and opens a virtual Markdown document beside the editor for longer results (>300 characters).
+3. Output follows `linguaLens.selection.output`: `auto` uses a notification for short text and opens a virtual Markdown document beside the editor for longer results (>300 characters).
 
 Related commands: clipboard-or-selection (`Ctrl+Alt+Shift+Y`), replace selection (`Ctrl+Alt+Shift+R`), insert translation below (`Ctrl+Alt+Shift+B`).
 
@@ -82,14 +82,14 @@ Document translation applies to **Markdown** (`markdown`) and **plain text** (`p
 
 1. Open `README.md` or any `.md` file.
 2. Run **LinguaLens: Translate Document** (`Ctrl+Alt+Shift+D` when the resource language is markdown or plaintext) or click the globe icon in the editor title bar.
-3. A virtual document opens with scheme `aitranslate:` showing bilingual preview (`aiTranslate.document.previewStyle`: `interleaved` or `append`).
+3. A virtual document opens with scheme `lingualens:` showing bilingual preview (`linguaLens.document.previewStyle`: `interleaved` or `append`).
 4. Use the refresh icon in the preview title bar (**LinguaLens: Refresh Preview**) to bypass cache and re-fetch segments.
 
-To write a translated file to disk, use **LinguaLens: Generate Side File** after translation completes. Pattern: `aiTranslate.document.sideFileNamePattern` (default `${fileBasenameNoExtension}.${lang}${fileExtname}`).
+To write a translated file to disk, use **LinguaLens: Generate Side File** after translation completes. Pattern: `linguaLens.document.sideFileNamePattern` (default `${fileBasenameNoExtension}.${lang}${fileExtname}`).
 
 ## Glossary (optional)
 
-Place a `.translate-glossary.json` file (configurable via `aiTranslate.glossary.path`) in your workspace. Terms matching source text are injected into prompts. Run **LinguaLens: Open Glossary** to create or edit the file. JSON is validated against the bundled schema.
+Place a `.translate-glossary.json` file (configurable via `linguaLens.glossary.path`) in your workspace. Terms matching source text are injected into prompts. Run **LinguaLens: Open Glossary** to create or edit the file. JSON is validated against the bundled schema.
 
 ## Caching and cost control
 
@@ -102,11 +102,11 @@ After five consecutive auth/network/server failures, interactive translation pau
 - **LinguaLens: Disable for Workspace** sets `enabled` false for the first workspace folder.
 - **LinguaLens: Enable for Workspace** clears the folder override.
 
-Resource-scoped `aiTranslate.enabled` still applies per file pattern if you use finer control.
+Resource-scoped `linguaLens.enabled` still applies per file pattern if you use finer control.
 
 ## Diagnostics and logs
 
-- **LinguaLens: Show Log** opens the output channel; level from `aiTranslate.log.level` (default `info`).
+- **LinguaLens: Show Log** opens the output channel; level from `linguaLens.log.level` (default `info`).
 - Status bar reflects enabled state, target language, and key presence.
 
 ## Where to go next
@@ -125,10 +125,10 @@ Resource-scoped `aiTranslate.enabled` still applies per file pattern if you use 
 
 ## Common pitfalls at setup time
 
-- **Empty model:** `LlmClient` rejects requests with “Model name is not configured” until `aiTranslate.llm.model` is set.
+- **Empty model:** `LlmClient` rejects requests with “Model name is not configured” until `linguaLens.llm.model` is set.
 - **Wrong key for endpoint:** Keys are per `baseUrl` origin; switching providers requires **Set API Key** again or **Clear API Key**.
 - **Hover never appears:** Text may be too short (`detection.minLength`), already in the target language family, excluded by path, or hover toggles (`hover.comments` / `hover.strings`) may be off.
-- **Document command missing:** The command is hidden unless the file is markdown/plaintext and not already an `aitranslate:` preview.
+- **Document command missing:** The command is hidden unless the file is markdown/plaintext and not already an `lingualens:` preview.
 - **Virtual workspaces:** Whole-document features are limited; hover and selection remain available per `package.json` capabilities.
 
 Once hover and **Test Connection** succeed, you have a working loop: detection → optional cache → LLM → placeholder restore → UI. The rest of the documentation deepens each stage without changing this basic flow.

@@ -18,7 +18,7 @@ Defined in `BUILTIN_TARGET_LANGUAGES` / `package.json` enum:
 | `es` | Español | `es` |
 | `ru` | Русский | `ru` |
 
-Setting: `aiTranslate.targetLanguage` (resource scope, default `zh-CN` in schema).
+Setting: `linguaLens.targetLanguage` (resource scope, default `zh-CN` in schema).
 
 ### Prompt behavior
 
@@ -26,8 +26,8 @@ Setting: `aiTranslate.targetLanguage` (resource scope, default `zh-CN` in schema
 
 ### Side files and preview URIs
 
-- Preview query: `lang={target}` on `aitranslate:` URIs.
-- `aiTranslate.document.sideFileNamePattern` variable `${lang}` expands to the code (e.g. `readme.zh-CN.md`).
+- Preview query: `lang={target}` on `lingualens:` URIs.
+- `linguaLens.document.sideFileNamePattern` variable `${lang}` expands to the code (e.g. `readme.zh-CN.md`).
 
 ## UI locale vs target language
 
@@ -64,7 +64,7 @@ Command titles in `package.json` use `%command.*%` keys resolved by VS Code NLS 
 
 Both `zh-CN` and `zh-TW` share the `zh` **family** in `LanguageDetector`. Han-heavy text is often **skipped** as already Chinese when targeting either variant.
 
-`aiTranslate.detection.strictChineseVariant` is reserved for future variant-specific skip logic; **`decide()` does not implement it yet**. For zh-CN ↔ zh-TW document conversion, use `aiTranslate.document.forceTranslate` (see [Force translate](../how-to/force-translate.md)).
+`linguaLens.detection.strictChineseVariant` is reserved for future variant-specific skip logic; **`decide()` does not implement it yet**. For zh-CN ↔ zh-TW document conversion, use `linguaLens.document.forceTranslate` (see [Force translate](../how-to/force-translate.md)).
 
 ## Latin target languages
 
@@ -85,7 +85,7 @@ Both `zh-CN` and `zh-TW` share the `zh` **family** in `LanguageDetector`. Han-he
 ```json
 // .vscode/settings.json
 {
-  "aiTranslate.targetLanguage": "de"
+  "linguaLens.targetLanguage": "de"
 }
 ```
 
@@ -99,10 +99,10 @@ Multi-root: per-folder settings override per-repo targets (e.g. docs repo → `e
 
 | Setting | Role |
 |---------|------|
-| `aiTranslate.targetLanguage` | LLM output language |
-| `aiTranslate.detection.*` | Skip/translate thresholds |
-| `aiTranslate.document.forceTranslate` | Bypass “already target” for documents |
-| `aiTranslate.statusBar.enabled` | Show language control |
+| `linguaLens.targetLanguage` | LLM output language |
+| `linguaLens.detection.*` | Skip/translate thresholds |
+| `linguaLens.document.forceTranslate` | Bypass “already target” for documents |
+| `linguaLens.statusBar.enabled` | Show language control |
 
 ## Related documentation
 

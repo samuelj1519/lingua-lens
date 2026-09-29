@@ -25,17 +25,17 @@ export class DocumentCodeLensProvider implements vscode.CodeLensProvider {
     return [
       new vscode.CodeLens(top, {
         title: t('codelens.translatePreview'),
-        command: 'aiTranslate.translateDocument',
+        command: 'linguaLens.translateDocument',
         arguments: [],
       }),
       new vscode.CodeLens(top, {
         title: t('codelens.generateSideFile'),
-        command: 'aiTranslate.generateSideFile',
+        command: 'linguaLens.generateSideFile',
         arguments: [],
       }),
       new vscode.CodeLens(top, {
         title: t('codelens.refreshDocument'),
-        command: 'aiTranslate.refreshDocumentTranslation',
+        command: 'linguaLens.refreshDocumentTranslation',
         arguments: [],
       }),
     ];

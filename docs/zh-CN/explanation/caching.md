@@ -8,7 +8,7 @@ LinguaLens 缓存 LLM 的**模型输出字符串**（内存中在占位符恢复
 
 1. **text** — 源分段或单元文本（悬停时占位符已提取到 unit.text）。
 2. **targetLang** — 例如 `zh-CN`。
-3. **model** — `aiTranslate.llm.model`。
+3. **model** — `linguaLens.llm.model`。
 4. **promptVersion** — 来自 `PromptBuilder.promptVersion()`（kind、target、术语表哈希、自定义 system prompt）。
 5. **baseUrl** — 完整配置的 base URL 字符串。
 6. **extraBodyHash** — `JSON.stringify(extraBody ?? {})` 的 SHA-256 前 16 个十六进制字符。
@@ -93,7 +93,7 @@ LLM 成功响应并清理后：
 
 ## 统计与可观测性
 
-内部 `CacheService.stats()` 暴露内存条目数与磁盘占用字节，设置面板可选展示。`TranslationService` 在日志级别 `debug` 时可打印 cache hit/miss 原因，便于区分「键变更」与「缓存被禁用」。集成测试环境通常仍启用缓存，以验证键稳定性；若测试需要确定性输出，请在用例级禁用 `aiTranslate.cache.enabled` 而非删除 globalStorage 目录。
+内部 `CacheService.stats()` 暴露内存条目数与磁盘占用字节，设置面板可选展示。`TranslationService` 在日志级别 `debug` 时可打印 cache hit/miss 原因，便于区分「键变更」与「缓存被禁用」。集成测试环境通常仍启用缓存，以验证键稳定性；若测试需要确定性输出，请在用例级禁用 `linguaLens.cache.enabled` 而非删除 globalStorage 目录。
 
 ## 内存与磁盘一致性
 

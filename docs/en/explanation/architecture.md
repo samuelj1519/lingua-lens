@@ -30,7 +30,7 @@ sequenceDiagram
 
 | Component | Responsibility |
 |-----------|----------------|
-| `ConfigService` | Merged `aiTranslate.*` settings per resource URI |
+| `ConfigService` | Merged `linguaLens.*` settings per resource URI |
 | `ApiKeyStore` | Secrets keyed by `baseUrl` origin |
 | `LlmClient` | HTTP chat completions, retries, semaphore, streaming |
 | `CacheService` | SHA-256 keys, LRU memory, sharded JSONL disk |
@@ -81,7 +81,7 @@ flowchart TB
   PT --> P
   P --> TB
   TB --> PR
-  PR --> PV[aitranslate: virtual URI]
+  PR --> PV[lingualens: virtual URI]
 ```
 
 Sessions (`DocSession`) hold segments, per-segment results, cancellation, and link preview URI to source URI. `DocumentAssembler` walks segments in source order for interleaved/append rendering.
@@ -114,7 +114,7 @@ Keys hash: text, targetLang, model, promptVersion, baseUrl, extraBodyHash (super
 
 | Surface | Mechanism |
 |---------|-----------|
-| Document preview | `TextDocumentContentProvider` scheme `aitranslate:` (D10) |
+| Document preview | `TextDocumentContentProvider` scheme `lingualens:` (D10) |
 | Long selection output | Virtual Markdown document in side column (D11) |
 | Settings panel | Webview + CSP nonce (`panelHtml.ts`) |
 | Status bar | Target language, toggle, connection hint |

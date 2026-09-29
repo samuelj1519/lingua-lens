@@ -18,7 +18,7 @@ Typical scenarios:
 - Mixed-language docs where detection under-counts translatable prose.
 - You are validating prompt or glossary changes on text that would normally skip.
 
-Note: `aiTranslate.detection.strictChineseVariant` exists in settings for future simplified/traditional distinction, but **`LanguageDetector.decide` does not implement variant split yet** (see [Detection](../explanation/detection.md)). Force translate is the practical workaround for zh-CN ↔ zh-TW today.
+Note: `linguaLens.detection.strictChineseVariant` exists in settings for future simplified/traditional distinction, but **`LanguageDetector.decide` does not implement variant split yet** (see [Detection](../explanation/detection.md)). Force translate is the practical workaround for zh-CN ↔ zh-TW today.
 
 ## Step 1: Enable the setting
 
@@ -26,7 +26,7 @@ Resource-scoped (per workspace or folder):
 
 ```json
 {
-  "aiTranslate.document.forceTranslate": true
+  "linguaLens.document.forceTranslate": true
 }
 ```
 
@@ -51,7 +51,7 @@ Force mode increases API cost and can “translate” English comments in a Chin
 
 ```json
 {
-  "aiTranslate.document.forceTranslate": false
+  "linguaLens.document.forceTranslate": false
 }
 ```
 
@@ -65,11 +65,11 @@ Force translate does not bypass privacy or secrets. Example stack:
 
 ```json
 {
-  "aiTranslate.document.forceTranslate": true,
-  "aiTranslate.targetLanguage": "zh-TW",
-  "aiTranslate.llm.baseUrl": "https://api.deepseek.com/v1",
-  "aiTranslate.llm.model": "deepseek-chat",
-  "aiTranslate.llm.extraBody": {
+  "linguaLens.document.forceTranslate": true,
+  "linguaLens.targetLanguage": "zh-TW",
+  "linguaLens.llm.baseUrl": "https://api.deepseek.com/v1",
+  "linguaLens.llm.model": "deepseek-chat",
+  "linguaLens.llm.extraBody": {
     "thinking": { "type": "disabled" }
   }
 }

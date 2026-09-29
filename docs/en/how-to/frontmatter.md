@@ -7,7 +7,7 @@ Translate human-readable values in Markdown YAML frontmatter (title, description
 ## Prerequisites
 
 - Markdown document with optional `---` / `+++` / `;;;` style frontmatter blocks (detected by `detectFrontmatterBlock`).
-- `aiTranslate.markdown.frontmatterFields` lists which keys are candidates for translation.
+- `linguaLens.markdown.frontmatterFields` lists which keys are candidates for translation.
 - Document translation flow started or planned ([Translate Markdown](./translate-markdown.md)).
 
 ## Default fields
@@ -16,7 +16,7 @@ From `package.json`:
 
 ```json
 {
-  "aiTranslate.markdown.frontmatterFields": [
+  "linguaLens.markdown.frontmatterFields": [
     "description",
     "title",
     "summary",
@@ -66,7 +66,7 @@ Blog with custom keys:
 
 ```json
 {
-  "aiTranslate.markdown.frontmatterFields": [
+  "linguaLens.markdown.frontmatterFields": [
     "title",
     "seoDescription",
     "heroTitle",
@@ -103,17 +103,17 @@ If your static site generator stores SEO text only in frontmatter, keep body det
 
 ```json
 {
-  "aiTranslate.targetLanguage": "en",
-  "aiTranslate.markdown.frontmatterFields": [
+  "linguaLens.targetLanguage": "en",
+  "linguaLens.markdown.frontmatterFields": [
     "title",
     "description",
     "og_title",
     "og_description",
     "twitter_description"
   ],
-  "aiTranslate.document.forceTranslate": false,
-  "aiTranslate.llm.baseUrl": "https://api.openai.com/v1",
-  "aiTranslate.llm.model": "gpt-4o-mini"
+  "linguaLens.document.forceTranslate": false,
+  "linguaLens.llm.baseUrl": "https://api.openai.com/v1",
+  "linguaLens.llm.model": "gpt-4o-mini"
 }
 ```
 

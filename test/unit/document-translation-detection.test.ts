@@ -44,7 +44,7 @@ const zhReadme = `# LinguaLens (lingua-lens)
 
 ## 功能
 
-- **悬停翻译**：代码、配置与文档；\`aiTranslate.log.level\` 可设为 debug
+- **悬停翻译**：代码、配置与文档；\`linguaLens.log.level\` 可设为 debug
 - **选区翻译**：快捷键翻译选中内容
 `;
 
@@ -62,7 +62,7 @@ describe('document translation detection', () => {
   });
 
   it('skips Chinese mixed with inline code and config keys', () => {
-    const text = '**悬停翻译**：代码、配置与文档；`aiTranslate.log.level` 可设为 debug';
+    const text = '**悬停翻译**：代码、配置与文档；`linguaLens.log.level` 可设为 debug';
     expect(shouldTranslateDocumentText(text, cfg, 'paragraph')).toBe(false);
   });
 
@@ -98,7 +98,7 @@ describe('document translation detection', () => {
     }
     const session: DocSession = {
       sourceUri: { toString: () => 'file:///README.md' } as never,
-      previewUri: { toString: () => 'aitranslate:/r' } as never,
+      previewUri: { toString: () => 'lingualens:/r' } as never,
       target: 'zh-CN',
       sourceVersion: 1,
       sourceLabel: 'README.md',

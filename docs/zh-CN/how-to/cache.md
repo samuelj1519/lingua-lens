@@ -12,8 +12,8 @@
 
 `CacheService` 维护：
 
-1. **内存 LRU** — 大小 `aiTranslate.cache.memoryEntries`（默认 2000）。
-2. **磁盘 JSONL** — 位于扩展 `globalStorageUri/cache/v2`，上限 `aiTranslate.cache.maxDiskMB`（默认 50 MB）。
+1. **内存 LRU** — 大小 `linguaLens.cache.memoryEntries`（默认 2000）。
+2. **磁盘 JSONL** — 位于扩展 `globalStorageUri/cache/v2`，上限 `linguaLens.cache.maxDiskMB`（默认 50 MB）。
 
 查找顺序：内存 → 磁盘 → 未命中 → LLM。磁盘命中提升到内存。
 
@@ -23,9 +23,9 @@
 
 ```json
 {
-  "aiTranslate.cache.enabled": true,
-  "aiTranslate.cache.memoryEntries": 2000,
-  "aiTranslate.cache.maxDiskMB": 50
+  "linguaLens.cache.enabled": true,
+  "linguaLens.cache.memoryEntries": 2000,
+  "linguaLens.cache.maxDiskMB": 50
 }
 ```
 
@@ -36,10 +36,10 @@
 以下任一项变更会计算**新缓存键**：
 
 - 源分段文本（悬停/字符串占位符提取后）。
-- `aiTranslate.targetLanguage`。
-- `aiTranslate.llm.model`。
-- `aiTranslate.llm.baseUrl`。
-- `aiTranslate.llm.extraBody`（哈希）。
+- `linguaLens.targetLanguage`。
+- `linguaLens.llm.model`。
+- `linguaLens.llm.baseUrl`。
+- `linguaLens.llm.extraBody`（哈希）。
 - 提示词版本（内置提示模板、匹配的术语表术语、自定义 `llm.systemPrompt`）。
 
 单独改 temperature **不会**改变键，除非在提供商侧移入 `extraBody`。
@@ -60,7 +60,7 @@
 
 | 操作 | 行为 |
 |------|------|
-| `aitranslate:` 文档上**刷新预览** | `bypassCache: true` → `invalidateDocumentSegmentCaches` 后重新翻译。 |
+| `lingualens:` 文档上**刷新预览** | `bypassCache: true` → `invalidateDocumentSegmentCaches` 后重新翻译。 |
 | 悬停**重新翻译** / 刷新命令 | 经 `refreshHoverTranslation` 传递 `bypassCache`。 |
 | 选区翻译 | 默认使用缓存；除清空后重跑外无专用绕过命令。 |
 
@@ -78,8 +78,8 @@
 
 ```json
 {
-  "aiTranslate.cache.memoryEntries": 5000,
-  "aiTranslate.cache.maxDiskMB": 200
+  "linguaLens.cache.memoryEntries": 5000,
+  "linguaLens.cache.maxDiskMB": 200
 }
 ```
 
@@ -101,7 +101,7 @@
 
 ## 与目标语言、术语表联动
 
-更改 `aiTranslate.targetLanguage` 会使所有新查找使用新 `targetLang` 分量，旧目标语言的磁盘条目仍占用空间直至 LRU/压缩淘汰，不会自动删除——若磁盘紧张可在切换目标后运行 **Clear Cache**。向 `.translate-glossary.json` 添加术语会改变 `promptVersion`，即使悬停文本未变也会 miss；这是为了让新术语进入模型上下文。若仅调试术语表匹配，可临时禁用缓存，避免误以为「译文未更新」实为命中旧键。
+更改 `linguaLens.targetLanguage` 会使所有新查找使用新 `targetLang` 分量，旧目标语言的磁盘条目仍占用空间直至 LRU/压缩淘汰，不会自动删除——若磁盘紧张可在切换目标后运行 **Clear Cache**。向 `.translate-glossary.json` 添加术语会改变 `promptVersion`，即使悬停文本未变也会 miss；这是为了让新术语进入模型上下文。若仅调试术语表匹配，可临时禁用缓存，避免误以为「译文未更新」实为命中旧键。
 
 ## 团队与 CI 注意事项
 

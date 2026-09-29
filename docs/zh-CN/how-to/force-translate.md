@@ -18,7 +18,7 @@
 - 混合语言文档中检测低估可译正文。
 - 在通常会跳过的文本上验证提示词或术语表变更。
 
-注意：设置中存在 `aiTranslate.detection.strictChineseVariant` 供将来简繁区分，但 **`LanguageDetector.decide` 尚未实现变体拆分**（见[语言检测](../explanation/detection.md)）。当今 zh-CN ↔ zh-TW 的实用做法是强制翻译。
+注意：设置中存在 `linguaLens.detection.strictChineseVariant` 供将来简繁区分，但 **`LanguageDetector.decide` 尚未实现变体拆分**（见[语言检测](../explanation/detection.md)）。当今 zh-CN ↔ zh-TW 的实用做法是强制翻译。
 
 ## 步骤 1：启用设置
 
@@ -26,7 +26,7 @@
 
 ```json
 {
-  "aiTranslate.document.forceTranslate": true
+  "linguaLens.document.forceTranslate": true
 }
 ```
 
@@ -51,7 +51,7 @@
 
 ```json
 {
-  "aiTranslate.document.forceTranslate": false
+  "linguaLens.document.forceTranslate": false
 }
 ```
 
@@ -65,11 +65,11 @@
 
 ```json
 {
-  "aiTranslate.document.forceTranslate": true,
-  "aiTranslate.targetLanguage": "zh-TW",
-  "aiTranslate.llm.baseUrl": "https://api.deepseek.com/v1",
-  "aiTranslate.llm.model": "deepseek-chat",
-  "aiTranslate.llm.extraBody": {
+  "linguaLens.document.forceTranslate": true,
+  "linguaLens.targetLanguage": "zh-TW",
+  "linguaLens.llm.baseUrl": "https://api.deepseek.com/v1",
+  "linguaLens.llm.model": "deepseek-chat",
+  "linguaLens.llm.extraBody": {
     "thinking": { "type": "disabled" }
   }
 }

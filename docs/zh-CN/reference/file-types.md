@@ -11,7 +11,7 @@ LinguaLens 对**代码**、**配置**、**Markdown/纯文本文档**与 **Git �
 
 命令与菜单在 `resourceLangId == markdown || plaintext` 或扩展正则 `\.(md|markdown|txt)$` 时启用。
 
-虚拟预览 URI 使用 scheme `aitranslate:`——不能作为源再次翻译。
+虚拟预览 URI 使用 scheme `lingualens:`——不能作为源再次翻译。
 
 ## Tree-sitter 悬停语言
 
@@ -39,7 +39,7 @@ LinguaLens 对**代码**、**配置**、**Markdown/纯文本文档**与 **Git �
 
 ### 解析器限制
 
-- `aiTranslate.parser.maxFileSizeKB`（默认 1024）——大于此大小的文件跳过 tree-sitter 悬停提取。
+- `linguaLens.parser.maxFileSizeKB`（默认 1024）——大于此大小的文件跳过 tree-sitter 悬停提取。
 - 每种语法 WASM 加载一次；文档关闭时 `ParserService` 释放。
 
 ### JSX / TSX
@@ -54,11 +54,11 @@ LinguaLens 对**代码**、**配置**、**Markdown/纯文本文档**与 **Git �
 
 **扩展名回退：** `.json`、`.jsonc`、`.json5`、`.yaml`、`.yml`、`.toml`、`.ini`、`.cfg`、`.conf`、`.properties`、`.props`、`.xml`、`.editorconfig`、`.env.example`。
 
-当 `aiTranslate.hover.configKeys` 为 true 时，按 specs 中的格式特定 pair 节点类型（YAML mapping、TOML pair、JSON pair）运行结构化键值提取。
+当 `linguaLens.hover.configKeys` 为 true 时，按 specs 中的格式特定 pair 节点类型（YAML mapping、TOML pair、JSON pair）运行结构化键值提取。
 
 ## 其他悬停来源
 
-由 `aiTranslate.hover.*` 开关控制：
+由 `linguaLens.hover.*` 开关控制：
 
 | 开关 | 来源 |
 |------|------|
@@ -71,13 +71,13 @@ LinguaLens 对**代码**、**配置**、**Markdown/纯文本文档**与 **Git �
 | `gitCommitMessage` | Git 关联行 |
 | `selection` | 选区专用悬停提供方 |
 
-每次悬停最大长度：`aiTranslate.hover.maxChars`（默认 4000）。
+每次悬停最大长度：`linguaLens.hover.maxChars`（默认 4000）。
 
 ## 隐私排除
 
-默认 `aiTranslate.privacy.exclude` glob 包含 `.env`、密钥、`node_modules`、`.git`、`secrets/**` 等。匹配文件在 `PrivacyGuard.check()` 中阻止翻译命令与悬停。
+默认 `linguaLens.privacy.exclude` glob 包含 `.env`、密钥、`node_modules`、`.git`、`secrets/**` 等。匹配文件在 `PrivacyGuard.check()` 中阻止翻译命令与悬停。
 
-允许的 URI scheme：`aiTranslate.privacy.allowedSchemes`（默认 `file`、`untitled`、`vscode-remote`、`vscode-notebook-cell`）。
+允许的 URI scheme：`linguaLens.privacy.allowedSchemes`（默认 `file`、`untitled`、`vscode-remote`、`vscode-notebook-cell`）。
 
 ## 区域文件生成
 

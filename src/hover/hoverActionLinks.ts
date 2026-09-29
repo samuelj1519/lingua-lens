@@ -1,16 +1,16 @@
 import { t } from '../l10n/uiL10n';
 
 export const HOVER_TRUSTED_COMMANDS = [
-  'aiTranslate.hover.copy',
-  'aiTranslate.hover.insertComment',
-  'aiTranslate.hover.refresh',
-  'aiTranslate.hover.retranslate',
-  'aiTranslate.selection.replace',
-  'aiTranslate.selection.insertBelow',
-  'aiTranslate.acknowledgePrivacy',
-  'aiTranslate.setApiKey',
-  'aiTranslate.openSettings',
-  'aiTranslate.showLog',
+  'linguaLens.hover.copy',
+  'linguaLens.hover.insertComment',
+  'linguaLens.hover.refresh',
+  'linguaLens.hover.retranslate',
+  'linguaLens.selection.replace',
+  'linguaLens.selection.insertBelow',
+  'linguaLens.acknowledgePrivacy',
+  'linguaLens.setApiKey',
+  'linguaLens.openSettings',
+  'linguaLens.showLog',
 ] as const;
 
 export interface HoverLinkOptions {
@@ -24,16 +24,16 @@ export interface HoverLinkOptions {
 export function hoverActionLinks(id: string, opts: HoverLinkOptions): string {
   const arg = encodeURIComponent(JSON.stringify([id]));
   const parts: string[] = [];
-  if (opts.copy) parts.push(`[${t('hover.action.copy')}](command:aiTranslate.hover.copy?${arg})`);
+  if (opts.copy) parts.push(`[${t('hover.action.copy')}](command:linguaLens.hover.copy?${arg})`);
   if (opts.insertComment) {
-    parts.push(`[${t('hover.action.insertComment')}](command:aiTranslate.hover.insertComment?${arg})`);
+    parts.push(`[${t('hover.action.insertComment')}](command:linguaLens.hover.insertComment?${arg})`);
   }
   if (opts.replaceSelection) {
-    parts.push(`[${t('hover.action.replaceSelection')}](command:aiTranslate.selection.replace?${arg})`);
+    parts.push(`[${t('hover.action.replaceSelection')}](command:linguaLens.selection.replace?${arg})`);
   }
   if (opts.insertBelow) {
-    parts.push(`[${t('hover.action.insertBelow')}](command:aiTranslate.selection.insertBelow?${arg})`);
+    parts.push(`[${t('hover.action.insertBelow')}](command:linguaLens.selection.insertBelow?${arg})`);
   }
-  if (opts.refresh) parts.push(`[${t('hover.action.refresh')}](command:aiTranslate.hover.refresh?${arg})`);
+  if (opts.refresh) parts.push(`[${t('hover.action.refresh')}](command:linguaLens.hover.refresh?${arg})`);
   return parts.length ? `\n\n---\n${parts.join(' · ')}` : '';
 }

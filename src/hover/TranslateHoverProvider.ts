@@ -12,7 +12,7 @@ import type { AppLogger } from '../util/logger';
 import { t } from '../l10n/uiL10n';
 import type { HoverActionRegistry } from './HoverActionRegistry';
 import { HOVER_TRUSTED_COMMANDS, hoverActionLinks } from './hoverActionLinks';
-import { AI_TRANSLATE_HOVER_MARKER } from './hoverMarkers';
+import { LINGUA_LENS_HOVER_MARKER } from './hoverMarkers';
 import { buildSupplementalHoverBlocks } from './HoverBlocks';
 
 export class TranslateHoverProvider implements vscode.HoverProvider {
@@ -37,7 +37,7 @@ export class TranslateHoverProvider implements vscode.HoverProvider {
       const msg = e instanceof Error ? e.stack ?? e.message : String(e);
       this.log.error(`provideHover unexpected error: ${msg}`);
       return errorHover(doc, pos, t('hover.error.internal'), [
-        `[${t('hover.error.showLog')}](command:aiTranslate.showLog)`,
+        `[${t('hover.error.showLog')}](command:linguaLens.showLog)`,
       ]);
     }
   }
@@ -63,7 +63,7 @@ export class TranslateHoverProvider implements vscode.HoverProvider {
     if (block === 'noAck') {
       const origin = new URL(cfg.llm.baseUrl).origin;
       return errorHover(doc, pos, t('privacy.prompt', origin), [
-        `[${t('privacy.continue')}](command:aiTranslate.acknowledgePrivacy)`,
+        `[${t('privacy.continue')}](command:linguaLens.acknowledgePrivacy)`,
       ]);
     }
 
@@ -179,7 +179,7 @@ export class TranslateHoverProvider implements vscode.HoverProvider {
     md.isTrusted = { enabledCommands: [...HOVER_TRUSTED_COMMANDS] };
     md.supportHtml = false;
     const cacheLabel = fromCache ? t('hover.fromCache') : '';
-    md.appendMarkdown(`${AI_TRANSLATE_HOVER_MARKER}\n**${t('hover.brand')}** \`${cfg.targetLanguage}\`${cacheLabel}\n\n`);
+    md.appendMarkdown(`${LINGUA_LENS_HOVER_MARKER}\n**${t('hover.brand')}** \`${cfg.targetLanguage}\`${cacheLabel}\n\n`);
     const isString = unit.kind === 'string' || unit.kind === 'templateString';
     if (isString) md.appendText(translation);
     else md.appendMarkdown(translation);
@@ -206,13 +206,13 @@ export class TranslateHoverProvider implements vscode.HoverProvider {
   private errorFromLlm(_doc: vscode.TextDocument, range: vscode.Range, e: LlmError): vscode.Hover {
     const links: string[] = [];
     if (e.kind === 'noKey' || e.kind === 'auth') {
-      links.push(`[${t('hover.error.setApiKey')}](command:aiTranslate.setApiKey)`);
+      links.push(`[${t('hover.error.setApiKey')}](command:linguaLens.setApiKey)`);
     }
     if (e.kind === 'noModel' || e.kind === 'notFound') {
-      links.push(`[${t('hover.error.openSettings')}](command:aiTranslate.openSettings)`);
+      links.push(`[${t('hover.error.openSettings')}](command:linguaLens.openSettings)`);
     }
     const md = new vscode.MarkdownString(e.message + (links.length ? '\n\n' + links.join(' · ') : ''));
-    md.isTrusted = { enabledCommands: ['aiTranslate.setApiKey', 'aiTranslate.openSettings'] };
+    md.isTrusted = { enabledCommands: ['linguaLens.setApiKey', 'linguaLens.openSettings'] };
     return new vscode.Hover(md, range);
   }
 }
@@ -259,7 +259,7 @@ function mergeHoverBlocks(
   combined.supportHtml = false;
   combined.isTrusted = primary?.contents[0] && typeof primary.contents[0] !== 'string'
     ? (primary.contents[0] as vscode.MarkdownString).isTrusted
-    : { enabledCommands: ['aiTranslate.setApiKey', 'aiTranslate.acknowledgePrivacy', 'aiTranslate.showLog'] };
+    : { enabledCommands: ['linguaLens.setApiKey', 'linguaLens.acknowledgePrivacy', 'linguaLens.showLog'] };
   for (let i = 0; i < parts.length; i++) {
     if (i > 0) combined.appendMarkdown('\n\n---\n\n');
     combined.appendMarkdown(parts[i].value);
@@ -275,7 +275,7 @@ function mergeHoverBlocks(
 function errorHover(doc: vscode.TextDocument, pos: vscode.Position, msg: string, links: string[]): vscode.Hover {
   const md = new vscode.MarkdownString(msg + (links.length ? '\n\n' + links.join(' · ') : ''));
   md.isTrusted = {
-    enabledCommands: ['aiTranslate.acknowledgePrivacy', 'aiTranslate.setApiKey', 'aiTranslate.showLog'],
+    enabledCommands: ['linguaLens.acknowledgePrivacy', 'linguaLens.setApiKey', 'linguaLens.showLog'],
   };
   const range = doc.getWordRangeAtPosition(pos) ?? new vscode.Range(pos, pos);
   return new vscode.Hover(md, range);

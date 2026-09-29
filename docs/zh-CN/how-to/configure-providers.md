@@ -2,7 +2,7 @@
 
 ## 目标
 
-将 LinguaLens 指向 OpenAI 兼容的 chat completions API：设置 `aiTranslate.llm.baseUrl`、`aiTranslate.llm.model`，存储 API 密钥，并可选择调整超时、并发与面向厂商的 `extraBody` 请求字段。
+将 LinguaLens 指向 OpenAI 兼容的 chat completions API：设置 `linguaLens.llm.baseUrl`、`linguaLens.llm.model`，存储 API 密钥，并可选择调整超时、并发与面向厂商的 `extraBody` 请求字段。
 
 ## 前提
 
@@ -24,11 +24,11 @@ LinguaLens 使用 **OpenAI Chat Completions** 协议。客户端构建 URL 为 `
 
 ```json
 {
-  "aiTranslate.llm.baseUrl": "https://api.openai.com/v1",
-  "aiTranslate.llm.model": "gpt-4o-mini",
-  "aiTranslate.llm.temperature": 0.2,
-  "aiTranslate.llm.timeoutMs": 30000,
-  "aiTranslate.llm.maxTokens": 4096
+  "linguaLens.llm.baseUrl": "https://api.openai.com/v1",
+  "linguaLens.llm.model": "gpt-4o-mini",
+  "linguaLens.llm.temperature": 0.2,
+  "linguaLens.llm.timeoutMs": 30000,
+  "linguaLens.llm.maxTokens": 4096
 }
 ```
 
@@ -36,9 +36,9 @@ LinguaLens 使用 **OpenAI Chat Completions** 协议。客户端构建 URL 为 `
 
 ```json
 {
-  "aiTranslate.llm.baseUrl": "https://api.deepseek.com/v1",
-  "aiTranslate.llm.model": "deepseek-chat",
-  "aiTranslate.llm.extraBody": {
+  "linguaLens.llm.baseUrl": "https://api.deepseek.com/v1",
+  "linguaLens.llm.model": "deepseek-chat",
+  "linguaLens.llm.extraBody": {
     "thinking": { "type": "disabled" }
   }
 }
@@ -50,9 +50,9 @@ LinguaLens 使用 **OpenAI Chat Completions** 协议。客户端构建 URL 为 `
 
 ```json
 {
-  "aiTranslate.llm.baseUrl": "https://dashscope.aliyuncs.com/compatible-mode/v1",
-  "aiTranslate.llm.model": "qwen-plus",
-  "aiTranslate.llm.extraBody": {
+  "linguaLens.llm.baseUrl": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+  "linguaLens.llm.model": "qwen-plus",
+  "linguaLens.llm.extraBody": {
     "enable_thinking": false
   }
 }
@@ -64,9 +64,9 @@ LinguaLens 使用 **OpenAI Chat Completions** 协议。客户端构建 URL 为 `
 
 ```json
 {
-  "aiTranslate.llm.baseUrl": "https://ark.cn-beijing.volces.com/api/v3",
-  "aiTranslate.llm.model": "ep-xxxxxxxxxxxxxxxx",
-  "aiTranslate.llm.extraHeaders": {}
+  "linguaLens.llm.baseUrl": "https://ark.cn-beijing.volces.com/api/v3",
+  "linguaLens.llm.model": "ep-xxxxxxxxxxxxxxxx",
+  "linguaLens.llm.extraHeaders": {}
 }
 ```
 
@@ -76,13 +76,13 @@ Ark 端点将**端点 id**（`ep-…`）作为 model 字段。区域与 URL 须�
 
 ```json
 {
-  "aiTranslate.llm.baseUrl": "http://127.0.0.1:1234/v1",
-  "aiTranslate.llm.model": "your-local-model-name",
-  "aiTranslate.llm.jsonMode": "auto"
+  "linguaLens.llm.baseUrl": "http://127.0.0.1:1234/v1",
+  "linguaLens.llm.model": "your-local-model-name",
+  "linguaLens.llm.jsonMode": "auto"
 }
 ```
 
-文档批量翻译在 `jsonMode` 非 `off` 时请求 JSON 响应。若服务器不支持 `response_format`，将 `aiTranslate.llm.jsonMode` 设为 `off`，并预期可能出现批量解析失败。
+文档批量翻译在 `jsonMode` 非 `off` 时请求 JSON 响应。若服务器不支持 `response_format`，将 `linguaLens.llm.jsonMode` 设为 `off`，并预期可能出现批量解析失败。
 
 ## 步骤 3：存储 API 密钥
 
@@ -93,12 +93,12 @@ Ark 端点将**端点 id**（`ep-…`）作为 model 字段。区域与 URL 须�
 
 | 设置 | 何时修改 |
 |------|----------|
-| `aiTranslate.llm.stream` | 启用聊天 SSE 流式（默认 false）。 |
-| `aiTranslate.llm.maxConcurrency` | 并行文档批量（默认 4）。 |
-| `aiTranslate.llm.maxRetries` | 带退避的 HTTP 重试（默认 3）。 |
-| `aiTranslate.llm.extraHeaders` | 自定义头（少见；部分网关）。 |
-| `aiTranslate.llm.systemPrompt` | 追加/替换系统指令（影响提示词版本与缓存）。 |
-| `aiTranslate.llm.jsonMode` | 文档 JSON 批量调用的 `auto` / `on` / `off`。 |
+| `linguaLens.llm.stream` | 启用聊天 SSE 流式（默认 false）。 |
+| `linguaLens.llm.maxConcurrency` | 并行文档批量（默认 4）。 |
+| `linguaLens.llm.maxRetries` | 带退避的 HTTP 重试（默认 3）。 |
+| `linguaLens.llm.extraHeaders` | 自定义头（少见；部分网关）。 |
+| `linguaLens.llm.systemPrompt` | 追加/替换系统指令（影响提示词版本与缓存）。 |
+| `linguaLens.llm.jsonMode` | 文档 JSON 批量调用的 `auto` / `on` / `off`。 |
 
 ## 步骤 5：验证
 

@@ -22,7 +22,7 @@ export async function applyTargetLanguageCursorUiBootstrap(
     return { applied: false };
   }
 
-  const cfg = vscode.workspace.getConfiguration('aiTranslate');
+  const cfg = vscode.workspace.getConfiguration('linguaLens');
   const inspect = cfg.inspect<string>('targetLanguage');
 
   await context.globalState.update(CURSOR_UI_BOOTSTRAP_STATE_KEY, true);

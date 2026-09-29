@@ -7,7 +7,7 @@ Translate Git commit message text from history (at a line in a repo file) or fro
 ## Prerequisites
 
 - Repository with Git integration (`vscode.git` extension active).
-- `aiTranslate.hover.gitCommitMessage` enabled (default true) for hover on commit lines; commands work independently.
+- `linguaLens.hover.gitCommitMessage` enabled (default true) for hover on commit lines; commands work independently.
 - LLM configured ([Configure providers](./configure-providers.md)).
 - Privacy acknowledged.
 
@@ -48,14 +48,14 @@ Only the first repository is updated; multi-repo workspaces may need manual copy
 
 ## Step 3: Target language for Git text
 
-`resolveSelectionTargetLanguage` may adjust target based on message content (same helper as other selection flows). Workspace `aiTranslate.targetLanguage` is the baseline.
+`resolveSelectionTargetLanguage` may adjust target based on message content (same helper as other selection flows). Workspace `linguaLens.targetLanguage` is the baseline.
 
 Example user settings:
 
 ```json
 {
-  "aiTranslate.targetLanguage": "en",
-  "aiTranslate.hover.gitCommitMessage": true
+  "linguaLens.targetLanguage": "en",
+  "linguaLens.hover.gitCommitMessage": true
 }
 ```
 
@@ -75,9 +75,9 @@ DeepSeek:
 
 ```json
 {
-  "aiTranslate.llm.baseUrl": "https://api.deepseek.com/v1",
-  "aiTranslate.llm.model": "deepseek-chat",
-  "aiTranslate.llm.extraBody": { "thinking": { "type": "disabled" } }
+  "linguaLens.llm.baseUrl": "https://api.deepseek.com/v1",
+  "linguaLens.llm.model": "deepseek-chat",
+  "linguaLens.llm.extraBody": { "thinking": { "type": "disabled" } }
 }
 ```
 
@@ -85,9 +85,9 @@ Qwen:
 
 ```json
 {
-  "aiTranslate.llm.baseUrl": "https://dashscope.aliyuncs.com/compatible-mode/v1",
-  "aiTranslate.llm.model": "qwen-plus",
-  "aiTranslate.llm.extraBody": { "enable_thinking": false }
+  "linguaLens.llm.baseUrl": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+  "linguaLens.llm.model": "qwen-plus",
+  "linguaLens.llm.extraBody": { "enable_thinking": false }
 }
 ```
 
@@ -108,7 +108,7 @@ Git translate commands appear in the Command Palette under category **LinguaLens
 ```json
 {
   "key": "ctrl+shift+g t",
-  "command": "aiTranslate.translateScmInput",
+  "command": "linguaLens.translateScmInput",
   "when": "scmRepository"
 }
 ```

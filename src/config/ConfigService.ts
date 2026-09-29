@@ -25,21 +25,21 @@ export class ConfigService implements vscode.Disposable {
 
   constructor() {
     this.sub = vscode.workspace.onDidChangeConfiguration((e) => {
-      if (e.affectsConfiguration('aiTranslate')) {
+      if (e.affectsConfiguration('linguaLens')) {
         this.emitter.fire(e);
       }
     });
   }
 
   getRawTargetLanguage(resource?: vscode.Uri): string {
-    return vscode.workspace.getConfiguration('aiTranslate', resource).get<string>('targetLanguage', 'zh-CN');
+    return vscode.workspace.getConfiguration('linguaLens', resource).get<string>('targetLanguage', 'zh-CN');
   }
 
   get(resource?: vscode.Uri): TranslateConfig {
-    const cfg = vscode.workspace.getConfiguration('aiTranslate', resource);
-    const userExclude = vscode.workspace.getConfiguration('aiTranslate').inspect<string[]>('privacy.exclude');
+    const cfg = vscode.workspace.getConfiguration('linguaLens', resource);
+    const userExclude = vscode.workspace.getConfiguration('linguaLens').inspect<string[]>('privacy.exclude');
     const wsExclude = resource
-      ? vscode.workspace.getConfiguration('aiTranslate', resource).inspect<string[]>('privacy.exclude')
+      ? vscode.workspace.getConfiguration('linguaLens', resource).inspect<string[]>('privacy.exclude')
       : undefined;
     const excludeSet = new Set<string>(DEFAULT_EXCLUDE);
     for (const v of [userExclude?.globalValue, userExclude?.workspaceValue, wsExclude?.workspaceFolderValue]) {
@@ -143,7 +143,7 @@ export class ConfigService implements vscode.Disposable {
   }
 
   async setEnabled(value: boolean, resource?: vscode.Uri): Promise<void> {
-    const cfg = vscode.workspace.getConfiguration('aiTranslate', resource);
+    const cfg = vscode.workspace.getConfiguration('linguaLens', resource);
     const inspect = cfg.inspect<boolean>('enabled');
     const target =
       inspect?.workspaceFolderValue !== undefined
@@ -155,7 +155,7 @@ export class ConfigService implements vscode.Disposable {
   }
 
   async setTargetLanguage(lang: TargetLang, resource?: vscode.Uri): Promise<void> {
-    const cfg = vscode.workspace.getConfiguration('aiTranslate', resource);
+    const cfg = vscode.workspace.getConfiguration('linguaLens', resource);
     const inspect = cfg.inspect<string>('targetLanguage');
     const target =
       inspect?.workspaceFolderValue !== undefined

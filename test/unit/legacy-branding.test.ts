@@ -3,6 +3,14 @@ import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 const FORBIDDEN = [/cursor-ai-translate/i, /Cursor AI Translate/];
+const LEGACY_PREFIX = /aiTranslate\./;
+
+const ALLOWLIST_FILES = new Set([
+  path.normalize('src/migration/settingsMigration.ts'),
+  path.normalize('test/unit/settings-migration.test.ts'),
+  path.normalize('src/hover/hoverMarkers.ts'),
+  path.normalize('src/extension.ts'),
+]);
 
 const SCAN_ROOTS = [
   { dir: 'src', exts: ['.ts'] },
@@ -68,6 +76,13 @@ function stripMigrationSections(text: string): string {
     );
 }
 
+function allowLegacyPrefix(file: string): boolean {
+  const rel = path.normalize(path.relative(process.cwd(), file));
+  if (ALLOWLIST_FILES.has(rel)) return true;
+  if (rel === path.normalize('package.json')) return true;
+  return false;
+}
+
 describe('legacy branding', () => {
   it('does not reference cursor-ai-translate or Cursor AI Translate outside CHANGELOG history', () => {
     const offenders: string[] = [];
@@ -82,6 +97,23 @@ describe('legacy branding', () => {
           offenders.push(`${path.relative(process.cwd(), file)} (${re})`);
           break;
         }
+      }
+    }
+    expect(offenders).toEqual([]);
+  });
+
+  it('does not reference aiTranslate. settings/command prefix outside allowlisted migration and aliases', () => {
+    const offenders: string[] = [];
+    const all = collectPaths();
+    for (const file of all) {
+      if (path.basename(file) === 'CHANGELOG.md') continue;
+      let text = fs.readFileSync(file, 'utf8');
+      if (/README(\.zh-CN)?\.md$/.test(file)) {
+        text = stripMigrationSections(text);
+      }
+      if (allowLegacyPrefix(file)) continue;
+      if (LEGACY_PREFIX.test(text)) {
+        offenders.push(path.relative(process.cwd(), file));
       }
     }
     expect(offenders).toEqual([]);

@@ -7,16 +7,16 @@ Diagnose and fix failures from **LinguaLens: Test Connection**, hover errors, or
 ## Prerequisites
 
 - Know your intended `baseUrl` and `model` ([Configure providers](./configure-providers.md)).
-- Ability to open **LinguaLens: Show Log** and set `aiTranslate.log.level` to `debug` temporarily.
+- Ability to open **LinguaLens: Show Log** and set `linguaLens.log.level` to `debug` temporarily.
 
 ## Step 1: Confirm configuration
 
 ```json
 {
-  "aiTranslate.llm.baseUrl": "https://api.openai.com/v1",
-  "aiTranslate.llm.model": "gpt-4o-mini",
-  "aiTranslate.llm.timeoutMs": 30000,
-  "aiTranslate.llm.maxRetries": 3
+  "linguaLens.llm.baseUrl": "https://api.openai.com/v1",
+  "linguaLens.llm.model": "gpt-4o-mini",
+  "linguaLens.llm.timeoutMs": 30000,
+  "linguaLens.llm.maxRetries": 3
 }
 ```
 
@@ -43,7 +43,7 @@ Diagnose and fix failures from **LinguaLens: Test Connection**, hover errors, or
 
 ### `Model name is not configured` (`noModel`)
 
-Set `aiTranslate.llm.model` to a valid id for your endpoint.
+Set `linguaLens.llm.model` to a valid id for your endpoint.
 
 ### Auth errors (`auth`)
 
@@ -73,8 +73,8 @@ Set `aiTranslate.llm.model` to a valid id for your endpoint.
 
 ```json
 {
-  "aiTranslate.llm.baseUrl": "https://api.openai.com/v1",
-  "aiTranslate.llm.model": "gpt-4o-mini"
+  "linguaLens.llm.baseUrl": "https://api.openai.com/v1",
+  "linguaLens.llm.model": "gpt-4o-mini"
 }
 ```
 
@@ -82,9 +82,9 @@ Set `aiTranslate.llm.model` to a valid id for your endpoint.
 
 ```json
 {
-  "aiTranslate.llm.baseUrl": "https://api.deepseek.com/v1",
-  "aiTranslate.llm.model": "deepseek-chat",
-  "aiTranslate.llm.extraBody": { "thinking": { "type": "disabled" } }
+  "linguaLens.llm.baseUrl": "https://api.deepseek.com/v1",
+  "linguaLens.llm.model": "deepseek-chat",
+  "linguaLens.llm.extraBody": { "thinking": { "type": "disabled" } }
 }
 ```
 
@@ -92,9 +92,9 @@ Set `aiTranslate.llm.model` to a valid id for your endpoint.
 
 ```json
 {
-  "aiTranslate.llm.baseUrl": "https://dashscope.aliyuncs.com/compatible-mode/v1",
-  "aiTranslate.llm.model": "qwen-plus",
-  "aiTranslate.llm.extraBody": { "enable_thinking": false }
+  "linguaLens.llm.baseUrl": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+  "linguaLens.llm.model": "qwen-plus",
+  "linguaLens.llm.extraBody": { "enable_thinking": false }
 }
 ```
 
@@ -102,8 +102,8 @@ Set `aiTranslate.llm.model` to a valid id for your endpoint.
 
 ```json
 {
-  "aiTranslate.llm.baseUrl": "https://ark.cn-beijing.volces.com/api/v3",
-  "aiTranslate.llm.model": "ep-xxxxxxxxxxxxxxxx"
+  "linguaLens.llm.baseUrl": "https://ark.cn-beijing.volces.com/api/v3",
+  "linguaLens.llm.model": "ep-xxxxxxxxxxxxxxxx"
 }
 ```
 
@@ -144,7 +144,7 @@ curl -sS "${BASE_URL%/}/chat/completions" \
 | Stream mode | `llm.stream` true changes response handling; disable to simplify debugging. |
 | JSON mode auto-off | Client remembers models that reject `response_format` per capability key. |
 | Secrets in logs | Use `info` in production; `trace` may log request metadata — avoid on shared machines. |
-| Workspace disabled | `aiTranslate.enabled` false — commands return early without LLM calls. |
+| Workspace disabled | `linguaLens.enabled` false — commands return early without LLM calls. |
 
 ## Related documentation
 

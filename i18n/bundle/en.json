@@ -65,6 +65,7 @@
   "msg.replaceSelection": "Replace selection",
   "msg.scm.empty": "SCM input is empty.",
   "msg.scm.replacePrompt": "Replace SCM input with translation?",
+  "msg.settingsMigrated": "Migrated {0} legacy aiTranslate settings to LinguaLens.",
   "msg.secretNotSent": "Looks like a secret; not sent.",
   "msg.selectTextFirst": "Select text first.",
   "msg.sideFileExists": "File already exists. Overwrite?",

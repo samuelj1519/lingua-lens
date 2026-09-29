@@ -15,23 +15,23 @@ Before calling the LLM, LinguaLens decides whether a text unit should be transla
 
 | Setting | Field | Default |
 |---------|-------|---------|
-| `aiTranslate.targetLanguage` | `target` | `zh-CN` |
-| `aiTranslate.detection.minLength` | `minLength` | 3 |
-| `aiTranslate.detection.targetRatio` | `targetRatio` | 0.6 |
-| `aiTranslate.detection.reliableMinLength` | `reliableMinLength` | 20 |
-| `aiTranslate.detection.skipPatterns` | `userSkipPatterns` | `[]` |
-| `aiTranslate.privacy.blockSecrets` | `blockSecrets` | true |
-| `aiTranslate.detection.strictChineseVariant` | `strictChineseVariant` | false |
+| `linguaLens.targetLanguage` | `target` | `zh-CN` |
+| `linguaLens.detection.minLength` | `minLength` | 3 |
+| `linguaLens.detection.targetRatio` | `targetRatio` | 0.6 |
+| `linguaLens.detection.reliableMinLength` | `reliableMinLength` | 20 |
+| `linguaLens.detection.skipPatterns` | `userSkipPatterns` | `[]` |
+| `linguaLens.privacy.blockSecrets` | `blockSecrets` | true |
+| `linguaLens.detection.strictChineseVariant` | `strictChineseVariant` | false |
 
 ### strictChineseVariant (important)
 
-The setting **`aiTranslate.detection.strictChineseVariant`** is exposed in configuration for future use: distinguishing simplified vs traditional Chinese when deciding skip vs translate.
+The setting **`linguaLens.detection.strictChineseVariant`** is exposed in configuration for future use: distinguishing simplified vs traditional Chinese when deciding skip vs translate.
 
 **Current implementation:** `decide()` accepts `strictChineseVariant` in `DetectOptions` but **does not implement variant split**. Simplified and traditional both map to the `zh` family via `familyOf()`. Practical implications:
 
 - Target `zh-CN` skips most Han text as already Chinese.
 - Target `zh-TW` behaves the same for script statistics — not ideal for zh-CN→zh-TW conversion.
-- Use `aiTranslate.document.forceTranslate` for document workflows until variant logic lands.
+- Use `linguaLens.document.forceTranslate` for document workflows until variant logic lands.
 
 This aligns with engineering decision D8 (simplified/traditional treated as one family for skip logic).
 

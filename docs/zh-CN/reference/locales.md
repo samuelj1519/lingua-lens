@@ -18,7 +18,7 @@ LinguaLens 使用固定的**目标语言代码**集，用于 LLM 提示词、检
 | `es` | Español | `es` |
 | `ru` | Русский | `ru` |
 
-设置项：`aiTranslate.targetLanguage`（资源作用域，schema 默认 `zh-CN`）。
+设置项：`linguaLens.targetLanguage`（资源作用域，schema 默认 `zh-CN`）。
 
 ### 提示词行为
 
@@ -26,8 +26,8 @@ LinguaLens 使用固定的**目标语言代码**集，用于 LLM 提示词、检
 
 ### 旁路文件与预览 URI
 
-- 预览查询：`aitranslate:` URI 上的 `lang={target}`。
-- `aiTranslate.document.sideFileNamePattern` 变量 `${lang}` 展开为代码（例如 `readme.zh-CN.md`）。
+- 预览查询：`lingualens:` URI 上的 `lang={target}`。
+- `linguaLens.document.sideFileNamePattern` 变量 `${lang}` 展开为代码（例如 `readme.zh-CN.md`）。
 
 ## UI 区域设置 vs 目标语言
 
@@ -64,7 +64,7 @@ LinguaLens 使用固定的**目标语言代码**集，用于 LLM 提示词、检
 
 `zh-CN` 与 `zh-TW` 在 `LanguageDetector` 中共享 `zh` **语族**。汉字占比高的文本在以任一变体为目标时常被**跳过**（视为已是中文）。
 
-`aiTranslate.detection.strictChineseVariant` 保留供将来变体专用跳过逻辑；**`decide()` 尚未实现**。zh-CN ↔ zh-TW 文档转换请使用 `aiTranslate.document.forceTranslate`（见[强制翻译](../how-to/force-translate.md)）。
+`linguaLens.detection.strictChineseVariant` 保留供将来变体专用跳过逻辑；**`decide()` 尚未实现**。zh-CN ↔ zh-TW 文档转换请使用 `linguaLens.document.forceTranslate`（见[强制翻译](../how-to/force-translate.md)）。
 
 ## 拉丁语系目标
 
@@ -85,7 +85,7 @@ LinguaLens 使用固定的**目标语言代码**集，用于 LLM 提示词、检
 ```json
 // .vscode/settings.json
 {
-  "aiTranslate.targetLanguage": "de"
+  "linguaLens.targetLanguage": "de"
 }
 ```
 
@@ -99,10 +99,10 @@ LinguaLens 使用固定的**目标语言代码**集，用于 LLM 提示词、检
 
 | 设置 | 作用 |
 |------|------|
-| `aiTranslate.targetLanguage` | LLM 输出语言 |
-| `aiTranslate.detection.*` | 跳过/翻译阈值 |
-| `aiTranslate.document.forceTranslate` | 文档绕过「已是目标语言」 |
-| `aiTranslate.statusBar.enabled` | 显示语言控件 |
+| `linguaLens.targetLanguage` | LLM 输出语言 |
+| `linguaLens.detection.*` | 跳过/翻译阈值 |
+| `linguaLens.document.forceTranslate` | 文档绕过「已是目标语言」 |
+| `linguaLens.statusBar.enabled` | 显示语言控件 |
 
 ## 自定义与扩展边界
 
@@ -110,7 +110,7 @@ LinguaLens 使用固定的**目标语言代码**集，用于 LLM 提示词、检
 
 ## 与缓存、预览查询参数
 
-预览 URI 查询 `lang=` 必须与 `aiTranslate.targetLanguage` 解析值一致，否则 `PreviewContentProvider` 可能拒绝会话或显示过期会话。切换目标后配置监听器刷新已打开预览，一般无需手动重开标签。缓存元数据记录 `targetLang` 字符串；`zh-CN` 与 `zh-TW` 在缓存层视为不同目标，即使检测共享 `zh` 语族——切换简繁目标不会互相命中缓存。
+预览 URI 查询 `lang=` 必须与 `linguaLens.targetLanguage` 解析值一致，否则 `PreviewContentProvider` 可能拒绝会话或显示过期会话。切换目标后配置监听器刷新已打开预览，一般无需手动重开标签。缓存元数据记录 `targetLang` 字符串；`zh-CN` 与 `zh-TW` 在缓存层视为不同目标，即使检测共享 `zh` 语族——切换简繁目标不会互相命中缓存。
 
 ## mapVscodeUiLanguageToTarget 细节
 

@@ -2,7 +2,7 @@
 
 ## Goal
 
-Merge vendor-specific fields into every chat completions request via `aiTranslate.llm.extraBody`, especially to **disable “thinking”** or extended reasoning on DeepSeek and Qwen so translations stay concise and document JSON batches parse reliably.
+Merge vendor-specific fields into every chat completions request via `linguaLens.llm.extraBody`, especially to **disable “thinking”** or extended reasoning on DeepSeek and Qwen so translations stay concise and document JSON batches parse reliably.
 
 ## Prerequisites
 
@@ -11,7 +11,7 @@ Merge vendor-specific fields into every chat completions request via `aiTranslat
 
 ## How extra body works
 
-`aiTranslate.llm.extraBody` is a JSON object (default `{}`). At request time the extension spreads it into the POST body. Anything valid for your provider’s OpenAI-compatible API can be passed: `top_p`, `presence_penalty`, provider flags, etc.
+`linguaLens.llm.extraBody` is a JSON object (default `{}`). At request time the extension spreads it into the POST body. Anything valid for your provider’s OpenAI-compatible API can be passed: `top_p`, `presence_penalty`, provider flags, etc.
 
 **Cache impact:** Since 0.4.3, `TranslationService` hashes `JSON.stringify(extraBody ?? {})` (16-char SHA-256 prefix) into the cache key alongside text, target language, model, prompt version, and `baseUrl`. Changing `extraBody` invalidates cache entries for new lookups without clearing disk cache manually.
 
@@ -21,9 +21,9 @@ Merge vendor-specific fields into every chat completions request via `aiTranslat
 
 ```json
 {
-  "aiTranslate.llm.baseUrl": "https://api.deepseek.com/v1",
-  "aiTranslate.llm.model": "deepseek-chat",
-  "aiTranslate.llm.extraBody": {
+  "linguaLens.llm.baseUrl": "https://api.deepseek.com/v1",
+  "linguaLens.llm.model": "deepseek-chat",
+  "linguaLens.llm.extraBody": {
     "thinking": {
       "type": "disabled"
     }
@@ -37,9 +37,9 @@ This matches the built-in template `EXTRA_BODY_TEMPLATE_DEEPSEEK` in the setting
 
 ```json
 {
-  "aiTranslate.llm.baseUrl": "https://dashscope.aliyuncs.com/compatible-mode/v1",
-  "aiTranslate.llm.model": "qwen-plus",
-  "aiTranslate.llm.extraBody": {
+  "linguaLens.llm.baseUrl": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+  "linguaLens.llm.model": "qwen-plus",
+  "linguaLens.llm.extraBody": {
     "enable_thinking": false
   }
 }
@@ -53,9 +53,9 @@ OpenAI’s public API does not use DeepSeek/Qwen thinking fields. You might stil
 
 ```json
 {
-  "aiTranslate.llm.baseUrl": "https://api.openai.com/v1",
-  "aiTranslate.llm.model": "gpt-4o-mini",
-  "aiTranslate.llm.extraBody": {
+  "linguaLens.llm.baseUrl": "https://api.openai.com/v1",
+  "linguaLens.llm.model": "gpt-4o-mini",
+  "linguaLens.llm.extraBody": {
     "seed": 42
   }
 }
@@ -69,9 +69,9 @@ Consult Volcengine docs for OpenAI-compatible parameters. If no thinking flag is
 
 ```json
 {
-  "aiTranslate.llm.baseUrl": "https://ark.cn-beijing.volces.com/api/v3",
-  "aiTranslate.llm.model": "ep-xxxxxxxxxxxxxxxx",
-  "aiTranslate.llm.extraBody": {}
+  "linguaLens.llm.baseUrl": "https://ark.cn-beijing.volces.com/api/v3",
+  "linguaLens.llm.model": "ep-xxxxxxxxxxxxxxxx",
+  "linguaLens.llm.extraBody": {}
 }
 ```
 

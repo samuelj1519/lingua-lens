@@ -29,7 +29,7 @@ const PANEL_KEYS: PanelConfigKey[] = [
 ];
 
 export function readPanelValues(scope: SettingsScope): Record<string, unknown> {
-  const cfg = vscode.workspace.getConfiguration('aiTranslate');
+  const cfg = vscode.workspace.getConfiguration('linguaLens');
   const out: Record<string, unknown> = {};
   for (const key of PANEL_KEYS) {
     const inspect = cfg.inspect(key);
@@ -43,7 +43,7 @@ export function readPanelValues(scope: SettingsScope): Record<string, unknown> {
 }
 
 export function readOverrides(): Record<string, 'workspace' | 'workspaceFolder' | null> {
-  const cfg = vscode.workspace.getConfiguration('aiTranslate');
+  const cfg = vscode.workspace.getConfiguration('linguaLens');
   const out: Record<string, 'workspace' | 'workspaceFolder' | null> = {};
   for (const key of PANEL_KEYS) {
     const inspect = cfg.inspect(key);
@@ -59,6 +59,6 @@ export async function updatePanelKey(
   value: unknown,
   scope: SettingsScope,
 ): Promise<void> {
-  const cfg = vscode.workspace.getConfiguration('aiTranslate');
+  const cfg = vscode.workspace.getConfiguration('linguaLens');
   await cfg.update(key, value, configurationTarget(scope));
 }

@@ -29,15 +29,15 @@ function collectDeclaredKeys(sections: ConfigSection[]): string[] {
   const keys: string[] = [];
   for (const section of sections) {
     for (const fullKey of Object.keys(section.properties)) {
-      expect(fullKey.startsWith('aiTranslate.')).toBe(true);
-      keys.push(fullKey.slice('aiTranslate.'.length));
+      expect(fullKey.startsWith('linguaLens.')).toBe(true);
+      keys.push(fullKey.slice('linguaLens.'.length));
     }
   }
   return keys.sort();
 }
 
 function nlsKeyForProperty(fullKey: string): string {
-  const rel = fullKey.slice('aiTranslate.'.length);
+  const rel = fullKey.slice('linguaLens.'.length);
   return `config.${rel}.markdownDescription`;
 }
 

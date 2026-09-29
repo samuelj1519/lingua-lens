@@ -2,7 +2,7 @@
 
 ## 目标
 
-设置翻译目标语言（`aiTranslate.targetLanguage`），理解从编辑器 UI 区域设置的首次运行引导，并通过 `l10n` 包使用已本地化的扩展 UI 字符串。
+设置翻译目标语言（`linguaLens.targetLanguage`），理解从编辑器 UI 区域设置的首次运行引导，并通过 `l10n` 包使用已本地化的扩展 UI 字符串。
 
 ## 前提
 
@@ -21,7 +21,7 @@
 
 1. 点击状态栏语言段（**LinguaLens: Select Target Language**）。
 2. 从快速选择中挑选语言。
-3. `targetLanguage` 的 `config.onDidChange` 会重置 UI l10n 缓存、刷新 CodeLens、状态栏与所有 `aitranslate:` 预览。
+3. `targetLanguage` 的 `config.onDidChange` 会重置 UI l10n 缓存、刷新 CodeLens、状态栏与所有 `lingualens:` 预览。
 
 ## 步骤 2：在设置 JSON 中更改目标
 
@@ -29,7 +29,7 @@
 
 ```json
 {
-  "aiTranslate.targetLanguage": "ja"
+  "linguaLens.targetLanguage": "ja"
 }
 ```
 
@@ -74,7 +74,7 @@
 
 ```json
 {
-  "aiTranslate.detection.strictChineseVariant": false
+  "linguaLens.detection.strictChineseVariant": false
 }
 ```
 
@@ -92,7 +92,7 @@
 
 ## 多根工作区
 
-打开多个文件夹时，各根 `.vscode/settings.json` 可设不同 `aiTranslate.targetLanguage`。状态栏反映活动编辑器的解析配置（`ConfigService.get(uri)`）。切换编辑器可能改变显示目标而无需手动选择——这是 VS Code 配置继承的预期行为，非扩展缺陷。
+打开多个文件夹时，各根 `.vscode/settings.json` 可设不同 `linguaLens.targetLanguage`。状态栏反映活动编辑器的解析配置（`ConfigService.get(uri)`）。切换编辑器可能改变显示目标而无需手动选择——这是 VS Code 配置继承的预期行为，非扩展缺陷。
 
 ## 与扩展内文案的关系
 
@@ -116,7 +116,7 @@
 
 ## 与命令面板 NLS
 
-命令标题 `%command.aiTranslate.selectTargetLanguage%` 等由 VS Code 按**编辑器 UI 语言**显示，而翻译输出按 `targetLanguage`。培训材料应同时展示状态栏代码（`ZH-CN`）与原生标签（简体中文），减少混淆。在 Cursor 与 VS Code 之间迁移时，bootstrap 状态键位于各自全局存储，不随设置同步迁移；已设 `targetLanguage` 的用户无感，全新配置档案可能再次触发一次性对齐。编写扩展文档时，应用内 `t()` 字符串与 `docs/zh-CN` 读者所见可能不同语言：文档描述的是 `targetLanguage` 对 LLM 与部分 UI 的影响，而非 VS Code 菜单语言。对外截图请标注状态栏目标代码以免误解。
+命令标题 `%command.linguaLens.selectTargetLanguage%` 等由 VS Code 按**编辑器 UI 语言**显示，而翻译输出按 `targetLanguage`。培训材料应同时展示状态栏代码（`ZH-CN`）与原生标签（简体中文），减少混淆。在 Cursor 与 VS Code 之间迁移时，bootstrap 状态键位于各自全局存储，不随设置同步迁移；已设 `targetLanguage` 的用户无感，全新配置档案可能再次触发一次性对齐。编写扩展文档时，应用内 `t()` 字符串与 `docs/zh-CN` 读者所见可能不同语言：文档描述的是 `targetLanguage` 对 LLM 与部分 UI 的影响，而非 VS Code 菜单语言。对外截图请标注状态栏目标代码以免误解。
 
 ## 小结
 

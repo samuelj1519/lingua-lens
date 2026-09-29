@@ -1,6 +1,7 @@
 import type { Segment } from '../types';
 import type { DocSession } from './DocTranslationService';
 import { restore } from '../parsing/placeholders';
+import { formatFrontmatterYamlComments } from './frontmatterParse';
 
 export type PreviewStyle = 'interleaved' | 'append';
 
@@ -13,6 +14,7 @@ export function assembleDocument(
   const sorted = [...session.segments].sort((a, b) => a.range.start - b.range.start);
   const parts: string[] = [];
   let cursor = 0;
+  const frontmatterAppendLines: string[] = [];
 
   const header =
     `> AI 翻译预览 (只读) · 源文件 ${session.sourceLabel} · 目标 ${session.target} · 进度 ${session.doneCount}/${session.totalTranslatable}\n\n`;
@@ -27,7 +29,7 @@ export function assembleDocument(
     parts.push(original);
 
     if (seg.kind !== 'preserved') {
-      const block = translationBlockForSegment(seg, session, style);
+      const block = translationBlockForSegment(seg, session, style, frontmatterAppendLines);
       if (block) parts.push(block);
     }
     cursor = seg.range.end;
@@ -35,7 +37,19 @@ export function assembleDocument(
   if (cursor < source.length) {
     parts.push(source.slice(cursor));
   }
-  return finalizeTrailingNewlines(source, parts.join(''));
+  let out = parts.join('');
+  if (style === 'append' && frontmatterAppendLines.length) {
+    const blockEnd = sorted.find((s) => s.kind === 'frontmatter')?.frontmatterMeta?.blockEnd;
+    if (blockEnd !== undefined && blockEnd <= out.length) {
+      const insert = `\n\n${frontmatterAppendLines.join('\n\n')}\n`;
+      const bodyStart = out.indexOf('\n\n') + 2;
+      const headerPart = out.slice(0, bodyStart);
+      const body = out.slice(bodyStart);
+      const rel = blockEnd;
+      out = headerPart + body.slice(0, rel) + insert + body.slice(rel);
+    }
+  }
+  return finalizeTrailingNewlines(source, out);
 }
 
 function trailingNewlineCount(s: string): number {
@@ -64,6 +78,7 @@ function translationBlockForSegment(
   seg: Segment,
   session: DocSession,
   style: PreviewStyle,
+  frontmatterAppendLines: string[],
 ): string {
   if (style === 'append' && seg.kind === 'preserved') return '';
 
@@ -72,14 +87,29 @@ function translationBlockForSegment(
 
   const st = session.results.get(seg.id);
   if (!st || st.status === 'pending') {
+    if (seg.kind === 'frontmatter' && style === 'interleaved') {
+      return '\n> *(翻译中…)*';
+    }
     return style === 'interleaved' ? `${gap}> *(翻译中…)*` : '';
   }
   if (st.status === 'failed') {
+    if (seg.kind === 'frontmatter' && style === 'interleaved') {
+      return `\n# ⚠️ 翻译失败：${st.error ?? '未知错误'}`;
+    }
     return `${gap}> ⚠️ 翻译失败：${st.error ?? '未知错误'}（保留原文）`;
   }
   const restored = restore(st.text ?? '', seg.placeholders);
   const text = (restored.ok ? restored.text : (st.text ?? '')).trimEnd();
   if (!text) return '';
+
+  if (seg.kind === 'frontmatter' && seg.frontmatterMeta) {
+    const key = seg.frontmatterMeta.fieldKey;
+    if (style === 'append') {
+      frontmatterAppendLines.push(`**${key}**: ${text}`);
+      return '';
+    }
+    return `\n${formatFrontmatterYamlComments(key, text)}`;
+  }
 
   if (seg.kind === 'heading' && seg.headingDepth) {
     const hashes = '#'.repeat(seg.headingDepth);

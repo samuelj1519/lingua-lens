@@ -2,7 +2,7 @@
   "name": "cursor-ai-translate",
   "displayName": "AI Translate",
   "description": "使用 LLM 翻译项目中的注释、字符串和文档",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "publisher": "cursor-ai-translate",
   "repository": { "type": "git", "url": "https://github.com/local/cursor-ai-translate" },
   "license": "MIT",
@@ -240,6 +240,13 @@
         "aiTranslate.document.sideFileNamePattern": { "type": "string", "default": "${fileBasenameNoExtension}.${lang}${fileExtname}", "scope": "resource" },
         "aiTranslate.document.sideFileContent": { "type": "string", "enum": ["translated", "bilingual"], "default": "translated", "scope": "resource" },
         "aiTranslate.document.autoRefresh": { "type": "boolean", "default": false, "scope": "resource" },
+        "aiTranslate.markdown.frontmatterFields": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": ["description", "title", "summary", "subtitle", "excerpt", "about"],
+          "scope": "resource",
+          "markdownDescription": "Markdown/YAML frontmatter 中需要翻译的字段名（自然语言值）。设为 `[]` 关闭 frontmatter 翻译。"
+        },
         "aiTranslate.cache.enabled": { "type": "boolean", "default": true, "scope": "application" },
         "aiTranslate.cache.memoryEntries": { "type": "number", "default": 2000, "minimum": 0, "scope": "application" },
         "aiTranslate.cache.maxDiskMB": { "type": "number", "default": 50, "minimum": 0, "scope": "application" },

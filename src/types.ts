@@ -14,7 +14,8 @@ export type UnitKind =
   | 'documentTableCell'
   | 'configKey'
   | 'diagnostic'
-  | 'symbolDoc';
+  | 'symbolDoc'
+  | 'frontmatter';
 
 export interface OffsetRange {
   start: number;
@@ -66,7 +67,7 @@ export interface DocumentSnapshot {
 
 export interface Segment {
   id: string;
-  kind: 'heading' | 'paragraph' | 'table' | 'list' | 'blockquote' | 'preserved';
+  kind: 'heading' | 'paragraph' | 'table' | 'list' | 'blockquote' | 'frontmatter' | 'preserved';
   range: OffsetRange;
   sourceText: string;
   placeholders: Placeholder[];
@@ -76,6 +77,11 @@ export interface Segment {
   /** Whole-block markdown (lists/tables/blockquotes) sent to the model. */
   containerKind?: 'list' | 'table' | 'blockquote';
   /** Per-line fallback when whole-block validation fails (lists only). */
+  frontmatterMeta?: {
+    fieldKey: string;
+    insertAfter: number;
+    blockEnd: number;
+  };
   listFallbackItems?: {
     id: string;
     lineIndex: number;

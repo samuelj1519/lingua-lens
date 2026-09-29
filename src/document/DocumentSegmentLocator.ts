@@ -15,7 +15,7 @@ const md = new MarkdownSegmenter();
 const plain = new PlainTextSegmenter();
 
 export function segmentDocument(source: string, languageId: string, filePath?: string): Segment[] {
-  if (languageId === 'markdown' || filePath?.match(/\.(md|markdown)$/i)) {
+  if (languageId === 'markdown' || filePath?.match(/\.(md|markdown|mdc)$/i)) {
     return md.segment(source);
   }
   return plain.segment(source);

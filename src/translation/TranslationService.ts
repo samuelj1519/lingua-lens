@@ -49,13 +49,15 @@ export class TranslationService {
   private cacheKey(
     text: string,
     target: TargetLang,
-    kind: 'hover' | 'selection' | 'documentBatch',
+    kind: 'hover' | 'selection' | 'documentBatch' | 'documentFrontmatterBatch',
     uri?: vscode.Uri,
   ): string {
     const cfg = this.getConfig(uri);
     const glossary = this.glossary.match(text, this.workspaceFolder(uri), target);
+    const batchKind =
+      kind === 'documentFrontmatterBatch' ? 'documentFrontmatterBatch' : kind === 'documentBatch' ? 'documentBatch' : kind;
     const pv = this.prompts.promptVersion({
-      kind: kind === 'documentBatch' ? 'documentBatch' : kind,
+      kind: batchKind,
       targetLang: target,
       glossary,
       customSystemPrompt: cfg.llm.systemPrompt,
@@ -192,13 +194,19 @@ export class TranslationService {
   ): Promise<void> {
     for (const seg of segments) {
       if (seg.kind === 'preserved') continue;
-      const key = this.cacheKey(seg.sourceText, target, 'documentBatch', uri);
+      const kind = seg.kind === 'frontmatter' ? 'documentFrontmatterBatch' : 'documentBatch';
+      const key = this.cacheKey(seg.sourceText, target, kind, uri);
       await this.cache.delete(key);
     }
   }
 
   async translateBatch(
-    items: { id: string; text: string; placeholders: Placeholder[] }[],
+    items: {
+      id: string;
+      text: string;
+      placeholders: Placeholder[];
+      batchCacheKind?: 'documentBatch' | 'documentFrontmatterBatch';
+    }[],
     target: TargetLang,
     signal: AbortSignal,
     fileName?: string,
@@ -217,10 +225,11 @@ export class TranslationService {
       if (signal.aborted) break;
       const batch = pending.splice(0, cfg.document.batchSize);
       try {
+        const batchKind = batch[0]?.batchCacheKind ?? 'documentBatch';
         const messages = this.prompts.buildBatch(
           batch.map((b) => ({ id: b.id, text: b.text })),
           {
-            kind: 'documentBatch',
+            kind: batchKind,
             targetLang: target,
             glossary,
             customSystemPrompt: cfg.llm.systemPrompt,
@@ -248,12 +257,13 @@ export class TranslationService {
             continue;
           }
           const restored = restore(cleaned, item.placeholders);
+          const itemBatchKind = item.batchCacheKind ?? 'documentBatch';
           const key = this.cache.key({
             text: item.text,
             targetLang: target,
             model: cfg.llm.model,
             promptVersion: this.prompts.promptVersion({
-              kind: 'documentBatch',
+              kind: itemBatchKind,
               targetLang: target,
               glossary,
               customSystemPrompt: cfg.llm.systemPrompt,

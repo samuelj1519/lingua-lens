@@ -10,5 +10,5 @@ export function isDocumentHoverLanguage(languageId: string, filePath?: string): 
   if (DOCUMENT_HOVER_LANGUAGE_IDS.has(languageId)) return true;
   if (!filePath) return false;
   const lower = filePath.toLowerCase();
-  return /\.(md|markdown|txt|rst|adoc|asciidoc)$/.test(lower);
+  return /\.(md|markdown|mdc|txt|rst|adoc|asciidoc)$/.test(lower);
 }

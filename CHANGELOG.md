@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.4
+
+- 新增：Markdown / `.mdc` / `SKILL.md` 等文件顶部 **YAML/TOML frontmatter** 自然语言字段翻译（默认白名单 `description`、`title`、`summary`、`subtitle`、`excerpt`、`about`）
+- 新增：`aiTranslate.markdown.frontmatterFields`（`string[]`，设为 `[]` 关闭）；支持引号标量与 `|`/`>` 块标量；`name`/id/URL/路径等保持原样
+- 改进：全文预览在 frontmatter 字段下以 **YAML 注释** 插入译文（`append` 模式在 frontmatter 块后追加译文段）；悬停可翻译 frontmatter 字段值
+- 改进：文档批量缓存区分 `documentFrontmatterBatch`；刷新全文/悬停对 frontmatter 同样生效
+
 ## 0.4.3
 
 - 新增：所有悬停/选区弹层增加 **刷新**（绕过缓存、写回缓存、`editor.action.showHover` 重开）；全文预览 CodeLens/命令 **刷新全文翻译**

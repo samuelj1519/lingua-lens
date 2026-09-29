@@ -14,11 +14,13 @@ export class DocumentHoverExtractor {
     if (!located) return null;
 
     const kind: UnitKind =
-      located.segment.kind === 'heading'
-        ? 'documentHeading'
-        : located.segment.kind === 'table'
-          ? 'documentTableCell'
-          : 'documentParagraph';
+      located.segment.kind === 'frontmatter'
+        ? 'frontmatter'
+        : located.segment.kind === 'heading'
+          ? 'documentHeading'
+          : located.segment.kind === 'table'
+            ? 'documentTableCell'
+            : 'documentParagraph';
 
     const rawText = doc.getText().slice(located.range.start, located.range.end);
     this.log.debug(

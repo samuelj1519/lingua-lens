@@ -3,9 +3,14 @@ import type { LangFamily } from '../types';
 import { TARGET_LANG_NAMES } from '../detection/families';
 import { sha256HexPrefix } from '../util/hash';
 import type { ChatMessage } from '../llm/LlmClient';
-import { DOCUMENT_BATCH_VERSION, HOVER_TEMPLATE_VERSION, SELECTION_TEMPLATE_VERSION } from './templates';
+import {
+  DOCUMENT_BATCH_VERSION,
+  DOCUMENT_FRONTMATTER_BATCH_VERSION,
+  HOVER_TEMPLATE_VERSION,
+  SELECTION_TEMPLATE_VERSION,
+} from './templates';
 
-export type PromptKind = 'hover' | 'selection' | 'documentBatch';
+export type PromptKind = 'hover' | 'selection' | 'documentBatch' | 'documentFrontmatterBatch';
 
 export interface PromptContext {
   kind: PromptKind;
@@ -47,9 +52,11 @@ export class PromptBuilder {
     const base =
       ctx.kind === 'documentBatch'
         ? DOCUMENT_BATCH_VERSION
-        : ctx.kind === 'selection'
-          ? SELECTION_TEMPLATE_VERSION
-          : HOVER_TEMPLATE_VERSION;
+        : ctx.kind === 'documentFrontmatterBatch'
+          ? DOCUMENT_FRONTMATTER_BATCH_VERSION
+          : ctx.kind === 'selection'
+            ? SELECTION_TEMPLATE_VERSION
+            : HOVER_TEMPLATE_VERSION;
     const sp = sha256HexPrefix(ctx.customSystemPrompt ?? '');
     const gl = sha256HexPrefix(JSON.stringify(ctx.glossary.map((g) => g.source)));
     return `${base}+sp:${sp}+gl:${gl}`;
@@ -72,6 +79,8 @@ export class PromptBuilder {
             ? 'Markdown table cell'
             : ctx.unitKind === 'documentParagraph'
               ? 'Markdown paragraph'
+              : ctx.unitKind === 'frontmatter'
+                ? 'YAML frontmatter field value'
               : ctx.unitKind === 'configKey'
                 ? 'configuration field name'
                 : ctx.unitKind === 'diagnostic'

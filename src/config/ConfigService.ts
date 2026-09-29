@@ -124,6 +124,16 @@ export class ConfigService implements vscode.Disposable {
       log: {
         level: cfg.get<'trace' | 'debug' | 'info' | 'warn' | 'error' | 'off'>('log.level', 'info'),
       },
+      markdown: {
+        frontmatterFields: cfg.get<string[]>('markdown.frontmatterFields', [
+          'description',
+          'title',
+          'summary',
+          'subtitle',
+          'excerpt',
+          'about',
+        ]),
+      },
     };
   }
 

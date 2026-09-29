@@ -4,22 +4,35 @@ import remarkGfm from 'remark-gfm';
 import remarkFrontmatter from 'remark-frontmatter';
 import type { Root, Content, PhrasingContent } from 'mdast';
 import type { Segment } from '../types';
+import type { TranslateConfig } from '../config/types';
 import { sha256HexPrefix } from '../util/hash';
 import { protect } from '../parsing/placeholders';
 import { splitListIntoLineItems } from './listFallback';
+import { buildFrontmatterSegments } from './frontmatterSegments';
+import { defaultMarkdownSegmentConfig } from './markdownSegmentConfig';
 
 export class MarkdownSegmenter {
   private readonly processor = unified().use(remarkParse).use(remarkGfm).use(remarkFrontmatter, ['yaml', 'toml']);
 
-  segment(source: string): Segment[] {
+  segment(
+    source: string,
+    cfg?: Pick<TranslateConfig, 'targetLanguage' | 'detection' | 'privacy' | 'markdown'>,
+  ): Segment[] {
+    const segmentCfg = cfg ?? defaultMarkdownSegmentConfig();
+    const fm = buildFrontmatterSegments(source, segmentCfg, 0);
     const tree = this.processor.parse(source) as Root;
-    const segments: Segment[] = [];
-    let id = 0;
+    const segments: Segment[] = [...fm.segments];
+    let id = fm.nextId;
+    const fmBlock = fm.block;
     const visit = (node: Content, linePrefix = ''): void => {
       if (!node.position) return;
       const start = node.position.start.offset ?? 0;
       const end = node.position.end.offset ?? source.length;
-      if (node.type === 'code' || node.type === 'html' || node.type === 'yaml') {
+      const nodeType = node.type as string;
+      if (fmBlock && start < fmBlock.end && (nodeType === 'yaml' || nodeType === 'toml')) {
+        return;
+      }
+      if (node.type === 'code' || node.type === 'html' || node.type === 'yaml' || nodeType === 'toml') {
         segments.push(preserved(`s${id++}`, start, end, source.slice(start, end)));
         return;
       }
@@ -75,7 +88,7 @@ export class MarkdownSegmenter {
     for (const child of tree.children) {
       visit(child as Content);
     }
-    return segments;
+    return segments.sort((a, b) => a.range.start - b.range.start);
   }
 }
 

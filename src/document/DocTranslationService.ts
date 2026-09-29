@@ -130,7 +130,15 @@ export class DocTranslationService {
 
   private segment(doc: vscode.TextDocument): Segment[] {
     const text = doc.getText();
-    if (doc.languageId === 'markdown') return this.md.segment(text);
+    const cfg = this.config.get(doc.uri);
+    if (doc.languageId === 'markdown') {
+      return this.md.segment(text, {
+        targetLanguage: cfg.targetLanguage,
+        detection: cfg.detection,
+        privacy: cfg.privacy,
+        markdown: cfg.markdown,
+      });
+    }
     return this.plain.segment(text);
   }
 
@@ -158,10 +166,20 @@ export class DocTranslationService {
   }
 
   private async runTranslation(session: DocSession, _source: string, waitComplete = false): Promise<void> {
-    const items: { id: string; text: string; placeholders: import('../types').Placeholder[] }[] = [];
+    const items: {
+      id: string;
+      text: string;
+      placeholders: import('../types').Placeholder[];
+      batchCacheKind: 'documentBatch' | 'documentFrontmatterBatch';
+    }[] = [];
     for (const seg of session.segments) {
       if (seg.kind === 'preserved') continue;
-      items.push({ id: seg.id, text: seg.sourceText, placeholders: seg.placeholders });
+      items.push({
+        id: seg.id,
+        text: seg.sourceText,
+        placeholders: seg.placeholders,
+        batchCacheKind: seg.kind === 'frontmatter' ? 'documentFrontmatterBatch' : 'documentBatch',
+      });
     }
 
     const cfg = this.config.get(session.sourceUri);
@@ -169,7 +187,12 @@ export class DocTranslationService {
     let batch: typeof items = [];
     let chars = 0;
     for (const item of items) {
-      if (batch.length >= cfg.document.batchSize || chars + item.text.length > cfg.document.maxBatchChars) {
+      const kindClash = batch.length > 0 && batch[0].batchCacheKind !== item.batchCacheKind;
+      if (
+        kindClash ||
+        batch.length >= cfg.document.batchSize ||
+        chars + item.text.length > cfg.document.maxBatchChars
+      ) {
         if (batch.length) batches.push(batch);
         batch = [];
         chars = 0;

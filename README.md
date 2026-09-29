@@ -15,7 +15,7 @@
 - **语言包**：`generateLocaleFile` 对 JSON/YAML/properties 增量生成 `*.zh-CN.json` 等
 - **Notebook / 模板**：Markdown 单元格段落悬停；HTML/Vue/JSX 的 UI 属性与文本节点
 - **命名助手**：根据中文描述建议 camelCase / snake_case / PascalCase 标识符
-- **文档双语预览**：虚拟文档 `aitranslate:`，默认**交错**（每个块：完整原文 → 一空行 → 完整译文；列表/表格/引用整块翻译）；顶部 CodeLens / `Ctrl+Alt+Shift+D` / 状态栏 `译` 菜单；配置文件不支持整篇翻译
+- **文档双语预览**：虚拟文档 `aitranslate:`，默认**交错**（每个块：完整原文 → 一空行 → 完整译文；列表/表格/引用整块翻译）；Markdown **frontmatter** 白名单字段（默认 `description` 等）在预览中以 YAML 注释显示译文；`aiTranslate.markdown.frontmatterFields` 可定制或 `[]` 关闭；顶部 CodeLens / `Ctrl+Alt+Shift+D` / 状态栏 `译` 菜单；配置文件不支持整篇翻译
 - **生成译文文件**：如 `README.zh-CN.md`，覆盖前确认
 - **状态栏**：开关与目标语言 QuickPick
 - **缓存**：内存 LRU + 磁盘分片 JSONL

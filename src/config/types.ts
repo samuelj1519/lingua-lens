@@ -73,4 +73,7 @@ export interface TranslateConfig {
   log: {
     level: 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'off';
   };
+  markdown: {
+    frontmatterFields: string[];
+  };
 }

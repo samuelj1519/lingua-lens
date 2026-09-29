@@ -3,6 +3,7 @@ import type { ConfigService } from '../config/ConfigService';
 import { t } from '../l10n/uiL10n';
 import type { PrivacyGuard } from '../privacy/PrivacyGuard';
 import type { TranslationService } from '../translation/TranslationService';
+import { handleCommandLlmError } from '../llm/handleCommandError';
 
 export async function translateSelectionPopup(
   config: ConfigService,
@@ -67,6 +68,6 @@ export async function translateSelectionPopup(
   try {
     await showResult(false);
   } catch (e) {
-    void vscode.window.showErrorMessage(e instanceof Error ? e.message : String(e));
+    void handleCommandLlmError(e);
   }
 }

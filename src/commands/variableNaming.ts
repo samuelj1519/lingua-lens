@@ -3,6 +3,7 @@ import type { ConfigService } from '../config/ConfigService';
 import type { PrivacyGuard } from '../privacy/PrivacyGuard';
 import type { LlmClient } from '../llm/LlmClient';
 import { t } from '../l10n/uiL10n';
+import { handleCommandLlmError } from '../llm/handleCommandError';
 
 export async function suggestVariableNames(
   _config: ConfigService,
@@ -46,6 +47,6 @@ export async function suggestVariableNames(
       void vscode.window.showInformationMessage(t('msg.copied', pick.label));
     }
   } catch (e) {
-    void vscode.window.showErrorMessage(e instanceof Error ? e.message : String(e));
+    void handleCommandLlmError(e);
   }
 }

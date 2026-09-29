@@ -1,5 +1,6 @@
 {
   "command.acknowledgePrivacy": "Accepter l’avis de confidentialité",
+  "command.applyDeepSeekExtraBodyPreset": "Appliquer le préréglage DeepSeek sans réflexion",
   "command.clearApiKey": "Effacer la clé API",
   "command.clearCache": "Vider le cache de traduction",
   "command.disableForWorkspace": "Désactiver pour l’espace de travail",
@@ -10,8 +11,10 @@
   "command.hoverInsertComment": "Insérer en commentaire",
   "command.hoverRefresh": "Actualiser la traduction",
   "command.hoverRetranslate": "Retraduire",
+  "command.openExtraBodySettings": "Ouvrir le réglage Extra Body",
   "command.openGlossary": "Ouvrir le glossaire",
   "command.openSettings": "Ouvrir les paramètres",
+  "command.openSettingsPanel": "Ouvrir le panneau des paramètres",
   "command.refreshDocumentTranslation": "Actualiser la traduction du document",
   "command.refreshPreview": "Actualiser la traduction",
   "command.selectTargetLanguage": "Choisir la langue cible",
@@ -30,6 +33,5 @@
   "command.translateReplaceSelection": "Traduire et remplacer la sélection",
   "command.translateScmInput": "Traduire le message de commit SCM",
   "command.translateSelection": "Traduire la sélection",
-  "command.translateSelectionPopup": "Traduire la sélection (fenêtre)",
-  "command.openSettingsPanel": "Ouvrir le panneau des paramètres"
+  "command.translateSelectionPopup": "Traduire la sélection (fenêtre)"
 }

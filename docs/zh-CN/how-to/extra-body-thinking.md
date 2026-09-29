@@ -84,6 +84,10 @@ OpenAI 公开 API 不使用 DeepSeek/Qwen 思考字段。仍可传入：
 
 面板用 `JSON.stringify` 显示对象；更新经 `parseExtraBodyJson` 解析（须为普通对象，不能是数组）。
 
+## 交互请求的 `max_tokens` 下限（0.7.1+）
+
+悬停与选区翻译的单次 completion 上限为 `min(linguaLens.llm.maxTokens, 估算(source)×2.5+64)`；当 `extraBody` **未**明确关闭思考时，扩展会将该值**至少提高到 1024**（仍受 `maxTokens` 约束），以降低推理占满额度导致空译文的情况。若在 `extraBody` 中已关闭思考（DeepSeek `thinking.type: disabled` 或 Qwen `enable_thinking: false`），则仍使用较低的启发式上限。
+
 ## 步骤 3：验证行为
 
 1. **LinguaLens: Test Connection** — 仍应成功；额外字段不应破坏最小 completion。

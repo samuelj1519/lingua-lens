@@ -157,5 +157,11 @@
   "hover.error.showLog": "Show log",
   "naming.pickStyleTitle": "Choose a naming style to insert",
   "naming.promptDescription": "Describe the feature (any language)",
-  "statusbar.shortLabel": "Tr"
+  "statusbar.shortLabel": "Tr",
+  "llm.error.reasoningBudget": "模型將輸出額度用於推理或已達 token 上限，未返回譯文。請在 `linguaLens.llm.extraBody` 中關閉思考模式（DeepSeek：`{\"thinking\":{\"type\":\"disabled\"}}`）。",
+  "llm.error.action.applyThinkingOff": "套用關閉思考預設",
+  "llm.error.action.openExtraBodySettings": "開啟 extra body 設定",
+  "deepSeek.hint.message": "DeepSeek 可能預設開啟思考模式。請在 linguaLens.llm.extraBody 中關閉，以獲得更穩定的翻譯。",
+  "deepSeek.hint.apply": "套用",
+  "deepSeek.hint.dismiss": "不再提示"
 }

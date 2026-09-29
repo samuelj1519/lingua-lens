@@ -7,6 +7,7 @@ import { buildHoverDocumentSelector } from '../constants/hoverSelector';
 import { cancellableDelay } from '../util/delay';
 import type { HoverActionRegistry } from './HoverActionRegistry';
 import { LlmError } from '../llm/errors';
+import { localizedLlmErrorMessage } from '../llm/llmErrorUi';
 import { isCacheableTranslation } from '../translation/cacheable';
 import { t } from '../l10n/uiL10n';
 import { HOVER_TRUSTED_COMMANDS, hoverActionLinks } from './hoverActionLinks';
@@ -79,7 +80,7 @@ export class SelectionHoverProvider implements vscode.HoverProvider {
       }
       return this.build(doc, editor.selection, unit, result.text, cfg, false);
     } catch (e) {
-      if (e instanceof LlmError) return new vscode.Hover(e.message, editor.selection);
+      if (e instanceof LlmError) return new vscode.Hover(localizedLlmErrorMessage(e), editor.selection);
       return undefined;
     }
   }

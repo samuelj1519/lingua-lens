@@ -4,6 +4,7 @@ import type { HoverActionRegistry } from '../hover/HoverActionRegistry';
 import { t } from '../l10n/uiL10n';
 import type { TranslationService } from '../translation/TranslationService';
 import { isCacheableTranslation } from '../translation/cacheable';
+import { handleCommandLlmError } from '../llm/handleCommandError';
 
 export async function refreshHoverTranslation(
   id: string,
@@ -39,6 +40,6 @@ export async function refreshHoverTranslation(
       void vscode.window.showInformationMessage(t('msg.hoverRefreshed'));
     }
   } catch (e) {
-    void vscode.window.showErrorMessage(e instanceof Error ? e.message : String(e));
+    void handleCommandLlmError(e);
   }
 }

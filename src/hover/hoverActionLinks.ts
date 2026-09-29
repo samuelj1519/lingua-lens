@@ -10,6 +10,8 @@ export const HOVER_TRUSTED_COMMANDS = [
   'linguaLens.acknowledgePrivacy',
   'linguaLens.setApiKey',
   'linguaLens.openSettings',
+  'linguaLens.openExtraBodySettings',
+  'linguaLens.applyDeepSeekExtraBodyPreset',
   'linguaLens.showLog',
 ] as const;
 

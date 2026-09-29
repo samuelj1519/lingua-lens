@@ -157,5 +157,11 @@
   "hover.error.showLog": "Show log",
   "naming.pickStyleTitle": "Choose a naming style to insert",
   "naming.promptDescription": "Describe the feature (any language)",
-  "statusbar.shortLabel": "Tr"
+  "statusbar.shortLabel": "Tr",
+  "llm.error.reasoningBudget": "Le modèle a consommé le budget de complétion en raisonnement ou a atteint la limite de jetons ; aucun texte traduit n’a été renvoyé. Désactivez la réflexion via `linguaLens.llm.extraBody` (DeepSeek : {\"thinking\":{\"type\":\"disabled\"}}).",
+  "llm.error.action.applyThinkingOff": "Appliquer le préréglage sans réflexion",
+  "llm.error.action.openExtraBodySettings": "Ouvrir le réglage extra body",
+  "deepSeek.hint.message": "DeepSeek peut activer la réflexion par défaut. Désactivez-la dans linguaLens.llm.extraBody pour des traductions plus fiables.",
+  "deepSeek.hint.apply": "Appliquer",
+  "deepSeek.hint.dismiss": "Ne plus demander"
 }

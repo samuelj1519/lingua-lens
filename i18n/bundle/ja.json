@@ -157,5 +157,11 @@
   "hover.error.showLog": "Show log",
   "naming.pickStyleTitle": "Choose a naming style to insert",
   "naming.promptDescription": "Describe the feature (any language)",
-  "statusbar.shortLabel": "Tr"
+  "statusbar.shortLabel": "Tr",
+  "llm.error.reasoningBudget": "モデルが推論に完了トークン枠を使い切ったか、トークン上限に達したため、翻訳テキストが返りませんでした。`linguaLens.llm.extraBody` で思考を無効にしてください（DeepSeek: {\"thinking\":{\"type\":\"disabled\"}}）。",
+  "llm.error.action.applyThinkingOff": "思考無効プリセットを適用",
+  "llm.error.action.openExtraBodySettings": "extra body 設定を開く",
+  "deepSeek.hint.message": "DeepSeek は既定で思考モードが有効な場合があります。安定した翻訳には linguaLens.llm.extraBody で無効にしてください。",
+  "deepSeek.hint.apply": "適用",
+  "deepSeek.hint.dismiss": "今後表示しない"
 }

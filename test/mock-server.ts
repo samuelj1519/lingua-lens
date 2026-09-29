@@ -15,6 +15,41 @@ export function startMockServer(port = 0): Promise<{ server: ReturnType<typeof c
           res.end('unauthorized');
           return;
         }
+        if (scenario === 'reasoning-empty') {
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(
+            JSON.stringify({
+              choices: [
+                {
+                  message: { content: '', reasoning_content: 'internal chain of thought' },
+                  finish_reason: 'stop',
+                },
+              ],
+              model: 'mock',
+              usage: { prompt_tokens: 10, completion_tokens: 50, completion_tokens_details: { reasoning_tokens: 50 } },
+            }),
+          );
+          return;
+        }
+        if (scenario === 'length-empty') {
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(
+            JSON.stringify({
+              choices: [{ message: { content: '' }, finish_reason: 'length' }],
+              model: 'mock',
+              usage: { prompt_tokens: 10, completion_tokens: 0 },
+            }),
+          );
+          return;
+        }
+        if (scenario === 'stream-reasoning' && parsed.stream) {
+          res.writeHead(200, { 'Content-Type': 'text/event-stream' });
+          res.write('data: {"choices":[{"delta":{"reasoning_content":"thinking"}}]}\n\n');
+          res.write('data: {"choices":[{"delta":{},"finish_reason":"length"}]}\n\n');
+          res.write('data: [DONE]\n\n');
+          res.end();
+          return;
+        }
         const userMsg = parsed.messages?.find((m: { role: string }) => m.role === 'user')?.content ?? '';
         if (userMsg.includes('"items"') || userMsg.includes('Input:')) {
           try {

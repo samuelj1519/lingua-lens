@@ -5,6 +5,7 @@ import type { PrivacyGuard } from '../privacy/PrivacyGuard';
 import type { TranslationService } from '../translation/TranslationService';
 import { getCommitMessageAtLine, getScmInputMessage } from '../git/GitService';
 import { resolveSelectionTargetLanguage } from './selectionTarget';
+import { handleCommandLlmError } from '../llm/handleCommandError';
 
 export async function translateGitCommitAtLine(
   config: ConfigService,
@@ -82,6 +83,6 @@ async function translatePlainText(
     });
     await vscode.window.showTextDocument(doc, { preview: true });
   } catch (e) {
-    void vscode.window.showErrorMessage(e instanceof Error ? e.message : String(e));
+    void handleCommandLlmError(e);
   }
 }

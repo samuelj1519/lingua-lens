@@ -1,5 +1,6 @@
 {
   "command.acknowledgePrivacy": "プライバシーに同意",
+  "command.applyDeepSeekExtraBodyPreset": "DeepSeek 思考無効プリセットを適用",
   "command.clearApiKey": "API キーをクリア",
   "command.clearCache": "翻訳キャッシュをクリア",
   "command.disableForWorkspace": "ワークスペースで無効化",
@@ -10,6 +11,7 @@
   "command.hoverInsertComment": "コメントとして挿入",
   "command.hoverRefresh": "訳文を更新",
   "command.hoverRetranslate": "再翻訳",
+  "command.openExtraBodySettings": "Extra Body 設定を開く",
   "command.openGlossary": "用語集を開く",
   "command.openSettings": "設定を開く",
   "command.openSettingsPanel": "設定パネルを開く",

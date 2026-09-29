@@ -1,5 +1,6 @@
 {
   "command.acknowledgePrivacy": "Acknowledge Privacy",
+  "command.applyDeepSeekExtraBodyPreset": "Apply DeepSeek Disable-Thinking Preset",
   "command.clearApiKey": "Clear API Key",
   "command.clearCache": "Clear Translation Cache",
   "command.disableForWorkspace": "Disable for Workspace",
@@ -10,6 +11,7 @@
   "command.hoverInsertComment": "Insert as Comment",
   "command.hoverRefresh": "Refresh Translation",
   "command.hoverRetranslate": "Retranslate",
+  "command.openExtraBodySettings": "Open Extra Body Setting",
   "command.openGlossary": "Open Glossary",
   "command.openSettings": "Open Settings",
   "command.openSettingsPanel": "Open Settings Panel",

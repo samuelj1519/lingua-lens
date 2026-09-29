@@ -1,10 +1,13 @@
 import type { TranslateConfig } from '../config/types';
 import type { ApiKeyStore } from '../secrets/ApiKeyStore';
+import type { AppLogger } from '../util/logger';
 import { LlmError } from './errors';
+import { assertNonEmptyTranslation } from './outputBudget';
 import { backoffDelay, parseRetryAfter } from './retry';
+import { logLlmFailure, parseUsageFromApi, type LlmUsageSnapshot } from './requestFailureLog';
 import { RequestSemaphore } from './semaphore';
-import { appendStreamDelta, parseSseDataLine } from './sseContent';
-import { isCacheableTranslation } from '../translation/cacheable';
+import { applySseChunk, type SseCompletionAggregate } from './sseAggregate';
+import { parseSseDataLine } from './sseContent';
 
 export interface ChatMessage {
   role: 'system' | 'user' | 'assistant';
@@ -17,6 +20,8 @@ export interface ChatRequest {
   json?: boolean;
   priority: 'interactive' | 'background';
   signal?: AbortSignal;
+  /** Shown in output-channel failure logs (e.g. hover, selection, document-batch). */
+  feature?: string;
 }
 
 export interface ChatResponse {
@@ -33,6 +38,7 @@ export class LlmClient {
   constructor(
     private getConfig: () => TranslateConfig,
     private readonly apiKeys: ApiKeyStore,
+    private readonly log?: AppLogger,
   ) {
     this.sem = new RequestSemaphore(getConfig().llm.maxConcurrency);
   }
@@ -46,6 +52,23 @@ export class LlmClient {
   private capabilityKey(): string {
     const c = this.getConfig();
     return `${c.llm.baseUrl}|${c.llm.model}`;
+  }
+
+  private failureContext(
+    req: ChatRequest,
+    config: TranslateConfig,
+    error: LlmError,
+    extras?: { finishReason?: string; usage?: LlmUsageSnapshot; httpStatus?: number },
+  ): void {
+    logLlmFailure(this.log, {
+      feature: req.feature ?? 'chat',
+      model: config.llm.model,
+      baseUrl: config.llm.baseUrl,
+      httpStatus: extras?.httpStatus ?? error.status,
+      finishReason: extras?.finishReason ?? error.finishReason,
+      usage: extras?.usage ?? error.usage,
+      error,
+    });
   }
 
   async chat(req: ChatRequest): Promise<ChatResponse> {
@@ -86,6 +109,7 @@ export class LlmClient {
       } catch (e) {
         if (e instanceof LlmError) {
           if (e.kind === 'auth' || e.kind === 'noKey' || e.kind === 'noModel' || e.kind === 'cancelled') {
+            this.failureContext(req, config, e);
             throw e;
           }
           if (e.kind === 'badRequest' && req.json && useJson) {
@@ -97,15 +121,22 @@ export class LlmClient {
           if (e.kind === 'rateLimit') {
             this.sem.onRateLimit();
           }
-          if (attempt >= config.llm.maxRetries) throw e;
+          if (attempt >= config.llm.maxRetries) {
+            this.failureContext(req, config, e);
+            throw e;
+          }
           if (e.kind === 'rateLimit' || e.kind === 'server' || e.kind === 'timeout' || e.kind === 'network') {
             const wait = e.retryAfterMs ?? backoffDelay(attempt);
             const hoverCap = req.priority === 'interactive' ? 5000 : Infinity;
-            if (req.priority === 'interactive' && wait > hoverCap - (Date.now() - start)) throw e;
+            if (req.priority === 'interactive' && wait > hoverCap - (Date.now() - start)) {
+              this.failureContext(req, config, e);
+              throw e;
+            }
             await new Promise((r) => setTimeout(r, wait));
             attempt++;
             continue;
           }
+          this.failureContext(req, config, e);
           throw e;
         }
         throw e;
@@ -156,10 +187,22 @@ export class LlmClient {
       clearTimeout(timeout);
 
       if (useStream && res.ok && res.body) {
-        const content = await readSseContent(res.body, controller.signal);
+        const agg = await readSseAggregate(res.body, controller.signal);
+        assertNonEmptyTranslation({
+          content: agg.content,
+          reasoningContent: agg.reasoningContent,
+          finishReason: agg.finishReason,
+          usage: agg.usage,
+        });
         return {
-          content,
+          content: agg.content,
           model: config.llm.model,
+          usage: agg.usage
+            ? {
+                promptTokens: agg.usage.promptTokens ?? 0,
+                completionTokens: agg.usage.completionTokens ?? 0,
+              }
+            : undefined,
         };
       }
 
@@ -185,22 +228,32 @@ export class LlmClient {
       }
 
       const data = (await res.json()) as {
-        choices?: { message?: { content?: string } }[];
-        usage?: { prompt_tokens?: number; completion_tokens?: number };
+        choices?: {
+          message?: { content?: string | null; reasoning_content?: string | null };
+          finish_reason?: string;
+        }[];
+        usage?: unknown;
         model?: string;
       };
-      const msg = data.choices?.[0]?.message;
+      const choice = data.choices?.[0];
+      const msg = choice?.message;
       const content = msg?.content ?? '';
-      if (!isCacheableTranslation(content)) {
-        throw new LlmError('invalidResponse', 'Model returned an empty translation');
-      }
+      const reasoningContent = msg?.reasoning_content ?? '';
+      const finishReason = choice?.finish_reason;
+      const usage = parseUsageFromApi(data.usage);
+      assertNonEmptyTranslation({
+        content,
+        reasoningContent,
+        finishReason,
+        usage,
+      });
       return {
         content,
         model: data.model ?? config.llm.model,
-        usage: data.usage
+        usage: usage
           ? {
-              promptTokens: data.usage.prompt_tokens ?? 0,
-              completionTokens: data.usage.completion_tokens ?? 0,
+              promptTokens: usage.promptTokens ?? 0,
+              completionTokens: usage.completionTokens ?? 0,
             }
           : undefined,
       };
@@ -221,6 +274,7 @@ export class LlmClient {
         messages: [{ role: 'user', content: 'Reply with OK only.' }],
         maxTokens: 5,
         priority: 'interactive',
+        feature: 'test-connection',
       });
       return {
         ok: true,
@@ -234,11 +288,14 @@ export class LlmClient {
   }
 }
 
-async function readSseContent(body: ReadableStream<Uint8Array>, signal: AbortSignal): Promise<string> {
+async function readSseAggregate(
+  body: ReadableStream<Uint8Array>,
+  signal: AbortSignal,
+): Promise<SseCompletionAggregate> {
   const reader = body.getReader();
   const decoder = new TextDecoder();
   let buf = '';
-  let content = '';
+  let agg: SseCompletionAggregate = { content: '', reasoningContent: '' };
   while (true) {
     if (signal.aborted) throw new LlmError('cancelled', 'Cancelled');
     const { done, value } = await reader.read();
@@ -249,12 +306,8 @@ async function readSseContent(body: ReadableStream<Uint8Array>, signal: AbortSig
     for (const line of lines) {
       const json = parseSseDataLine(line);
       if (!json) continue;
-      const choices = json.choices as { delta?: Record<string, unknown> }[] | undefined;
-      content = appendStreamDelta(content, choices?.[0]?.delta);
+      agg = applySseChunk(agg, json);
     }
   }
-  if (!isCacheableTranslation(content)) {
-    throw new LlmError('invalidResponse', 'Empty streamed response');
-  }
-  return content;
+  return agg;
 }

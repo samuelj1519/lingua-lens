@@ -39,6 +39,8 @@ Command palette titles appear as **LinguaLens: …** (`category` is `LinguaLens`
 | `linguaLens.translateScmInput` | Translate SCM Commit Message | — | command palette |
 | `linguaLens.generateLocaleFile` | Generate Locale Translation File | — | command palette |
 | `linguaLens.suggestVariableNames` | Suggest English Variable Names | — | command palette |
+| `linguaLens.applyDeepSeekExtraBodyPreset` | Apply DeepSeek Disable-Thinking Preset | — | — |
+| `linguaLens.openExtraBodySettings` | Open Extra Body Setting | — | — |
 
 ## CodeLens
 

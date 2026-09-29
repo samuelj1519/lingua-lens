@@ -39,6 +39,8 @@
 | `linguaLens.translateScmInput` | 翻译 SCM 提交说明 | — | command palette |
 | `linguaLens.generateLocaleFile` | 生成语言包译文文件 | — | command palette |
 | `linguaLens.suggestVariableNames` | 根据描述建议英文变量名 | — | command palette |
+| `linguaLens.applyDeepSeekExtraBodyPreset` | 应用 DeepSeek 关闭思考预设 | — | — |
+| `linguaLens.openExtraBodySettings` | 打开 Extra Body 设置 | — | — |
 
 ## CodeLens
 

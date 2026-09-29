@@ -30,6 +30,9 @@ import { refreshHoverTranslation } from './commands/refreshHover';
 import { SettingsPanelController } from './settingsPanel/SettingsPanelController';
 import { countConfigurationProperties } from './settingsPanel/countSettings';
 import { applyTargetLanguageCursorUiBootstrap } from './l10n/targetLanguageBootstrap';
+import { applyDeepSeekThinkingDisabledPreset, openExtraBodySettings } from './llm/extraBodyActions';
+import { maybeShowDeepSeekThinkingHint } from './llm/deepSeekHint';
+import { handleCommandLlmError } from './llm/handleCommandError';
 import { initUiL10n, resetUiL10nCache, t } from './l10n/uiL10n';
 import { EXTENSION_SETTINGS_FILTER } from './constants/extensionId';
 let parserService: ParserService | undefined;
@@ -42,7 +45,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   const logger = new Logger(() => config.get().log.level);
   const stats = new StatsService();
   const apiKeys = new ApiKeyStore(context);
-  const llm = new LlmClient(() => config.get(), apiKeys);
+  const llm = new LlmClient(() => config.get(), apiKeys, logger);
   const cfg = config.get();
   if (process.env.AITRANSLATE_INTEGRATION_TEST === '1') {
     const port = process.env.AITRANSLATE_MOCK_PORT ?? '18765';
@@ -205,7 +208,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         await vscode.window.showTextDocument(virt, { viewColumn: vscode.ViewColumn.Beside, preview: true });
       }
     } catch (e) {
-      void vscode.window.showErrorMessage(e instanceof Error ? e.message : String(e));
+      void handleCommandLlmError(e);
     }
   });
 
@@ -386,7 +389,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     void statusBar.refresh();
   });
 
+  reg('linguaLens.applyDeepSeekExtraBodyPreset', () => applyDeepSeekThinkingDisabledPreset());
+  reg('linguaLens.openExtraBodySettings', () => openExtraBodySettings());
+
   void glossary.ensureLoaded();
+  void maybeShowDeepSeekThinkingHint(context, config.get());
   logger.info(`LinguaLens activated (VS Code ${vscode.version})`);
 }
 

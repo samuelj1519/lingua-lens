@@ -157,5 +157,11 @@
   "hover.error.showLog": "Show log",
   "naming.pickStyleTitle": "Choose a naming style to insert",
   "naming.promptDescription": "Describe the feature (any language)",
-  "statusbar.shortLabel": "Tr"
+  "statusbar.shortLabel": "Tr",
+  "llm.error.reasoningBudget": "O modelo usou o orçamento de conclusão em raciocínio ou atingiu o limite de tokens; nenhum texto traduzido foi retornado. Desative o raciocínio em `linguaLens.llm.extraBody` (DeepSeek: {\"thinking\":{\"type\":\"disabled\"}}).",
+  "llm.error.action.applyThinkingOff": "Aplicar preset sem raciocínio",
+  "llm.error.action.openExtraBodySettings": "Abrir configuração extra body",
+  "deepSeek.hint.message": "O DeepSeek pode ativar raciocínio por padrão. Desative em linguaLens.llm.extraBody para traduções mais confiáveis.",
+  "deepSeek.hint.apply": "Aplicar",
+  "deepSeek.hint.dismiss": "Não perguntar de novo"
 }

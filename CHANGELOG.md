@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.7.1
+
+- **Reasoning / token budget errors**: detect empty `content` with `reasoning_content` or `finish_reason: length` (streaming and non-streaming) and surface a localized `reasoningBudget` error with actions to open `linguaLens.llm.extraBody` or apply the DeepSeek disable-thinking preset
+- **Interactive completion floor**: hover/selection requests use at least 1024 completion tokens when thinking is not explicitly disabled in `extraBody`, still bounded by `linguaLens.llm.maxTokens`
+- **LLM failure logging**: structured lines in the LinguaLens output channel (feature, model, host, HTTP status, `finish_reason`, token usage, error kind) without prompts or secrets
+- **DeepSeek hint**: one-time suggestion when `baseUrl` host is `api.deepseek.com` and `extraBody` has no `thinking` key, with Apply / Don't ask again (`globalState`)
+
 ## 0.7.0
 
 - Renamed from **cursor-ai-translate** / **AI Translate** to **LinguaLens** (`lingua-lens`, **`samuel-j.lingua-lens`**); settings, commands, and preview scheme use **`linguaLens.*`** / **`lingualens:`**

@@ -4,6 +4,7 @@ import { t } from '../l10n/uiL10n';
 import type { PrivacyGuard } from '../privacy/PrivacyGuard';
 import type { TranslationService } from '../translation/TranslationService';
 import { resolveSelectionTargetLanguage } from './selectionTarget';
+import { handleCommandLlmError } from '../llm/handleCommandError';
 
 export async function translateClipboardOrSelection(
   config: ConfigService,
@@ -64,6 +65,6 @@ export async function translateClipboardOrSelection(
     }
     void panel;
   } catch (e) {
-    void vscode.window.showErrorMessage(e instanceof Error ? e.message : String(e));
+    void handleCommandLlmError(e);
   }
 }

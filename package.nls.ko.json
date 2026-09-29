@@ -1,5 +1,6 @@
 {
   "command.acknowledgePrivacy": "개인정보 안내 확인",
+  "command.applyDeepSeekExtraBodyPreset": "DeepSeek 사고 비활성 프리셋 적용",
   "command.clearApiKey": "API 키 지우기",
   "command.clearCache": "번역 캐시 지우기",
   "command.disableForWorkspace": "워크스페이스에서 사용 안 함",
@@ -10,6 +11,7 @@
   "command.hoverInsertComment": "주석으로 삽입",
   "command.hoverRefresh": "번역 새로 고침",
   "command.hoverRetranslate": "다시 번역",
+  "command.openExtraBodySettings": "Extra Body 설정 열기",
   "command.openGlossary": "용어집 열기",
   "command.openSettings": "설정 열기",
   "command.openSettingsPanel": "설정 패널 열기",

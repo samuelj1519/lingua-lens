@@ -1,6 +1,7 @@
 import type { TranslateConfig } from '../config/types';
 import type { GlossaryService } from '../glossary/GlossaryService';
 import { LlmError } from '../llm/errors';
+import { singleTranslateMaxTokens } from '../llm/singleTranslateMaxTokens';
 import type { LlmClient } from '../llm/LlmClient';
 import { parseBatchResponse, PromptBuilder, sanitizeModelOutput } from '../prompts/PromptBuilder';
 import type { CacheService } from '../cache/CacheService';
@@ -178,12 +179,13 @@ export class TranslationService {
       glossary: glossaryTerms,
       customSystemPrompt: cfg.llm.systemPrompt,
     });
-    const maxTokens = Math.min(cfg.llm.maxTokens, estimateTokens(unit.text) * 2.5 + 64);
+    const maxTokens = singleTranslateMaxTokens(cfg, unit.text);
     try {
       const res = await this.llm.chat({
         messages,
-        maxTokens: Math.ceil(maxTokens),
+        maxTokens,
         priority: 'interactive',
+        feature: opts.kind === 'hover' ? 'hover' : 'selection',
       });
       this.stats.inc('apiCalls');
       if (res.usage) {
@@ -270,6 +272,7 @@ export class TranslationService {
           maxTokens: cfg.llm.maxTokens,
           priority: 'background',
           signal,
+          feature: 'document-batch',
         });
         this.stats.inc('apiCalls');
         const map = parseBatchResponse(res.content);
@@ -322,13 +325,4 @@ export class TranslationService {
     }
     return results;
   }
-}
-
-function estimateTokens(text: string): number {
-  let n = 0;
-  for (const ch of text) {
-    const cp = ch.codePointAt(0)!;
-    n += cp > 0x2e80 ? 1 : 0.25;
-  }
-  return Math.ceil(n);
 }

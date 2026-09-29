@@ -1,5 +1,6 @@
 {
   "command.acknowledgePrivacy": "プライバシーに同意",
+  "command.applyDeepSeekExtraBodyPreset": "DeepSeek 思考無効プリセットを適用",
   "command.clearApiKey": "API キーをクリア",
   "command.clearCache": "翻訳キャッシュをクリア",
   "command.disableForWorkspace": "ワークスペースで無効化",
@@ -10,8 +11,10 @@
   "command.hoverInsertComment": "コメントとして挿入",
   "command.hoverRefresh": "訳文を更新",
   "command.hoverRetranslate": "再翻訳",
+  "command.openExtraBodySettings": "Extra Body 設定を開く",
   "command.openGlossary": "用語集を開く",
   "command.openSettings": "設定を開く",
+  "command.openSettingsPanel": "設定パネルを開く",
   "command.refreshDocumentTranslation": "ドキュメント翻訳を更新",
   "command.refreshPreview": "翻訳を更新",
   "command.selectTargetLanguage": "翻訳先言語を選択",
@@ -30,6 +33,5 @@
   "command.translateReplaceSelection": "翻訳して選択範囲を置換",
   "command.translateScmInput": "SCM コミットメッセージを翻訳",
   "command.translateSelection": "選択範囲を翻訳",
-  "command.translateSelectionPopup": "選択範囲を翻訳（ポップアップ）",
-  "command.openSettingsPanel": "設定パネルを開く"
+  "command.translateSelectionPopup": "選択範囲を翻訳（ポップアップ）"
 }

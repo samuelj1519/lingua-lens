@@ -1,5 +1,6 @@
 {
   "command.acknowledgePrivacy": "Confirmar aviso de privacidad",
+  "command.applyDeepSeekExtraBodyPreset": "Aplicar preset DeepSeek sin razonamiento",
   "command.clearApiKey": "Borrar clave API",
   "command.clearCache": "Vaciar caché de traducción",
   "command.disableForWorkspace": "Desactivar en el espacio de trabajo",
@@ -10,6 +11,7 @@
   "command.hoverInsertComment": "Insertar como comentario",
   "command.hoverRefresh": "Actualizar traducción",
   "command.hoverRetranslate": "Retraducir",
+  "command.openExtraBodySettings": "Abrir ajuste Extra Body",
   "command.openGlossary": "Abrir glosario",
   "command.openSettings": "Abrir configuración",
   "command.openSettingsPanel": "Abrir panel de configuración",

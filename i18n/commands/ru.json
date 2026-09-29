@@ -1,5 +1,6 @@
 {
   "command.acknowledgePrivacy": "Подтвердить уведомление о конфиденциальности",
+  "command.applyDeepSeekExtraBodyPreset": "Применить пресет DeepSeek без thinking",
   "command.clearApiKey": "Очистить ключ API",
   "command.clearCache": "Очистить кэш перевода",
   "command.disableForWorkspace": "Отключить для рабочей области",
@@ -10,8 +11,10 @@
   "command.hoverInsertComment": "Вставить как комментарий",
   "command.hoverRefresh": "Обновить перевод",
   "command.hoverRetranslate": "Перевести заново",
+  "command.openExtraBodySettings": "Открыть настройку Extra Body",
   "command.openGlossary": "Открыть глоссарий",
   "command.openSettings": "Открыть настройки",
+  "command.openSettingsPanel": "Открыть панель настроек",
   "command.refreshDocumentTranslation": "Обновить перевод документа",
   "command.refreshPreview": "Обновить перевод",
   "command.selectTargetLanguage": "Выбрать язык перевода",
@@ -30,6 +33,5 @@
   "command.translateReplaceSelection": "Перевести и заменить выделение",
   "command.translateScmInput": "Перевести сообщение коммита SCM",
   "command.translateSelection": "Перевести выделение",
-  "command.translateSelectionPopup": "Перевести выделение (всплывающее окно)",
-  "command.openSettingsPanel": "Открыть панель настроек"
+  "command.translateSelectionPopup": "Перевести выделение (всплывающее окно)"
 }

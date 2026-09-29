@@ -157,5 +157,11 @@
   "hover.error.showLog": "Show log",
   "naming.pickStyleTitle": "Choose a naming style to insert",
   "naming.promptDescription": "Describe the feature (any language)",
-  "statusbar.shortLabel": "Tr"
+  "statusbar.shortLabel": "Tr",
+  "llm.error.reasoningBudget": "Das Modell hat das Completion-Budget für Reasoning verbraucht oder das Token-Limit erreicht; kein Übersetzungstext wurde zurückgegeben. Deaktivieren Sie Thinking über `linguaLens.llm.extraBody` (DeepSeek: {\"thinking\":{\"type\":\"disabled\"}}).",
+  "llm.error.action.applyThinkingOff": "Thinking-aus-Preset anwenden",
+  "llm.error.action.openExtraBodySettings": "Extra-Body-Einstellung öffnen",
+  "deepSeek.hint.message": "DeepSeek kann Thinking standardmäßig aktivieren. Deaktivieren Sie es in linguaLens.llm.extraBody für zuverlässigere Übersetzungen.",
+  "deepSeek.hint.apply": "Anwenden",
+  "deepSeek.hint.dismiss": "Nicht mehr fragen"
 }

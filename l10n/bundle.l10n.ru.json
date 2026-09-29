@@ -157,5 +157,11 @@
   "hover.error.showLog": "Show log",
   "naming.pickStyleTitle": "Choose a naming style to insert",
   "naming.promptDescription": "Describe the feature (any language)",
-  "statusbar.shortLabel": "Tr"
+  "statusbar.shortLabel": "Tr",
+  "llm.error.reasoningBudget": "Модель израсходовала лимит завершения на рассуждение или достигла лимита токенов; перевод не возвращён. Отключите thinking в `linguaLens.llm.extraBody` (DeepSeek: {\"thinking\":{\"type\":\"disabled\"}}).",
+  "llm.error.action.applyThinkingOff": "Применить пресет без thinking",
+  "llm.error.action.openExtraBodySettings": "Открыть настройку extra body",
+  "deepSeek.hint.message": "DeepSeek может включать thinking по умолчанию. Отключите в linguaLens.llm.extraBody для стабильных переводов.",
+  "deepSeek.hint.apply": "Применить",
+  "deepSeek.hint.dismiss": "Больше не спрашивать"
 }

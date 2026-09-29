@@ -157,5 +157,11 @@
   "statusbar.tooltip.skipped": "本地跳过",
   "statusbar.tooltip.target": "目标",
   "statusbar.tooltip.title": "LinguaLens",
-  "statusbar.tooltip.tokens": "Token (输入/输出)"
+  "statusbar.tooltip.tokens": "Token (输入/输出)",
+  "llm.error.reasoningBudget": "模型将输出额度用于推理或已达到 token 上限，未返回译文。请在 `linguaLens.llm.extraBody` 中关闭思考模式（DeepSeek：`{\"thinking\":{\"type\":\"disabled\"}}`）。",
+  "llm.error.action.applyThinkingOff": "应用关闭思考预设",
+  "llm.error.action.openExtraBodySettings": "打开 extra body 设置",
+  "deepSeek.hint.message": "DeepSeek 可能默认开启思考模式。请在 linguaLens.llm.extraBody 中关闭，以获得更稳定的翻译。",
+  "deepSeek.hint.apply": "应用",
+  "deepSeek.hint.dismiss": "不再提示"
 }

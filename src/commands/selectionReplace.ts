@@ -6,6 +6,7 @@ import type { TargetLang } from '../types';
 import { TARGET_LANG_NAMES } from '../detection/families';
 import { t } from '../l10n/uiL10n';
 import { resolveSelectionTargetLanguage } from './selectionTarget';
+import { handleCommandLlmError } from '../llm/handleCommandError';
 
 export async function translateReplaceSelection(
   config: ConfigService,
@@ -102,6 +103,6 @@ async function runSelectionTransform(
       });
     }
   } catch (e) {
-    void vscode.window.showErrorMessage(e instanceof Error ? e.message : String(e));
+    void handleCommandLlmError(e);
   }
 }

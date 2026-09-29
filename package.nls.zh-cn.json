@@ -1,5 +1,6 @@
 {
   "command.acknowledgePrivacy": "确认隐私提示",
+  "command.applyDeepSeekExtraBodyPreset": "应用 DeepSeek 关闭思考预设",
   "command.clearApiKey": "清除 API Key",
   "command.clearCache": "清除翻译缓存",
   "command.disableForWorkspace": "在此工作区禁用",
@@ -10,6 +11,7 @@
   "command.hoverInsertComment": "插入为注释",
   "command.hoverRefresh": "刷新译文",
   "command.hoverRetranslate": "重新翻译",
+  "command.openExtraBodySettings": "打开 Extra Body 设置",
   "command.openGlossary": "打开术语表",
   "command.openSettings": "打开设置",
   "command.openSettingsPanel": "打开设置面板",

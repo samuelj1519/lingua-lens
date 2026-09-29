@@ -3,6 +3,7 @@ import { buildHoverDocumentSelector } from '../constants/hoverSelector';
 import type { ConfigService } from '../config/ConfigService';
 import { decide } from '../detection/LanguageDetector';
 import { LlmError } from '../llm/errors';
+import { localizedLlmErrorMessage, reasoningBudgetHoverLinks } from '../llm/llmErrorUi';
 import type { CombinedExtractor } from '../parsing/CombinedExtractor';
 import type { PrivacyGuard } from '../privacy/PrivacyGuard';
 import type { StatsService } from '../stats/StatsService';
@@ -211,8 +212,20 @@ export class TranslateHoverProvider implements vscode.HoverProvider {
     if (e.kind === 'noModel' || e.kind === 'notFound') {
       links.push(`[${t('hover.error.openSettings')}](command:linguaLens.openSettings)`);
     }
-    const md = new vscode.MarkdownString(e.message + (links.length ? '\n\n' + links.join(' · ') : ''));
-    md.isTrusted = { enabledCommands: ['linguaLens.setApiKey', 'linguaLens.openSettings'] };
+    if (e.kind === 'reasoningBudget') {
+      links.push(reasoningBudgetHoverLinks());
+    }
+    const md = new vscode.MarkdownString(
+      localizedLlmErrorMessage(e) + (links.length ? '\n\n' + links.join(' · ') : ''),
+    );
+    md.isTrusted = {
+      enabledCommands: [
+        'linguaLens.setApiKey',
+        'linguaLens.openSettings',
+        'linguaLens.openExtraBodySettings',
+        'linguaLens.applyDeepSeekExtraBodyPreset',
+      ],
+    };
     return new vscode.Hover(md, range);
   }
 }

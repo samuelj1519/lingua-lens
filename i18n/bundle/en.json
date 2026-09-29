@@ -157,5 +157,11 @@
   "statusbar.tooltip.skipped": "Skipped locally",
   "statusbar.tooltip.target": "Target",
   "statusbar.tooltip.title": "LinguaLens",
-  "statusbar.tooltip.tokens": "Tokens (in/out)"
+  "statusbar.tooltip.tokens": "Tokens (in/out)",
+  "llm.error.reasoningBudget": "The model used the completion budget for reasoning or hit the token limit, so no translation text was returned. Disable thinking via `linguaLens.llm.extraBody` (DeepSeek: {\"thinking\":{\"type\":\"disabled\"}}).",
+  "llm.error.action.applyThinkingOff": "Apply disable-thinking preset",
+  "llm.error.action.openExtraBodySettings": "Open extra body setting",
+  "deepSeek.hint.message": "DeepSeek may enable thinking mode by default. Disable it in linguaLens.llm.extraBody for more reliable translations.",
+  "deepSeek.hint.apply": "Apply",
+  "deepSeek.hint.dismiss": "Don't ask again"
 }

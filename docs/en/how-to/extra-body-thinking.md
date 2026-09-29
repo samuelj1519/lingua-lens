@@ -84,6 +84,10 @@ Consult Volcengine docs for OpenAI-compatible parameters. If no thinking flag is
 
 The panel serializes objects with `JSON.stringify` for display; updates parse through `parseExtraBodyJson` (must be a plain object, not an array).
 
+## Interactive `max_tokens` floor (0.7.1+)
+
+Hover and selection use a per-request completion cap of `min(linguaLens.llm.maxTokens, estimate(source)×2.5+64)`, but when thinking is **not** explicitly disabled in `extraBody`, the extension raises that cap to **at least 1024** (still capped by `maxTokens`). This reduces empty translations when providers spend the completion budget on reasoning. If you disable thinking (DeepSeek `thinking.type: disabled` or Qwen `enable_thinking: false`), the lower heuristic applies again.
+
 ## Step 3: Verify behavior
 
 1. **LinguaLens: Test Connection** — should still succeed; extra fields should not break a minimal completion.

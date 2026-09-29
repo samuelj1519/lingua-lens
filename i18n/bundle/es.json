@@ -157,5 +157,11 @@
   "hover.error.showLog": "Show log",
   "naming.pickStyleTitle": "Choose a naming style to insert",
   "naming.promptDescription": "Describe the feature (any language)",
-  "statusbar.shortLabel": "Tr"
+  "statusbar.shortLabel": "Tr",
+  "llm.error.reasoningBudget": "El modelo usó el presupuesto de finalización en razonamiento o alcanzó el límite de tokens; no se devolvió texto traducido. Desactive el razonamiento en `linguaLens.llm.extraBody` (DeepSeek: {\"thinking\":{\"type\":\"disabled\"}}).",
+  "llm.error.action.applyThinkingOff": "Aplicar preset sin razonamiento",
+  "llm.error.action.openExtraBodySettings": "Abrir ajuste extra body",
+  "deepSeek.hint.message": "DeepSeek puede activar el razonamiento por defecto. Desactívelo en linguaLens.llm.extraBody para traducciones más fiables.",
+  "deepSeek.hint.apply": "Aplicar",
+  "deepSeek.hint.dismiss": "No volver a preguntar"
 }

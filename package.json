@@ -2,7 +2,7 @@
   "name": "cursor-ai-translate",
   "displayName": "AI Translate",
   "description": "使用 LLM 翻译项目中的注释、字符串和文档",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "cursor-ai-translate",
   "repository": { "type": "git", "url": "https://github.com/local/cursor-ai-translate" },
   "license": "MIT",
@@ -135,7 +135,14 @@
         "aiTranslate.glossary.maxTerms": { "type": "number", "default": 50, "minimum": 0, "scope": "resource" },
         "aiTranslate.selection.output": { "type": "string", "enum": ["auto", "notification", "document"], "default": "auto", "scope": "resource" },
         "aiTranslate.parser.maxFileSizeKB": { "type": "number", "default": 1024, "minimum": 16, "scope": "application" },
-        "aiTranslate.statusBar.enabled": { "type": "boolean", "default": true, "scope": "application" }
+        "aiTranslate.statusBar.enabled": { "type": "boolean", "default": true, "scope": "application" },
+        "aiTranslate.log.level": {
+          "type": "string",
+          "enum": ["trace", "debug", "info", "warn", "error", "off"],
+          "default": "info",
+          "scope": "application",
+          "description": "扩展日志级别；悬停流水线细节请设为 debug 或 trace"
+        }
       }
     },
     "jsonValidation": [
@@ -149,7 +156,8 @@
     "test:watch": "vitest",
     "lint": "tsc --noEmit",
     "package": "npm run build && vsce package --no-dependencies",
-    "smoke:tree-sitter": "node scripts/smoke-tree-sitter.mjs"
+    "smoke:tree-sitter": "node scripts/smoke-tree-sitter.mjs",
+    "test:integration": "npm run build && node scripts/run-integration.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.14.0",

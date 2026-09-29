@@ -111,6 +111,9 @@ export class ConfigService implements vscode.Disposable {
       statusBar: {
         enabled: cfg.get<boolean>('statusBar.enabled', true),
       },
+      log: {
+        level: cfg.get<'trace' | 'debug' | 'info' | 'warn' | 'error' | 'off'>('log.level', 'info'),
+      },
     };
   }
 

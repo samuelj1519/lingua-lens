@@ -60,4 +60,7 @@ export interface TranslateConfig {
   statusBar: {
     enabled: boolean;
   };
+  log: {
+    level: 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'off';
+  };
 }

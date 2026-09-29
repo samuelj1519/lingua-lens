@@ -12,7 +12,8 @@ describe('TreeSitterExtractor', () => {
       console.warn('Skipping: wasm not built');
       return;
     }
-    const parser = new ParserService(wasmDir, 1024);
+    const noopLog = { trace: () => {}, debug: () => {}, info: () => {}, warn: () => {}, error: () => {}, show: () => {} };
+    const parser = new ParserService(wasmDir, 1024, noopLog);
     const extractor = new TreeSitterExtractor(parser);
     const src = '// line one\n// line two\nconst a = "hi";\n';
     const doc = {

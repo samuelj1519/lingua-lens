@@ -1,10 +1,9 @@
 import * as vscode from 'vscode';
-import * as path from 'path';
 import { CacheService } from './cache/CacheService';
 import { ConfigService } from './config/ConfigService';
 import { DocTranslationService } from './document/DocTranslationService';
 import { PreviewContentProvider } from './document/PreviewContentProvider';
-import { TranslateHoverProvider } from './hover/TranslateHoverProvider';
+import { createHoverProvider } from './hover/TranslateHoverProvider';
 import { HoverActionRegistry } from './hover/HoverActionRegistry';
 import { GlossaryService } from './glossary/GlossaryService';
 import { LlmClient } from './llm/LlmClient';
@@ -22,8 +21,8 @@ let parserService: ParserService | undefined;
 let cacheService: CacheService | undefined;
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
-  const logger = new Logger();
   const config = new ConfigService();
+  const logger = new Logger(() => config.get().log.level);
   const stats = new StatsService();
   const apiKeys = new ApiKeyStore(context);
   const llm = new LlmClient(() => config.get(), apiKeys);
@@ -34,9 +33,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   const glossary = new GlossaryService(config, logger);
   const translation = new TranslationService((uri) => config.get(uri), cacheService, llm, glossary, stats);
   const guard = new PrivacyGuard(config, context);
-  const wasmDir = path.join(context.extensionPath, 'dist', 'wasm');
-  parserService = new ParserService(wasmDir, cfg.parser.maxFileSizeKB);
-  const extractor = new CombinedExtractor(parserService);
+  const wasmDir = vscode.Uri.joinPath(context.extensionUri, 'dist', 'wasm').fsPath;
+  parserService = new ParserService(wasmDir, cfg.parser.maxFileSizeKB, logger);
+  const extractor = new CombinedExtractor(parserService, logger);
   const hoverRegistry = new HoverActionRegistry();
   const preview = new PreviewContentProvider();
   const docService = new DocTranslationService(config, guard, translation, preview);
@@ -48,7 +47,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     glossary,
     statusBar,
     vscode.workspace.registerTextDocumentContentProvider('aitranslate', preview),
-    vscode.languages.registerHoverProvider({ scheme: '*', language: '*' }, new TranslateHoverProvider(config, guard, extractor, translation, stats, hoverRegistry)),
+    createHoverProvider(config, guard, extractor, translation, stats, hoverRegistry, logger),
     vscode.workspace.onDidChangeTextDocument((e) => {
       parserService?.applyChanges(e.document.uri.toString(), e.contentChanges, e.document.version);
     }),
@@ -256,8 +255,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
   config.onDidChange(() => {
     const c = config.get();
+    logger.setLevelProvider(() => c.log.level);
     cacheService?.configure(c.cache.enabled, c.cache.memoryEntries, c.cache.maxDiskMB);
-    parserService = new ParserService(wasmDir, c.parser.maxFileSizeKB);
+    parserService?.setMaxFileSizeKB(c.parser.maxFileSizeKB);
   });
 
   apiKeys.onDidChange(() => {

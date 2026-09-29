@@ -6,7 +6,8 @@
 
 ## 功能
 
-- **悬停翻译**：注释与字符串（tree-sitter + 正则回退），额外延迟可配置（默认 700ms）
+- **悬停翻译**：代码文件中的注释与字符串（tree-sitter + 正则回退），额外延迟可配置（默认 700ms）。**Markdown / 纯文本**请用「翻译文档」或选区翻译（悬停不翻译正文段落）
+- **诊断日志**：设置 `aiTranslate.log.level` 为 `debug` 可查看悬停流水线（守卫、提取、检测、缓存）
 - **选区翻译**：`Ctrl+Alt+Shift+T`（macOS：`Cmd+Alt+Shift+T`）
 - **文档双语预览**：虚拟文档 `aitranslate:`，原文在上、译文在下
 - **生成译文文件**：如 `README.zh-CN.md`，覆盖前确认

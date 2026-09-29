@@ -1,6 +1,10 @@
 export type CommentFamily = 'cLike' | 'hash' | 'dashDash' | 'xml' | 'semicolon' | 'percent';
 
 export const LANGUAGE_TO_FAMILY: Record<string, CommentFamily> = {
+  typescript: 'cLike',
+  typescriptreact: 'cLike',
+  javascript: 'cLike',
+  javascriptreact: 'cLike',
   csharp: 'cLike',
   kotlin: 'cLike',
   swift: 'cLike',

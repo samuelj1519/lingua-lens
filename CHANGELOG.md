@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.10
+
+- **Icon**: replace placeholder square with a 256×256 lens-and-text marketplace icon aligned with gallery banner `#1e3a5f`.
+- **Keywords**: remove `copilot` and `chatgpt` (trademark risk); keep `openai` and `cursor`.
+- **Publish tooling**: bump `@vscode/vsce` to 4.x; add `ovsx` and `publish:vsce` / `publish:ovsx` scripts (tokens via `VSCE_PAT` / `OVSX_PAT`).
+
 ## 0.7.9
 
 - **Marketplace metadata**: public GitHub repo URLs (`samuelj1519/lingua-lens`), `bugs` and `homepage`, PNG icon, gallery banner, expanded keywords; README quick start and privacy section for store listing; standard MIT license line.

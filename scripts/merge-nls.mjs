@@ -1,8 +1,12 @@
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+const i18nCommands = join(root, 'i18n', 'commands');
+const i18nConfig = join(root, 'i18n', 'config');
+const i18nBundle = join(root, 'i18n', 'bundle');
+const l10nDir = join(root, 'l10n');
 
 /** VS Code package.nls locale ids */
 const PACKAGE_NLS_LOCALES = [
@@ -18,13 +22,15 @@ const PACKAGE_NLS_LOCALES = [
   { out: 'package.nls.pt-br.json', commands: 'pt-br', config: 'pt-br' },
 ];
 
+const BUNDLE_LOCALES = ['zh-cn', 'zh-tw', 'ja', 'ko', 'fr', 'de', 'es', 'ru', 'pt-br'];
+
 function loadJson(path) {
   return JSON.parse(readFileSync(path, 'utf8'));
 }
 
 function mergeLocale(commandsLocale, configLocale) {
-  const commandsPath = join(root, `package.nls.commands.${commandsLocale}.json`);
-  const configPath = join(root, `package.nls.config.${configLocale}.json`);
+  const commandsPath = join(i18nCommands, `${commandsLocale}.json`);
+  const configPath = join(i18nConfig, `${configLocale}.json`);
   const commands = loadJson(commandsPath);
   const config = loadJson(configPath);
   const merged = { ...commands, ...config };
@@ -34,13 +40,30 @@ function mergeLocale(commandsLocale, configLocale) {
   return out;
 }
 
+function syncBundles() {
+  const enPath = join(i18nBundle, 'en.json');
+  if (!existsSync(enPath)) return;
+  writeFileSync(join(l10nDir, 'bundle.l10n.json'), `${JSON.stringify(loadJson(enPath), null, 2)}\n`);
+  for (const loc of BUNDLE_LOCALES) {
+    const src = join(i18nBundle, `${loc}.json`);
+    if (existsSync(src)) {
+      writeFileSync(
+        join(l10nDir, `bundle.l10n.${loc}.json`),
+        `${JSON.stringify(loadJson(src), null, 2)}\n`,
+      );
+    }
+  }
+}
+
 for (const { out, commands, config } of PACKAGE_NLS_LOCALES) {
   const outPath = join(root, out);
   writeFileSync(outPath, `${JSON.stringify(mergeLocale(commands, config), null, 2)}\n`);
 }
 
-// Sync runtime bundle base from English panel strings if bundle.l10n.json exists
-const bundlePath = join(root, 'bundle.l10n.json');
+syncBundles();
+
+// Legacy: merge package.l10n.json into bundle base if present
+const bundlePath = join(l10nDir, 'bundle.l10n.json');
 if (existsSync(bundlePath)) {
   const legacyL10n = join(root, 'package.l10n.json');
   if (existsSync(legacyL10n)) {
@@ -52,3 +75,7 @@ if (existsSync(bundlePath)) {
 }
 
 console.log(`Merged ${PACKAGE_NLS_LOCALES.length} package.nls locales`);
+if (existsSync(i18nBundle)) {
+  const bundleFiles = readdirSync(i18nBundle).filter((f) => f.endsWith('.json'));
+  console.log(`Synced ${bundleFiles.length} bundle source files to l10n/`);
+}

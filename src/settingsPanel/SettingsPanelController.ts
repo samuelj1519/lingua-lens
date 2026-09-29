@@ -65,7 +65,7 @@ export class SettingsPanelController {
 
   private readBundle(locale: BundleLocale): Record<string, string> | undefined {
     const file = locale === 'en' ? 'bundle.l10n.json' : `bundle.l10n.${locale}.json`;
-    const p = path.join(this.context.extensionPath, file);
+    const p = path.join(this.context.extensionPath, 'l10n', file);
     if (!fs.existsSync(p)) return undefined;
     return JSON.parse(fs.readFileSync(p, 'utf8')) as Record<string, string>;
   }

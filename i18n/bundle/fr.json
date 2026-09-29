@@ -39,7 +39,15 @@
   "panel.cache.enabled": "Activer le cache",
   "panel.cache.memoryEntries": "Entrées mémoire (LRU)",
   "panel.cache.maxDiskMB": "Cache disque max. (Mo)",
-  "panel.openNativeSettings": "Ouvrir dans les paramètres VS Code",
+  "panel.openNativeSettings": "View all {0} settings in VS Code",
   "panel.override.workspace": "Remplacements de l’espace de travail actifs",
-  "document.progress.message": "Traduction de {0} : {1}/{2} segments"
+  "document.progress.message": "Traduction de {0} : {1}/{2} segments",
+  "panel.section.target": "Target & detection",
+  "panel.field.stream": "Stream interactive requests (SSE)",
+  "panel.field.extraBody": "Extra request body (JSON)",
+  "panel.hover.extraDelayMs": "Hover delay (ms)",
+  "panel.cache.stats": "Cache usage",
+  "panel.cache.clear": "Clear cache",
+  "panel.cache.clearConfirm": "Clear all cached translations?",
+  "panel.cache.clearYes": "Clear"
 }

@@ -45,14 +45,18 @@ describe('package.nls locales', () => {
   });
 });
 
+const L10N_DIR = 'l10n';
+
 describe('bundle.l10n locales', () => {
-  const en = loadJson('bundle.l10n.json');
-  const files = readdirSync(root).filter((f) => f === 'bundle.l10n.json' || f.startsWith('bundle.l10n.'));
+  const en = loadJson(`${L10N_DIR}/bundle.l10n.json`);
+  const files = readdirSync(join(root, L10N_DIR)).filter(
+    (f) => f === 'bundle.l10n.json' || f.startsWith('bundle.l10n.'),
+  );
 
   for (const file of files) {
     if (file === 'bundle.l10n.json') continue;
     it(`${file} matches bundle keys and placeholders`, () => {
-      const loc = loadJson(file);
+      const loc = loadJson(`${L10N_DIR}/${file}`);
       expect(Object.keys(loc).sort()).toEqual(Object.keys(en).sort());
       const mismatches = bundlePlaceholderMismatches(en, loc);
       expect(mismatches).toEqual([]);

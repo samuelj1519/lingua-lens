@@ -39,7 +39,15 @@
   "panel.cache.enabled": "キャッシュを有効化",
   "panel.cache.memoryEntries": "メモリエントリ数（LRU）",
   "panel.cache.maxDiskMB": "ディスクキャッシュ上限（MB）",
-  "panel.openNativeSettings": "VS Code 設定で開く",
+  "panel.openNativeSettings": "View all {0} settings in VS Code",
   "panel.override.workspace": "ワークスペースの上書きが有効",
-  "document.progress.message": "{0} を翻訳中: {1}/{2} セグメント"
+  "document.progress.message": "{0} を翻訳中: {1}/{2} セグメント",
+  "panel.section.target": "Target & detection",
+  "panel.field.stream": "Stream interactive requests (SSE)",
+  "panel.field.extraBody": "Extra request body (JSON)",
+  "panel.hover.extraDelayMs": "Hover delay (ms)",
+  "panel.cache.stats": "Cache usage",
+  "panel.cache.clear": "Clear cache",
+  "panel.cache.clearConfirm": "Clear all cached translations?",
+  "panel.cache.clearYes": "Clear"
 }

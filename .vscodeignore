@@ -11,6 +11,7 @@ esbuild.mjs
 **/*.ts
 !dist/**
 docs/**
+i18n/**
 uploads/**
 wasm/**
 *.map

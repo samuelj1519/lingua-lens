@@ -4,11 +4,15 @@ import { fileURLToPath } from 'node:url';
 import { Converter } from 'opencc-js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+const i18nCommands = join(root, 'i18n', 'commands');
+const i18nConfig = join(root, 'i18n', 'config');
+const i18nBundle = join(root, 'i18n', 'bundle');
+
 const enNls = JSON.parse(readFileSync(join(root, 'package.nls.json'), 'utf8'));
-const enCmd = JSON.parse(readFileSync(join(root, 'package.nls.commands.en.json'), 'utf8'));
-const enCfg = JSON.parse(readFileSync(join(root, 'package.nls.config.en.json'), 'utf8'));
+const enCmd = JSON.parse(readFileSync(join(i18nCommands, 'en.json'), 'utf8'));
+const enCfg = JSON.parse(readFileSync(join(i18nConfig, 'en.json'), 'utf8'));
 const zhCn = JSON.parse(readFileSync(join(root, 'package.nls.zh-cn.json'), 'utf8'));
-const zhCnCfg = JSON.parse(readFileSync(join(root, 'package.nls.config.zh-cn.json'), 'utf8'));
+const zhCnCfg = JSON.parse(readFileSync(join(i18nConfig, 'zh-cn.json'), 'utf8'));
 
 const enCmdKeys = Object.keys(enCmd).sort();
 const enCfgKeys = Object.keys(enCfg).sort();
@@ -88,28 +92,9 @@ const zhTwCfg = convertObj(zhCnCfg);
 assertKeys(zhTwCmd, enCmdKeys, 'zh-tw commands');
 assertKeys(zhTwCfg, enCfgKeys, 'zh-tw config');
 
-writeJson(join(root, 'package.nls.commands.zh-tw.json'), zhTwCmd);
-writeJson(join(root, 'package.nls.config.zh-tw.json'), zhTwCfg);
+writeJson(join(i18nCommands, 'zh-tw.json'), zhTwCmd);
+writeJson(join(i18nConfig, 'zh-tw.json'), zhTwCfg);
 
-/** Load per-locale overrides from scripts/nls-overrides/<locale>.json */
-const locales = ['ja', 'ko', 'fr', 'de', 'es', 'ru', 'pt-br'];
-for (const locale of locales) {
-  const path = join(root, 'scripts', 'nls-overrides', `${locale}.json`);
-  const data = JSON.parse(readFileSync(path, 'utf8'));
-  assertKeys(data.commands, enCmdKeys, `${locale} commands`);
-  assertKeys(data.config, enCfgKeys, `${locale} config`);
-  writeJson(join(root, `package.nls.commands.${locale}.json`), data.commands);
-  writeJson(join(root, `package.nls.config.${locale}.json`), data.config);
-}
-
-/** bundle.l10n */
-const bundleEn = JSON.parse(readFileSync(join(root, 'scripts', 'nls-overrides', 'bundle.en.json'), 'utf8'));
-writeJson(join(root, 'bundle.l10n.json'), bundleEn);
-const bundleLocales = ['zh-cn', 'zh-tw', 'ja', 'ko', 'fr', 'de', 'es', 'ru', 'pt-br'];
-for (const loc of bundleLocales) {
-  const path = join(root, 'scripts', 'nls-overrides', `bundle.${loc}.json`);
-  writeJson(join(root, `bundle.l10n.${loc}.json`), JSON.parse(readFileSync(path, 'utf8')));
-}
-
-console.log('Generated zh-tw +', locales.length, 'locales + bundle files');
+console.log('Generated zh-tw commands/config under i18n/');
 console.log('EN reference keys:', Object.keys(enNls).length);
+console.log('Run npm run merge-nls to refresh package.nls.* and l10n/');

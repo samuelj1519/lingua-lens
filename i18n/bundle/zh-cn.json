@@ -39,7 +39,15 @@
   "panel.cache.enabled": "启用缓存",
   "panel.cache.memoryEntries": "内存条目数（LRU）",
   "panel.cache.maxDiskMB": "磁盘缓存上限（MB）",
-  "panel.openNativeSettings": "在 VS Code 设置中打开",
+  "panel.openNativeSettings": "View all {0} settings in VS Code",
   "panel.override.workspace": "工作区覆盖已生效",
-  "document.progress.message": "正在翻译 {0}：{1}/{2} 段"
+  "document.progress.message": "正在翻译 {0}：{1}/{2} 段",
+  "panel.section.target": "Target & detection",
+  "panel.field.stream": "Stream interactive requests (SSE)",
+  "panel.field.extraBody": "Extra request body (JSON)",
+  "panel.hover.extraDelayMs": "Hover delay (ms)",
+  "panel.cache.stats": "Cache usage",
+  "panel.cache.clear": "Clear cache",
+  "panel.cache.clearConfirm": "Clear all cached translations?",
+  "panel.cache.clearYes": "Clear"
 }

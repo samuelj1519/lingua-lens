@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.1
+
+- 改进：多语言文件目录整理 — 根目录保留 10 个 `package.nls*.json`；运行时 `bundle.l10n*` 移至 `l10n/`（`package.json` 的 `"l10n": "./l10n"`）；构建源文件 `package.nls.commands/config` 与 bundle 源文件统一到 `i18n/commands`、`i18n/config`、`i18n/bundle`；`.vscodeignore` 排除 `i18n/`
+- 开发：`opencc-js` 加入 devDependencies；新增 VSIX 内容校验测试
+
 ## 0.5.0
 
 - 新增：内置 **package.nls** 多语言（zh-tw、ja、ko、fr、de、es、ru、pt-br 等），设置说明/命令/分组/enum 全覆盖；运行时 `bundle.l10n.*` + `vscode.l10n`

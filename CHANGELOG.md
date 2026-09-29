@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.2
+
+- **Document preview URI**: `DocTranslationService.previewUriFor` now uses the `lingualens:` scheme (via `PREVIEW_SCHEME`), matching the registered `TextDocumentContentProvider` — fixes “Unable to resolve resource” when opening Translate document preview
+- **Preview eligibility**: preview virtual documents are excluded from whole-document translation using the same scheme constant
+- **Cleanup**: rename integration-test env vars to `LINGUALENS_INTEGRATION_TEST` / `LINGUALENS_MOCK_PORT`; LinguaLens naming for quick-pick and hover marker helpers; legacy `aitranslate` references removed outside CHANGELOG
+
 ## 0.7.1
 
 - **Reasoning / token budget errors**: detect empty `content` with `reasoning_content` or `finish_reason: length` (streaming and non-streaming) and surface a localized `reasoningBudget` error with actions to open `linguaLens.llm.extraBody` or apply the DeepSeek disable-thinking preset
@@ -9,7 +15,7 @@
 
 ## 0.7.0
 
-- Renamed from **cursor-ai-translate** / **AI Translate** to **LinguaLens** (`lingua-lens`, **`samuel-j.lingua-lens`**); settings, commands, and preview scheme use **`linguaLens.*`** / **`lingualens:`**
+- Renamed from **cursor-ai-translate** / **AI Translate** to **LinguaLens** (`lingua-lens`, **`samuel-j.lingua-lens`**); settings and commands use **`linguaLens.*`** (preview scheme completed in **0.7.2**)
 
 ## 0.6.1
 

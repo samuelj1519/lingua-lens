@@ -26,7 +26,7 @@ function miniSession(
   );
   return {
     sourceUri: { toString: () => 'file:///a.md' } as never,
-    previewUri: { toString: () => 'aitranslate:/a' } as never,
+    previewUri: { toString: () => 'lingualens:/a' } as never,
     target: 'zh-CN',
     sourceVersion: 1,
     sourceLabel: 'README.md',

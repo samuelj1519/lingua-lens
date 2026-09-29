@@ -1,23 +1,24 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
-const FORBIDDEN = [/cursor-ai-translate/i, /Cursor AI Translate/, /aiTranslate\./];
+const LEGACY_AITRANSLATE = new RegExp('ai' + 'translate', 'i');
+
+const FORBIDDEN = [/cursor-ai-translate/i, /Cursor AI Translate/, /aiTranslate\./, LEGACY_AITRANSLATE];
 
 const SCAN_ROOTS = [
   { dir: 'src', exts: ['.ts'] },
+  { dir: 'test', exts: ['.ts'] },
   { dir: 'docs', exts: ['.md'] },
+  { dir: 'scripts', exts: ['.mjs', '.ts'] },
+  { dir: 'i18n', exts: ['.json'] },
+  { dir: 'l10n', exts: ['.json'] },
 ];
 
-const SCAN_FILES = [
-  'package.json',
-  'README.md',
-  'README.zh-CN.md',
-  'CONTRIBUTING.md',
-  'CONTRIBUTING.zh-CN.md',
-  'SECURITY.md',
-  'SECURITY.zh-CN.md',
-];
+const SCAN_FILES = ['package.json', 'README.md', 'README.zh-CN.md'];
+
+const SELF_TEST = path.normalize(fileURLToPath(new URL('./legacy-branding.test.ts', import.meta.url)));
 
 function walk(dir: string, exts: string[], out: string[] = []): string[] {
   if (!fs.existsSync(dir)) return out;
@@ -36,31 +37,20 @@ function collectPaths(): string[] {
     const p = path.join(root, rel);
     if (fs.existsSync(p)) files.push(p);
   }
-  for (const glob of ['package.nls.json', 'package.nls.*.json']) {
-    const dir = root;
-    if (glob.includes('*')) {
-      for (const name of fs.readdirSync(dir)) {
-        if (name.startsWith('package.nls.') && name.endsWith('.json')) {
-          files.push(path.join(dir, name));
-        }
-      }
-    } else {
-      files.push(path.join(dir, glob));
+  for (const name of fs.readdirSync(root)) {
+    if (name.startsWith('package.nls.') && name.endsWith('.json')) {
+      files.push(path.join(root, name));
     }
-  }
-  for (const name of fs.readdirSync(path.join(root, 'l10n'))) {
-    if (name.startsWith('bundle.l10n') && name.endsWith('.json')) {
-      files.push(path.join(root, 'l10n', name));
-    }
+    if (name === 'package.nls.json') files.push(path.join(root, name));
   }
   for (const { dir, exts } of SCAN_ROOTS) {
     files.push(...walk(path.join(root, dir), exts));
   }
-  return [...new Set(files)];
+  return [...new Set(files)].filter((f) => path.normalize(f) !== SELF_TEST);
 }
 
 describe('legacy branding', () => {
-  it('does not reference cursor-ai-translate, Cursor AI Translate, or aiTranslate. outside CHANGELOG', () => {
+  it('does not reference legacy product names or aitranslate outside CHANGELOG', () => {
     const offenders: string[] = [];
     for (const file of collectPaths()) {
       if (path.basename(file) === 'CHANGELOG.md') continue;

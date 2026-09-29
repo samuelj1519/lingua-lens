@@ -6,7 +6,8 @@ import { PreviewContentProvider } from './document/PreviewContentProvider';
 import { createHoverProvider } from './hover/TranslateHoverProvider';
 import { createSelectionHoverProvider } from './hover/SelectionHoverProvider';
 import { registerDocumentCodeLens } from './document/DocumentCodeLensProvider';
-import { showAiTranslateQuickPick } from './commands/quickPickMenu';
+import { showLinguaLensQuickPick } from './commands/quickPickMenu';
+import { PREVIEW_SCHEME } from './constants/previewScheme';
 import { SelectionTranslateCodeActionProvider } from './commands/selectionCodeAction';
 import { translateSelectionPopup } from './commands/selectionPopup';
 import { HoverActionRegistry } from './hover/HoverActionRegistry';
@@ -47,8 +48,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   const apiKeys = new ApiKeyStore(context);
   const llm = new LlmClient(() => config.get(), apiKeys, logger);
   const cfg = config.get();
-  if (process.env.AITRANSLATE_INTEGRATION_TEST === '1') {
-    const port = process.env.AITRANSLATE_MOCK_PORT ?? '18765';
+  if (process.env.LINGUALENS_INTEGRATION_TEST === '1') {
+    const port = process.env.LINGUALENS_MOCK_PORT ?? '18765';
     const baseUrl = `http://127.0.0.1:${port}/v1`;
     await vscode.workspace
       .getConfiguration('linguaLens')
@@ -99,7 +100,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     config,
     glossary,
     statusBar,
-    vscode.workspace.registerTextDocumentContentProvider('lingualens', preview),
+    vscode.workspace.registerTextDocumentContentProvider(PREVIEW_SCHEME, preview),
     createHoverProvider(config, guard, extractor, translation, stats, hoverRegistry, logger),
     createSelectionHoverProvider(config, guard, translation, hoverRegistry),
     codeLensRegistration.disposable,
@@ -111,7 +112,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     }),
     vscode.workspace.onDidCloseTextDocument((d) => {
       parserService?.release(d.uri.toString());
-      if (d.uri.scheme === 'lingualens') docService.onClosePreview(d.uri);
+      if (d.uri.scheme === PREVIEW_SCHEME) docService.onClosePreview(d.uri);
     }),
   );
 
@@ -220,7 +221,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
   reg('linguaLens.refreshPreview', () => {
     const editor = vscode.window.activeTextEditor;
-    if (editor?.document.uri.scheme === 'lingualens') {
+    if (editor?.document.uri.scheme === PREVIEW_SCHEME) {
       return docService.refresh(editor.document.uri, { bypassCache: true });
     }
   });
@@ -297,7 +298,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
   reg('linguaLens.translateInsertBelow', () => translateInsertBelow(config, guard, translation));
 
-  reg('linguaLens.showQuickPick', () => showAiTranslateQuickPick(config, docService));
+  reg('linguaLens.showQuickPick', () => showLinguaLensQuickPick(config, docService));
   reg('linguaLens.translateSelectionPopup', () => translateSelectionPopup(config, guard, translation));
 
   reg('linguaLens.selection.replace', async (...args: unknown[]) => {

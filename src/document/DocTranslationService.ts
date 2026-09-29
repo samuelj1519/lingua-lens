@@ -21,6 +21,7 @@ import type { Placeholder } from '../types';
 import { isDocumentAlreadyInTargetLanguage } from './documentTranslationGate';
 import { showAlreadyTargetLanguageStatusHint } from './documentTranslationHints';
 import { t } from '../l10n/uiL10n';
+import { documentPreviewUri } from './previewUri';
 
 export type SegmentResultStatus = 'pending' | 'done' | 'failed' | 'skipped';
 
@@ -58,9 +59,7 @@ export class DocTranslationService {
   }
 
   previewUriFor(source: vscode.Uri, lang: TargetLang): vscode.Uri {
-    const name = source.path.split('/').pop() ?? 'doc.md';
-    const base = name.replace(/\.[^.]+$/, '') + `.${lang}.preview.md`;
-    return vscode.Uri.parse(`aitranslate:/${base}?source=${encodeURIComponent(source.toString())}&lang=${lang}`);
+    return documentPreviewUri(source, lang);
   }
 
   async openPreview(doc: vscode.TextDocument): Promise<void> {

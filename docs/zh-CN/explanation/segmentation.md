@@ -102,7 +102,7 @@ flowchart TB
 
 ## 与 side file 的关系
 
-旁路文件生成走 `DocumentAssembler` 的 `renderTranslated` / `renderBilingual` 路径，与预览相同分段顺序，但不写入 `aitranslate:` 虚拟 URI。若用户在预览仍进行翻译时生成 side file，扩展会等待当前会话 `results` 达到可组装状态或提示进度未完成。`sideFileContent` 为 `bilingual` 时，交错规则与 `previewStyle: interleaved` 类似，但输出为持久文件而非只读编辑器。
+旁路文件生成走 `DocumentAssembler` 的 `renderTranslated` / `renderBilingual` 路径，与预览相同分段顺序，但不写入 `lingualens:` 虚拟 URI。若用户在预览仍进行翻译时生成 side file，扩展会等待当前会话 `results` 达到可组装状态或提示进度未完成。`sideFileContent` 为 `bilingual` 时，交错规则与 `previewStyle: interleaved` 类似，但输出为持久文件而非只读编辑器。
 
 ## remark 遍历与结构保留
 

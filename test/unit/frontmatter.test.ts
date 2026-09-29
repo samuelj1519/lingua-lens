@@ -80,7 +80,7 @@ Interview the user.
     const fm = segs.find((s) => s.kind === 'frontmatter')!;
     const session: DocSession = {
       sourceUri: { scheme: 'file', path: '/x/SKILL.md' } as import('vscode').Uri,
-      previewUri: { scheme: 'aitranslate', path: '/x.preview.md' } as import('vscode').Uri,
+      previewUri: { scheme: 'lingualens', path: '/x.preview.md' } as import('vscode').Uri,
       target: 'zh-CN',
       sourceVersion: 1,
       sourceLabel: 'SKILL.md',

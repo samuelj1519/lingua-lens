@@ -18,7 +18,7 @@ function mockSession(source: string, translations: Record<string, string>): DocS
   );
   return {
     sourceUri: { toString: () => 'file:///t.md' } as never,
-    previewUri: { toString: () => 'aitranslate:/t' } as never,
+    previewUri: { toString: () => 'lingualens:/t' } as never,
     target: 'zh-CN',
     sourceVersion: 1,
     sourceLabel: 't.md',

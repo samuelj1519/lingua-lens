@@ -42,8 +42,8 @@ try {
     extensionTestsPath: path.join(outDir, 'index.js'),
     launchArgs: ['--disable-extensions', '--no-sandbox'],
     extensionTestsEnv: {
-      AITRANSLATE_INTEGRATION_TEST: '1',
-      AITRANSLATE_MOCK_PORT: String(port),
+      LINGUALENS_INTEGRATION_TEST: '1',
+      LINGUALENS_MOCK_PORT: String(port),
     },
   });
 } finally {

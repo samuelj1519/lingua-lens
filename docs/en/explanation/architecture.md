@@ -137,7 +137,7 @@ From `package.json`:
 
 ## Integration test hook
 
-`AITRANSLATE_INTEGRATION_TEST=1` rewrites `llm.baseUrl` to local mock server and sets API key for CI.
+`LINGUALENS_INTEGRATION_TEST=1` rewrites `llm.baseUrl` to local mock server and sets API key for CI.
 
 ## Related documentation
 

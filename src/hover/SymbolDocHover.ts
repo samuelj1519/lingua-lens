@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { isAiTranslateHoverContent } from './hoverMarkers';
+import { isLinguaLensHoverContent } from './hoverMarkers';
 import { withForeignHoverFetch } from './hoverDepth';
 
 export async function extractSymbolDocumentation(
@@ -17,7 +17,7 @@ export async function extractSymbolDocumentation(
     for (const h of hovers) {
       const text = hoverToPlainText(h);
       if (!text.trim()) continue;
-      if (isAiTranslateHoverContent(text)) continue;
+      if (isLinguaLensHoverContent(text)) continue;
       chunks.push(text.trim());
     }
     const merged = chunks.join('\n\n---\n\n').trim();

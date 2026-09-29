@@ -137,7 +137,7 @@ API 密钥从不经过设置面板 webview；仅扩展宿主中的 `ApiKeyStore`
 
 ## 集成测试钩子
 
-`AITRANSLATE_INTEGRATION_TEST=1` 将 `llm.baseUrl` 重写为本地 mock 服务器并为 CI 设置 API 密钥。
+`LINGUALENS_INTEGRATION_TEST=1` 将 `llm.baseUrl` 重写为本地 mock 服务器并为 CI 设置 API 密钥。
 
 ## 命令与贡献点
 

@@ -111,7 +111,7 @@
 
 ## 步骤 5：集成测试模式（开发者）
 
-`AITRANSLATE_INTEGRATION_TEST=1` 时，激活将 `baseUrl` 指向 `http://127.0.0.1:${AITRANSLATE_MOCK_PORT||18765}/v1` 并设模型 `mock`。仅用于自动化测试。
+`LINGUALENS_INTEGRATION_TEST=1` 时，激活将 `baseUrl` 指向 `http://127.0.0.1:${LINGUALENS_MOCK_PORT||18765}/v1` 并设模型 `mock`。仅用于自动化测试。
 
 ## 步骤 6：重置暂停状态
 

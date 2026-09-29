@@ -4,7 +4,7 @@ import type { DocTranslationService } from '../document/DocTranslationService';
 import { EXTENSION_SETTINGS_FILTER } from '../constants/extensionId';
 import { t } from '../l10n/uiL10n';
 
-export async function showAiTranslateQuickPick(
+export async function showLinguaLensQuickPick(
   config: ConfigService,
   docService: DocTranslationService,
 ): Promise<void> {

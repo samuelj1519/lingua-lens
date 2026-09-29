@@ -1,7 +1,7 @@
 /** ALLOW_CJK_FIXTURE: intentional Chinese samples for detection, documents, or l10n assertions. */
 import { describe, expect, it } from 'vitest';
 import { formatDiagnosticMessages } from '../../src/hover/diagnosticFormat';
-import { isAiTranslateHoverContent } from '../../src/hover/hoverMarkers';
+import { isLinguaLensHoverContent } from '../../src/hover/hoverMarkers';
 import { resolveSelectionTargetLanguage } from '../../src/commands/selectionTarget';
 import type { TranslateConfig } from '../../src/config/types';
 
@@ -16,8 +16,8 @@ describe('diagnostic hover helpers', () => {
   });
 
   it('detects own hover marker', () => {
-    expect(isAiTranslateHoverContent('<!-- linguaLens -->\n**LinguaLens** `en`')).toBe(true);
-    expect(isAiTranslateHoverContent('normal docs')).toBe(false);
+    expect(isLinguaLensHoverContent('<!-- linguaLens -->\n**LinguaLens** `en`')).toBe(true);
+    expect(isLinguaLensHoverContent('normal docs')).toBe(false);
   });
 });
 

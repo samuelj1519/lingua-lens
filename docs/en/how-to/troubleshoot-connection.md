@@ -111,7 +111,7 @@ Verify endpoint id and region match the console URL.
 
 ## Step 5: Integration test mode (developers)
 
-When `AITRANSLATE_INTEGRATION_TEST=1`, activation points `baseUrl` to `http://127.0.0.1:${AITRANSLATE_MOCK_PORT||18765}/v1` and sets model `mock`. Use only in automated tests.
+When `LINGUALENS_INTEGRATION_TEST=1`, activation points `baseUrl` to `http://127.0.0.1:${LINGUALENS_MOCK_PORT||18765}/v1` and sets model `mock`. Use only in automated tests.
 
 ## Step 6: Reset pause state
 

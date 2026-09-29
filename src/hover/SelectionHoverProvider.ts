@@ -7,6 +7,7 @@ import { buildHoverDocumentSelector } from '../constants/hoverSelector';
 import { cancellableDelay } from '../util/delay';
 import type { HoverActionRegistry } from './HoverActionRegistry';
 import { LlmError } from '../llm/errors';
+import { isCacheableTranslation } from '../translation/cacheable';
 
 export class SelectionHoverProvider implements vscode.HoverProvider {
   constructor(
@@ -55,8 +56,11 @@ export class SelectionHoverProvider implements vscode.HoverProvider {
       source: 'selection' as const,
     };
 
-    const cached = await this.translation.peekCache(unit, cfg.targetLanguage, doc.uri);
+    const cached = await this.translation.peekCache(unit, cfg.targetLanguage, 'hover', doc.uri);
     if (cached) {
+      if (!isCacheableTranslation(cached.text)) {
+        return this.emptyBodyHover(editor.selection, true);
+      }
       return this.build(doc, editor.selection, unit, cached.text, cfg, true);
     }
 
@@ -68,11 +72,24 @@ export class SelectionHoverProvider implements vscode.HoverProvider {
         kind: 'hover',
         uri: doc.uri,
       });
+      if (!isCacheableTranslation(result.text)) {
+        return this.emptyBodyHover(editor.selection, false);
+      }
       return this.build(doc, editor.selection, unit, result.text, cfg, false);
     } catch (e) {
       if (e instanceof LlmError) return new vscode.Hover(e.message, editor.selection);
       return undefined;
     }
+  }
+
+  private emptyBodyHover(range: vscode.Selection, fromCache: boolean): vscode.Hover {
+    const md = new vscode.MarkdownString();
+    md.isTrusted = { enabledCommands: ['aiTranslate.hover.retranslate', 'aiTranslate.showLog'] };
+    md.appendMarkdown(
+      `**AI 翻译 · 选区**${fromCache ? ' · 缓存无效' : ''}\n\n` +
+        `译文为空。请 [重新翻译](command:aiTranslate.hover.retranslate) 或查看 [日志](command:aiTranslate.showLog)。`,
+    );
+    return new vscode.Hover(md, range);
   }
 
   private build(
@@ -94,7 +111,11 @@ export class SelectionHoverProvider implements vscode.HoverProvider {
       ],
     };
     md.appendMarkdown(`**AI 翻译 · 选区** \`${cfg.targetLanguage}\`${fromCache ? ' · 缓存' : ''}\n\n`);
-    md.appendMarkdown(translation);
+    if (!isCacheableTranslation(translation)) {
+      md.appendMarkdown('*译文为空，请重新翻译。*');
+    } else {
+      md.appendMarkdown(translation);
+    }
     const id = this.registry.put({
       translation,
       uri: doc.uri.toString(),

@@ -7,6 +7,8 @@ import type { CacheService } from '../cache/CacheService';
 import type { Placeholder, TargetLang, TextUnit } from '../types';
 import { restore } from '../parsing/placeholders';
 import type { StatsService } from '../stats/StatsService';
+import { isCacheableTranslation } from './cacheable';
+import { sha256HexPrefix } from '../util/hash';
 import * as vscode from 'vscode';
 
 export interface TranslateResult {
@@ -44,7 +46,12 @@ export class TranslationService {
     return vscode.workspace.getWorkspaceFolder(uri)?.uri;
   }
 
-  private cacheKey(text: string, target: TargetLang, kind: 'hover' | 'selection' | 'documentBatch', uri?: vscode.Uri): string {
+  private cacheKey(
+    text: string,
+    target: TargetLang,
+    kind: 'hover' | 'selection' | 'documentBatch',
+    uri?: vscode.Uri,
+  ): string {
     const cfg = this.getConfig(uri);
     const glossary = this.glossary.match(text, this.workspaceFolder(uri), target);
     const pv = this.prompts.promptVersion({
@@ -53,21 +60,50 @@ export class TranslationService {
       glossary,
       customSystemPrompt: cfg.llm.systemPrompt,
     });
-    return this.cache.key({ text, targetLang: target, model: cfg.llm.model, promptVersion: pv });
+    const extraBodyHash = sha256HexPrefix(JSON.stringify(cfg.llm.extraBody ?? {}), 16);
+    return this.cache.key({
+      text,
+      targetLang: target,
+      model: cfg.llm.model,
+      promptVersion: pv,
+      baseUrl: cfg.llm.baseUrl,
+      extraBodyHash,
+    });
   }
 
-  async peekCache(unit: TextUnit, target: TargetLang, uri?: vscode.Uri): Promise<TranslateResult | undefined> {
-    const key = this.cacheKey(unit.text, target, 'hover', uri);
+  async peekCache(
+    unit: TextUnit,
+    target: TargetLang,
+    kind: 'hover' | 'selection',
+    uri?: vscode.Uri,
+  ): Promise<TranslateResult | undefined> {
+    const key = this.cacheKey(unit.text, target, kind, uri);
     const mem = this.cache.getMemory(key);
     if (mem !== undefined) {
-      const restored = restore(mem, unit.placeholders);
-      return { text: restored.text, fromCache: 'memory', placeholderOk: restored.ok };
+      return this.resultFromCached(mem, unit, key, 'memory');
     }
     const disk = await this.cache.get(key);
     if (!disk) return undefined;
-    this.stats.inc('diskHits');
-    const restored = restore(disk.value, unit.placeholders);
-    return { text: restored.text, fromCache: disk.tier, placeholderOk: restored.ok };
+    return this.resultFromCached(disk.value, unit, key, disk.tier);
+  }
+
+  private async resultFromCached(
+    raw: string,
+    unit: TextUnit,
+    key: string,
+    tier: 'memory' | 'disk',
+  ): Promise<TranslateResult | undefined> {
+    if (!isCacheableTranslation(raw)) {
+      await this.cache.delete(key);
+      return undefined;
+    }
+    const restored = restore(raw, unit.placeholders);
+    if (!isCacheableTranslation(restored.text)) {
+      await this.cache.delete(key);
+      return undefined;
+    }
+    if (tier === 'disk') this.stats.inc('diskHits');
+    return { text: restored.text, fromCache: tier, placeholderOk: restored.ok };
   }
 
   async translate(
@@ -77,7 +113,7 @@ export class TranslationService {
   ): Promise<TranslateResult> {
     const key = this.cacheKey(unit.text, target, opts.kind, opts.uri);
     if (!opts.bypassCache) {
-      const cached = await this.peekCache(unit, target, opts.uri);
+      const cached = await this.peekCache(unit, target, opts.kind, opts.uri);
       if (cached) {
         if (cached.fromCache === 'memory') this.stats.inc('memoryHits');
         return cached;
@@ -126,7 +162,13 @@ export class TranslationService {
       }
       this.failures = 0;
       const cleaned = sanitizeModelOutput(res.content);
+      if (!isCacheableTranslation(cleaned)) {
+        throw new LlmError('invalidResponse', '模型返回空译文');
+      }
       const restored = restore(cleaned, unit.placeholders);
+      if (!isCacheableTranslation(restored.text)) {
+        throw new LlmError('invalidResponse', '模型返回空译文');
+      }
       this.cache.set(
         this.cacheKey(unit.text, target, opts.kind, opts.uri),
         cleaned,
@@ -157,6 +199,7 @@ export class TranslationService {
     await this.glossary.ensureLoaded(this.workspaceFolder(uri));
     const glossaryText = items.map((i) => i.text).join('\n');
     const glossary = this.glossary.match(glossaryText, this.workspaceFolder(uri), target);
+    const extraBodyHash = sha256HexPrefix(JSON.stringify(cfg.llm.extraBody ?? {}), 16);
 
     while (pending.length > 0) {
       if (signal.aborted) break;
@@ -188,6 +231,10 @@ export class TranslationService {
             continue;
           }
           const cleaned = sanitizeModelOutput(raw);
+          if (!isCacheableTranslation(cleaned)) {
+            results.set(item.id, new LlmError('invalidResponse', '模型返回空译文'));
+            continue;
+          }
           const restored = restore(cleaned, item.placeholders);
           const key = this.cache.key({
             text: item.text,
@@ -199,6 +246,8 @@ export class TranslationService {
               glossary,
               customSystemPrompt: cfg.llm.systemPrompt,
             }),
+            baseUrl: cfg.llm.baseUrl,
+            extraBodyHash,
           });
           this.cache.set(key, cleaned, { model: cfg.llm.model, targetLang: target });
           results.set(item.id, {

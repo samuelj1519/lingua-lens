@@ -114,7 +114,7 @@ export class TranslateHoverProvider implements vscode.HoverProvider {
     } else {
       const range = new vscode.Range(doc.positionAt(unit.range.start), doc.positionAt(unit.range.end));
 
-      const cached = await this.translation.peekCache(unit, cfg.targetLanguage, doc.uri);
+      const cached = await this.translation.peekCache(unit, cfg.targetLanguage, 'hover', doc.uri);
       if (cached) {
         this.log.debug(`hover: cache hit (${cached.fromCache})`);
         if (cached.fromCache === 'memory') this.stats.inc('memoryHits');

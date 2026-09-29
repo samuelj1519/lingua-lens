@@ -3,6 +3,8 @@ import type { ApiKeyStore } from '../secrets/ApiKeyStore';
 import { LlmError } from './errors';
 import { backoffDelay, parseRetryAfter } from './retry';
 import { RequestSemaphore } from './semaphore';
+import { appendStreamDelta, parseSseDataLine } from './sseContent';
+import { isCacheableTranslation } from '../translation/cacheable';
 
 export interface ChatMessage {
   role: 'system' | 'user' | 'assistant';
@@ -187,9 +189,10 @@ export class LlmClient {
         usage?: { prompt_tokens?: number; completion_tokens?: number };
         model?: string;
       };
-      const content = data.choices?.[0]?.message?.content;
-      if (content === undefined) {
-        throw new LlmError('invalidResponse', '模型返回格式无效');
+      const msg = data.choices?.[0]?.message;
+      const content = msg?.content ?? '';
+      if (!isCacheableTranslation(content)) {
+        throw new LlmError('invalidResponse', '模型返回空译文');
       }
       return {
         content,
@@ -239,19 +242,14 @@ async function readSseContent(body: ReadableStream<Uint8Array>, signal: AbortSig
     const lines = buf.split('\n');
     buf = lines.pop() ?? '';
     for (const line of lines) {
-      const trimmed = line.trim();
-      if (!trimmed.startsWith('data:')) continue;
-      const data = trimmed.slice(5).trim();
-      if (data === '[DONE]') continue;
-      try {
-        const json = JSON.parse(data) as { choices?: { delta?: { content?: string } }[] };
-        const delta = json.choices?.[0]?.delta?.content;
-        if (delta) content += delta;
-      } catch {
-        /* ignore partial */
-      }
+      const json = parseSseDataLine(line);
+      if (!json) continue;
+      const choices = json.choices as { delta?: Record<string, unknown> }[] | undefined;
+      content = appendStreamDelta(content, choices?.[0]?.delta);
     }
   }
-  if (!content) throw new LlmError('invalidResponse', '流式响应为空');
+  if (!isCacheableTranslation(content)) {
+    throw new LlmError('invalidResponse', '流式响应为空');
+  }
   return content;
 }

@@ -15,7 +15,7 @@ export class CacheService {
     maxDiskMB: number,
   ) {
     this.memory = new LruCache<string>(memoryEntries);
-    const dir = vscode.Uri.joinPath(context.globalStorageUri, 'cache', 'v1').fsPath;
+    const dir = vscode.Uri.joinPath(context.globalStorageUri, 'cache', 'v2').fsPath;
     this.disk = new ShardedJsonlStore(dir, maxDiskMB * 1024 * 1024);
   }
 
@@ -27,19 +27,38 @@ export class CacheService {
   configure(enabled: boolean, memoryEntries: number, maxDiskMB: number): void {
     this.enabled = enabled;
     this.memory = new LruCache<string>(memoryEntries);
-    const dir = vscode.Uri.joinPath(this.context.globalStorageUri, 'cache', 'v1').fsPath;
+    const dir = vscode.Uri.joinPath(this.context.globalStorageUri, 'cache', 'v2').fsPath;
     this.disk = new ShardedJsonlStore(dir, maxDiskMB * 1024 * 1024);
     void this.disk.init();
   }
 
-  key(parts: { text: string; targetLang: TargetLang; model: string; promptVersion: string }): string {
-    const raw = [parts.text, parts.targetLang, parts.model, parts.promptVersion].join('\u0000');
+  key(parts: {
+    text: string;
+    targetLang: TargetLang;
+    model: string;
+    promptVersion: string;
+    baseUrl: string;
+    extraBodyHash: string;
+  }): string {
+    const raw = [
+      parts.text,
+      parts.targetLang,
+      parts.model,
+      parts.promptVersion,
+      parts.baseUrl,
+      parts.extraBodyHash,
+    ].join('\u0000');
     return sha256Hex(raw);
   }
 
   getMemory(key: string): string | undefined {
     if (!this.enabled) return undefined;
-    return this.memory.get(key);
+    const v = this.memory.get(key);
+    if (v !== undefined && !v.trim()) {
+      this.memory.delete(key);
+      return undefined;
+    }
+    return v;
   }
 
   async get(key: string): Promise<{ value: string; tier: 'memory' | 'disk' } | undefined> {
@@ -47,13 +66,17 @@ export class CacheService {
     const mem = this.memory.get(key);
     if (mem !== undefined) return { value: mem, tier: 'memory' };
     const line = await this.disk.get(key);
-    if (!line) return undefined;
+    if (!line || !line.v.trim()) {
+      if (line) void this.delete(key);
+      return undefined;
+    }
     this.memory.set(key, line.v);
     return { value: line.v, tier: 'disk' };
   }
 
   set(key: string, value: string, meta: { model: string; targetLang: TargetLang }): void {
     if (!this.enabled) return;
+    if (!value.trim()) return;
     this.memory.set(key, value);
     this.disk.set({
       k: key,
@@ -62,6 +85,11 @@ export class CacheService {
       m: meta.model,
       l: meta.targetLang,
     });
+  }
+
+  async delete(key: string): Promise<void> {
+    this.memory.delete(key);
+    await this.disk.delete(key);
   }
 
   async clear(): Promise<void> {

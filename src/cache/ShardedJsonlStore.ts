@@ -84,6 +84,17 @@ export class ShardedJsonlStore {
     return map;
   }
 
+  async delete(key: string): Promise<void> {
+    const shard = this.shardKey(key);
+    const map = await this.loadShard(shard);
+    if (!map.delete(key)) return;
+    const path = join(this.baseDir, `${shard}.jsonl`);
+    const out = [...map.values()].map((e) => JSON.stringify(e)).join('\n');
+    const data = out ? out + '\n' : '';
+    await writeFile(path, data, 'utf8');
+    this.diskBytes = Math.max(0, this.diskBytes - 1);
+  }
+
   async get(key: string): Promise<CacheLine | undefined> {
     const shard = this.shardKey(key);
     const map = await this.loadShard(shard);

@@ -56,7 +56,7 @@ export async function buildSupplementalHoverBlocks(
     if (msg && shouldTranslateCommitMessage(msg, cfg)) {
       const unit = plainUnit(doc, 'diagnostic', msg);
       const range = new vscode.Range(pos.line, 0, pos.line, doc.lineAt(pos.line).text.length);
-      const cached = await translation.peekCache(unit, cfg.targetLanguage, doc.uri);
+      const cached = await translation.peekCache(unit, cfg.targetLanguage, 'hover', doc.uri);
       if (cached) {
         pending.push({
           title: 'Git 提交说明',
@@ -79,7 +79,7 @@ export async function buildSupplementalHoverBlocks(
       const decision = decide(text, detOpts);
       if (decision.action === 'translate') {
         const range = diagnosticHoverRange(diags, pos);
-        const cached = await translation.peekCache(unit, cfg.targetLanguage, doc.uri);
+        const cached = await translation.peekCache(unit, cfg.targetLanguage, 'hover', doc.uri);
         if (cached) {
           pending.push({ title: '诊断信息', unit, range, cached: { text: cached.text, fromCache: true, placeholderOk: cached.placeholderOk } });
         } else {
@@ -97,7 +97,7 @@ export async function buildSupplementalHoverBlocks(
       const decision = decide(docText, detOpts);
       if (decision.action === 'translate') {
         const range = doc.getWordRangeAtPosition(pos) ?? new vscode.Range(pos, pos);
-        const cached = await translation.peekCache(unit, cfg.targetLanguage, doc.uri);
+        const cached = await translation.peekCache(unit, cfg.targetLanguage, 'hover', doc.uri);
         if (cached) {
           pending.push({ title: '符号文档', unit, range, cached: { text: cached.text, fromCache: true, placeholderOk: cached.placeholderOk } });
         } else {

@@ -11,6 +11,10 @@
 - **诊断日志**：设置 `aiTranslate.log.level` 为 `debug` 可查看悬停流水线（守卫、提取、检测、缓存）
 - **选区翻译**：`Ctrl+Alt+Shift+T`；**翻译并替换** `Ctrl+Alt+Shift+R`；**译后插入下方** `Ctrl+Alt+Shift+B`
 - **终端/剪贴板**：`Ctrl+Alt+Shift+Y` 翻译终端选区或剪贴板（读后恢复剪贴板）
+- **Git**：翻译当前行提交说明、翻译 SCM 输入框（可替换为英文提交信息）
+- **语言包**：`generateLocaleFile` 对 JSON/YAML/properties 增量生成 `*.zh-CN.json` 等
+- **Notebook / 模板**：Markdown 单元格段落悬停；HTML/Vue/JSX 的 UI 属性与文本节点
+- **命名助手**：根据中文描述建议 camelCase / snake_case / PascalCase 标识符
 - **文档双语预览**：虚拟文档 `aitranslate:`，原文在上、译文在下
 - **生成译文文件**：如 `README.zh-CN.md`，覆盖前确认
 - **状态栏**：开关与目标语言 QuickPick

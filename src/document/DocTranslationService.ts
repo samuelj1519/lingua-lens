@@ -18,6 +18,8 @@ import { translatePartialDocumentSegments } from './documentPartialTranslate';
 import { isSameTranslationAsSource } from '../util/textEquivalence';
 import { DocumentSegmentProgressReporter } from './DocumentSegmentProgressReporter';
 import type { Placeholder } from '../types';
+import { isDocumentAlreadyInTargetLanguage } from './documentTranslationGate';
+import { showAlreadyTargetLanguageStatusHint } from './documentTranslationHints';
 import { t } from '../l10n/uiL10n';
 
 export type SegmentResultStatus = 'pending' | 'done' | 'failed' | 'skipped';
@@ -81,9 +83,10 @@ export class DocTranslationService {
     }
     const cfg = this.config.get(doc.uri);
     const segments = this.segment(doc);
-    const { plans, translatableCount } = buildDocumentTranslationPlan(segments, doc.getText(), cfg);
-    if (translatableCount === 0 && !cfg.document.forceTranslate) {
-      void vscode.window.showInformationMessage(t('doc.alreadyTarget'));
+    const text = doc.getText();
+    const { plans, translatableCount } = buildDocumentTranslationPlan(segments, text, cfg);
+    if (isDocumentAlreadyInTargetLanguage(translatableCount, cfg.document.forceTranslate)) {
+      showAlreadyTargetLanguageStatusHint();
       return;
     }
     const previewUri = this.previewUriFor(doc.uri, cfg.targetLanguage);
@@ -97,10 +100,16 @@ export class DocTranslationService {
 
   async refreshDocumentTranslation(doc: vscode.TextDocument): Promise<void> {
     const cfg = this.config.get(doc.uri);
+    const segments = this.segment(doc);
+    const text = doc.getText();
+    const { translatableCount } = buildDocumentTranslationPlan(segments, text, cfg);
+    if (isDocumentAlreadyInTargetLanguage(translatableCount, cfg.document.forceTranslate)) {
+      showAlreadyTargetLanguageStatusHint();
+      return;
+    }
     const previewUri = this.previewUriFor(doc.uri, cfg.targetLanguage);
     const session = this.sessions.get(previewUri.toString());
     if (!session) {
-      void vscode.window.showInformationMessage(t('doc.openPreviewFirst'));
       await this.openPreview(doc);
       return;
     }
@@ -137,9 +146,10 @@ export class DocTranslationService {
   async generateSideFile(doc: vscode.TextDocument): Promise<void> {
     const cfg = this.config.get(doc.uri);
     const segments = this.segment(doc);
-    const { plans, translatableCount } = buildDocumentTranslationPlan(segments, doc.getText(), cfg);
-    if (translatableCount === 0 && !cfg.document.forceTranslate) {
-      void vscode.window.showInformationMessage(t('doc.alreadyTarget'));
+    const text = doc.getText();
+    const { plans, translatableCount } = buildDocumentTranslationPlan(segments, text, cfg);
+    if (isDocumentAlreadyInTargetLanguage(translatableCount, cfg.document.forceTranslate)) {
+      showAlreadyTargetLanguageStatusHint();
       return;
     }
     const previewUri = this.previewUriFor(doc.uri, cfg.targetLanguage);

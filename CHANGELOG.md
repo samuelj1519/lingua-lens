@@ -5,6 +5,7 @@
 - 改进：**设置面板**顶部语言下拉与 `aiTranslate.targetLanguage` 双向同步（与 User/Workspace 作用域一致）；合并原「目标语言」重复控件；自定义目标语言时面板界面回落英文、下拉显示「自定义：…」
 - 新增：首次激活时若用户从未在任何作用域设置过 `targetLanguage`，按 `vscode.env.language` 静默写入一次最接近的内置语言（未匹配界面语言时默认 **en**，不覆盖已有显式设置）；面板可显示一行说明
 - 改进：扩展自绘运行时 UI（CodeLens、状态栏、QuickPick、悬停链接、通知/对话框、全文预览标题等）统一经 `t()` 读取 `l10n/bundle.l10n.*`，跟随 **targetLanguage**；变更目标语言时刷新 CodeLens、状态栏与已打开预览/设置面板（无需 Reload Window）
+- 修复：全文已是目标语言且无待译段落时，不再打开空白预览或生成译文文件；「翻译全文 / 生成译文 / 刷新全文」统一在状态栏提示约 3 秒（`doc.alreadyTarget`）；已打开的预览保持不变
 
 ## 0.5.1
 

@@ -6,7 +6,7 @@
 
 ## 功能
 
-- **悬停翻译**：代码文件中针对注释与字符串（tree-sitter + 正则回退）；在 **Markdown / 纯文本**（`.md`、`.txt`、`.rst`、`.adoc` 等）中悬停**段落**可显示译文，分段规则与「翻译文档」预览一致（跳过围栏代码块、front matter、HTML 块；列表项为当前项；表格为**光标所在单元格**）。可用 `aiTranslate.hover.documents`（默认 `true`）关闭文档悬停。额外延迟 `aiTranslate.hover.extraDelayMs`（默认 700ms），并共享语言检测、缓存与隐私守卫
+- **悬停翻译**：代码文件中针对注释与字符串（tree-sitter + 正则回退）；**配置文件**（YAML、TOML、JSON/JSONC、INI、`.properties`、XML 等）可悬停翻译注释、字符串值，以及字段名（`snake_case` / `camelCase` / `kebab-case` 会先拆成词再翻译，可用 `aiTranslate.hover.configKeys` 关闭）。`.env` 等路径仍由隐私排除规则屏蔽。在 **Markdown / 纯文本** 中悬停**段落**的规则与「翻译文档」预览一致。额外延迟 `aiTranslate.hover.extraDelayMs`（默认 700ms），并共享语言检测、缓存与隐私守卫
 - **诊断日志**：设置 `aiTranslate.log.level` 为 `debug` 可查看悬停流水线（守卫、提取、检测、缓存）
 - **选区翻译**：`Ctrl+Alt+Shift+T`（macOS：`Cmd+Alt+Shift+T`）
 - **文档双语预览**：虚拟文档 `aitranslate:`，原文在上、译文在下
@@ -32,6 +32,7 @@
 - `aiTranslate.llm.model`
 - `aiTranslate.targetLanguage`（默认 `zh-CN`）
 - `aiTranslate.hover.documents`（默认 `true`，Markdown/纯文本段落悬停）
+- `aiTranslate.hover.configKeys`（默认 `true`，配置字段名悬停）
 
 ## 命令
 

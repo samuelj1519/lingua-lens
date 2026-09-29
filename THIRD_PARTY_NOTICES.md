@@ -8,7 +8,7 @@
 ## tree-sitter 语法 WASM（tree-sitter-wasms 或各 grammar 仓库）
 
 - 典型许可证：MIT（以各 grammar 仓库为准）
-- 包含：typescript, tsx, javascript, python, rust, go, java, c, cpp
+- 包含：typescript, tsx, javascript, python, rust, go, java, c, cpp, yaml, toml, json
 
 ## tinyld
 

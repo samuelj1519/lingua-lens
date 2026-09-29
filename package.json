@@ -126,6 +126,12 @@
           "scope": "resource",
           "description": "在 Markdown、纯文本等文档中悬停翻译段落（与文档预览使用相同分段）"
         },
+        "aiTranslate.hover.configKeys": {
+          "type": "boolean",
+          "default": true,
+          "scope": "resource",
+          "description": "在 YAML/TOML/JSON 等配置文件中悬停翻译字段名（会将 snake_case、camelCase 等拆成词）"
+        },
         "aiTranslate.hover.maxChars": { "type": "number", "default": 4000, "minimum": 100, "scope": "resource" },
         "aiTranslate.hover.showOriginal": { "type": "boolean", "default": false, "scope": "resource" },
         "aiTranslate.detection.minLength": { "type": "number", "default": 3, "minimum": 1, "scope": "resource" },

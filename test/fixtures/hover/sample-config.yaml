@@ -1,0 +1,5 @@
+# English config comment for hover
+
+max_retry_count: Hello from yaml config
+
+chinese_value: 不应翻译的中文内容

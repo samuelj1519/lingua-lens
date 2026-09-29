@@ -2,6 +2,9 @@ export interface LanguageSpec {
   grammar: string;
   commentTypes: ReadonlySet<string>;
   stringTypes: ReadonlySet<string>;
+  /** Mapping / pair node types for config key detection (uses `key` field when present). */
+  pairTypes?: ReadonlySet<string>;
+  propertyKeyTypes?: ReadonlySet<string>;
   templateTypes?: ReadonlySet<string>;
   interpolationTypes?: ReadonlySet<string>;
   concatTypes?: ReadonlySet<string>;
@@ -100,6 +103,46 @@ export const LANGUAGE_SPECS: Record<string, LanguageSpec> = {
     commentTypes: new Set(['comment']),
     stringTypes: new Set(['string_literal', 'raw_string_literal', 'concatenated_string']),
     classifyComment: (t) => (t.includes('/*') ? 'block' : 'line'),
+    lineCommentPrefixForInsert: '//',
+  },
+  yaml: {
+    grammar: 'tree-sitter-yaml.wasm',
+    commentTypes: new Set(['comment']),
+    stringTypes: new Set([
+      'plain_scalar',
+      'double_quoted_scalar',
+      'single_quoted_scalar',
+      'block_scalar',
+      'string_scalar',
+    ]),
+    pairTypes: new Set(['block_mapping_pair', 'flow_pair']),
+    propertyKeyTypes: new Set(['tag', 'anchor', 'alias']),
+    classifyComment: () => 'line',
+    lineCommentPrefixForInsert: '#',
+  },
+  toml: {
+    grammar: 'tree-sitter-toml.wasm',
+    commentTypes: new Set(['comment']),
+    stringTypes: new Set(['string', 'quoted_string', 'multiline_string', 'multiline_basic_string']),
+    pairTypes: new Set(['pair']),
+    propertyKeyTypes: new Set(['bare_key', 'quoted_key']),
+    classifyComment: () => 'line',
+    lineCommentPrefixForInsert: '#',
+  },
+  json: {
+    grammar: 'tree-sitter-json.wasm',
+    commentTypes: new Set(),
+    stringTypes: new Set(['string']),
+    pairTypes: new Set(['pair']),
+    classifyComment: () => 'line',
+    lineCommentPrefixForInsert: '//',
+  },
+  jsonc: {
+    grammar: 'tree-sitter-json.wasm',
+    commentTypes: new Set(),
+    stringTypes: new Set(['string']),
+    pairTypes: new Set(['pair']),
+    classifyComment: () => 'line',
     lineCommentPrefixForInsert: '//',
   },
 };

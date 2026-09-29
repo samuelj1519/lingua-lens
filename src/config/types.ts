@@ -9,6 +9,7 @@ export interface TranslateConfig {
     comments: boolean;
     strings: boolean;
     documents: boolean;
+    configKeys: boolean;
     maxChars: number;
     showOriginal: boolean;
   };

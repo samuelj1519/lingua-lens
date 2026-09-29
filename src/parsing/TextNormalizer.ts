@@ -16,7 +16,9 @@ export function normalize(kind: UnitKind, raw: string, _languageId: string): Nor
   } else if (kind === 'docstring') {
     body = stripPythonDocstring(raw);
   } else if (kind === 'string' || kind === 'templateString' || kind === 'rawString') {
-    body = stripStringLiteral(raw);
+    body = looksLikeQuotedCodeString(raw) ? stripStringLiteral(raw) : raw;
+  } else if (kind === 'configKey') {
+    body = raw.trim();
   }
   const protected_ = protect(body.trim());
   return protected_;
@@ -50,6 +52,11 @@ function stripPythonDocstring(raw: string): string {
   if (nonEmpty.length === 0) return '';
   const indent = Math.min(...nonEmpty.map((l) => l.match(/^\s*/)?.[0].length ?? 0));
   return lines.map((l) => l.slice(indent)).join('\n').trim();
+}
+
+function looksLikeQuotedCodeString(raw: string): boolean {
+  const t = raw.trimStart();
+  return t.startsWith('"') || t.startsWith("'") || t.startsWith('`');
 }
 
 function stripStringLiteral(raw: string): string {

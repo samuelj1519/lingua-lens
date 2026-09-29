@@ -1,0 +1,5 @@
+# English toml comment for hover
+
+max_retry_count = "Hello from toml config"
+
+chinese_value = "不应翻译"

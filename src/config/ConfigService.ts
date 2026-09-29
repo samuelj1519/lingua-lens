@@ -57,6 +57,7 @@ export class ConfigService implements vscode.Disposable {
         comments: cfg.get<boolean>('hover.comments', true),
         strings: cfg.get<boolean>('hover.strings', true),
         documents: cfg.get<boolean>('hover.documents', true),
+        configKeys: cfg.get<boolean>('hover.configKeys', true),
         maxChars: cfg.get<number>('hover.maxChars', 4000),
         showOriginal: cfg.get<boolean>('hover.showOriginal', false),
       },

@@ -72,14 +72,18 @@ export class TranslateHoverProvider implements vscode.HoverProvider {
     };
     const unit = await this.extractor.extractAt(snapshot, offset, {
       documentHover: cfg.hover.documents,
+      configKeys: cfg.hover.configKeys,
     });
     if (!unit) return undefined;
 
     const commentKinds = new Set(['lineComment', 'blockComment', 'docComment', 'docstring']);
-    if (unit.source !== 'document') {
+    if (unit.kind === 'configKey' && !cfg.hover.configKeys) {
+      return undefined;
+    }
+    if (unit.source !== 'document' && unit.kind !== 'configKey') {
       if (!cfg.hover.comments && commentKinds.has(unit.kind)) return undefined;
       if (!cfg.hover.strings && !commentKinds.has(unit.kind)) return undefined;
-    } else if (!cfg.hover.documents) {
+    } else if (unit.source === 'document' && !cfg.hover.documents) {
       return undefined;
     }
 

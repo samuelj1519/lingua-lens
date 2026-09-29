@@ -24,6 +24,7 @@ export async function run(): Promise<void> {
   await vscode.workspace.getConfiguration('aiTranslate').update('log.level', 'debug', true);
   await vscode.workspace.getConfiguration('aiTranslate').update('hover.extraDelayMs', 0, true);
   await vscode.workspace.getConfiguration('aiTranslate').update('hover.documents', true, true);
+  await vscode.workspace.getConfiguration('aiTranslate').update('hover.configKeys', true, true);
   await vscode.commands.executeCommand('aiTranslate.acknowledgePrivacy');
 
   const root = path.join(ext.extensionPath, 'test', 'fixtures', 'hover');
@@ -47,4 +48,30 @@ export async function run(): Promise<void> {
   const txtUri = vscode.Uri.file(path.join(root, 'sample-doc.txt'));
   const enTxt = await hoverMarkdownAt(txtUri, 'English plain');
   assert.ok(enTxt && /AI 翻译|\[zh-CN\]|翻译/i.test(enTxt), `expected EN txt hover: ${enTxt?.slice(0, 120)}`);
+
+  const yamlUri = vscode.Uri.file(path.join(root, 'sample-config.yaml'));
+  const yamlComment = await hoverMarkdownAt(yamlUri, 'English config comment');
+  assert.ok(yamlComment && /AI 翻译|\[zh-CN\]|翻译/i.test(yamlComment), 'yaml comment hover');
+
+  const yamlValue = await hoverMarkdownAt(yamlUri, 'Hello from yaml');
+  assert.ok(yamlValue && /AI 翻译|\[zh-CN\]|翻译/i.test(yamlValue), 'yaml value hover');
+
+  const yamlKey = await hoverMarkdownAt(yamlUri, 'max_retry');
+  assert.ok(yamlKey && /AI 翻译|\[zh-CN\]|翻译/i.test(yamlKey), 'yaml key hover');
+
+  const yamlZh = await hoverMarkdownAt(yamlUri, '不应翻译');
+  assert.ok(!yamlZh, 'yaml Chinese value should not hover');
+
+  const tomlUri = vscode.Uri.file(path.join(root, 'sample-config.toml'));
+  const tomlComment = await hoverMarkdownAt(tomlUri, 'English toml comment');
+  assert.ok(tomlComment && /AI 翻译|\[zh-CN\]|翻译/i.test(tomlComment), 'toml comment hover');
+
+  const tomlValue = await hoverMarkdownAt(tomlUri, 'Hello from toml');
+  assert.ok(tomlValue && /AI 翻译|\[zh-CN\]|翻译/i.test(tomlValue), 'toml value hover');
+
+  const tomlKey = await hoverMarkdownAt(tomlUri, 'max_retry');
+  assert.ok(tomlKey && /AI 翻译|\[zh-CN\]|翻译/i.test(tomlKey), 'toml key hover');
+
+  const tomlZh = await hoverMarkdownAt(tomlUri, '不应翻译');
+  assert.ok(!tomlZh, 'toml Chinese value should not hover');
 }

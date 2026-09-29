@@ -3,11 +3,16 @@ import type { DocumentSnapshot, TextUnit, UnitKind } from '../types';
 import { getSpec } from './languages/specs';
 import { normalize } from './TextNormalizer';
 import type { ParserService } from './ParserService';
+import { resolveConfigKeyNode } from './configKeyNode';
 
 export class TreeSitterExtractor {
   constructor(private readonly parser: ParserService) {}
 
-  async extractAt(doc: DocumentSnapshot, offset: number): Promise<TextUnit | null> {
+  async extractAt(
+    doc: DocumentSnapshot,
+    offset: number,
+    options?: { configKeys?: boolean },
+  ): Promise<TextUnit | null> {
     const parsed = await this.parser.getTree(doc);
     if (!parsed) return null;
     const spec = getSpec(doc.languageId);
@@ -15,7 +20,7 @@ export class TreeSitterExtractor {
 
     const text = doc.getText();
     let node = parsed.tree.rootNode.descendantForIndex(offset);
-    const found = findCommentOrString(node, spec, 5);
+    const found = findHoverUnit(node, spec, offset, options?.configKeys ?? false, 12);
     if (!found) return null;
 
     let start = found.node.startIndex;
@@ -29,6 +34,20 @@ export class TreeSitterExtractor {
     }
 
     const rawText = text.slice(start, end);
+    if (kind === 'configKey') {
+      const keyText = found.keyText ?? rawText;
+      if (!keyText.trim()) return null;
+      return {
+        kind: 'configKey',
+        range: { start, end },
+        rawText,
+        text: keyText,
+        placeholders: [],
+        languageId: doc.languageId,
+        source: 'tree-sitter',
+      };
+    }
+
     const norm = normalize(kind, rawText, doc.languageId);
     if (!norm.text.trim()) return null;
 
@@ -44,11 +63,15 @@ export class TreeSitterExtractor {
   }
 }
 
-function findCommentOrString(
+type HoverHit = { node: SyntaxNode; kind: UnitKind; keyText?: string };
+
+function findHoverUnit(
   node: SyntaxNode,
   spec: ReturnType<typeof getSpec>,
+  offset: number,
+  configKeys: boolean,
   depth: number,
-): { node: SyntaxNode; kind: UnitKind } | null {
+): HoverHit | null {
   if (!spec) return null;
   let cur: SyntaxNode | null = node;
   for (let i = 0; i < depth && cur; i++) {
@@ -57,6 +80,18 @@ function findCommentOrString(
       const kind: UnitKind = cls === 'doc' ? 'docComment' : cls === 'block' ? 'blockComment' : 'lineComment';
       return { node: cur, kind };
     }
+    cur = cur.parent;
+  }
+
+  if (configKeys) {
+    const keyHit = resolveConfigKeyNode(node, offset, spec);
+    if (keyHit) {
+      return { node: keyHit.node, kind: 'configKey', keyText: keyHit.text };
+    }
+  }
+
+  cur = node;
+  for (let i = 0; i < depth && cur; i++) {
     if (spec.templateTypes?.has(cur.type)) {
       return { node: cur, kind: 'templateString' };
     }

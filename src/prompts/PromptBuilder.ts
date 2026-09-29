@@ -65,6 +65,8 @@ export class PromptBuilder {
             ? 'Markdown table cell'
             : ctx.unitKind === 'documentParagraph'
               ? 'Markdown paragraph'
+              : ctx.unitKind === 'configKey'
+                ? 'configuration field name'
               : ctx.unitKind === 'string' || ctx.unitKind === 'templateString'
                 ? 'string literal'
                 : ctx.unitKind === 'docstring'

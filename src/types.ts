@@ -11,7 +11,8 @@ export type UnitKind =
   | 'rawString'
   | 'documentParagraph'
   | 'documentHeading'
-  | 'documentTableCell';
+  | 'documentTableCell'
+  | 'configKey';
 
 export interface OffsetRange {
   start: number;

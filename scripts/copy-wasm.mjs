@@ -23,6 +23,9 @@ const GRAMMARS = [
   'tree-sitter-java.wasm',
   'tree-sitter-c.wasm',
   'tree-sitter-cpp.wasm',
+  'tree-sitter-yaml.wasm',
+  'tree-sitter-toml.wasm',
+  'tree-sitter-json.wasm',
 ];
 
 if (existsSync(wasmsPkg)) {
@@ -49,6 +52,9 @@ const needed = [
   'tree-sitter-java.wasm',
   'tree-sitter-c.wasm',
   'tree-sitter-cpp.wasm',
+  'tree-sitter-yaml.wasm',
+  'tree-sitter-toml.wasm',
+  'tree-sitter-json.wasm',
 ];
 
 const missing = needed.filter((f) => !existsSync(join(distWasm, f)));

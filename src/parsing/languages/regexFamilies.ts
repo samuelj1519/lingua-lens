@@ -34,6 +34,7 @@ export const LANGUAGE_TO_FAMILY: Record<string, CommentFamily> = {
   clojure: 'semicolon',
   lisp: 'semicolon',
   ini: 'semicolon',
+  properties: 'semicolon',
   latex: 'percent',
   matlab: 'percent',
   erlang: 'percent',

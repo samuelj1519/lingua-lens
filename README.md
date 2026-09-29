@@ -15,7 +15,7 @@
 - **语言包**：`generateLocaleFile` 对 JSON/YAML/properties 增量生成 `*.zh-CN.json` 等
 - **Notebook / 模板**：Markdown 单元格段落悬停；HTML/Vue/JSX 的 UI 属性与文本节点
 - **命名助手**：根据中文描述建议 camelCase / snake_case / PascalCase 标识符
-- **文档双语预览**：虚拟文档 `aitranslate:`，默认**交错**（每个块：完整原文 → 一空行 → 完整译文；列表/表格/引用整块翻译）；Markdown **frontmatter** 白名单字段（默认 `description` 等）在预览中以 YAML 注释显示译文；`aiTranslate.markdown.frontmatterFields` 可定制或 `[]` 关闭；顶部 CodeLens / `Ctrl+Alt+Shift+D` / 状态栏 `译` 菜单；配置文件不支持整篇翻译
+- **文档双语预览**：虚拟文档 `aitranslate:`，默认**交错**（每个块：完整原文 → 一空行 → 完整译文；列表/表格/引用整块翻译）；已是目标语言的段落会跳过（与悬停相同检测）；`aiTranslate.document.forceTranslate` 可强制全文请求模型；Markdown **frontmatter** 白名单字段（默认 `description` 等）在预览中以 YAML 注释显示译文；`aiTranslate.markdown.frontmatterFields` 可定制或 `[]` 关闭；顶部 CodeLens / `Ctrl+Alt+Shift+D` / 状态栏 `译` 菜单；配置文件不支持整篇翻译
 - **生成译文文件**：如 `README.zh-CN.md`，覆盖前确认
 - **状态栏**：开关与目标语言 QuickPick
 - **缓存**：内存 LRU + 磁盘分片 JSONL
@@ -41,7 +41,7 @@
 | **常规** | `enabled`, `targetLanguage`, `detection.*`, `selection.output`, `privacy.exclude`, `statusBar.enabled` |
 | **模型与 API** | `llm.baseUrl`, `llm.model`, `llm.stream`, `llm.extraBody`, `llm.systemPrompt`, `llm.timeoutMs`, `llm.maxConcurrency`, `glossary.path`, `glossary.maxTerms` |
 | **悬停翻译** | `hover.enabled`, `hover.extraDelayMs`, `hover.comments`, `hover.strings`, `hover.documents`, `hover.configKeys`, `hover.diagnostics`, `hover.symbolDocs`, `hover.gitCommitMessage`, `hover.selection` |
-| **全文翻译与预览** | `document.previewStyle`, `document.codeLens`, `document.batchSize`, `document.maxBatchChars`, `document.sideFileNamePattern`, `document.sideFileContent` |
+| **全文翻译与预览** | `document.previewStyle`, `document.codeLens`, `document.forceTranslate`, `document.batchSize`, `document.maxBatchChars`, `document.sideFileNamePattern`, `document.sideFileContent` |
 | **Markdown 与文档** | `markdown.frontmatterFields` |
 | **缓存** | `cache.enabled`, `cache.memoryEntries`, `cache.maxDiskMB` |
 | **高级与调试** | `privacy.blockSecrets`, `privacy.allowedSchemes`, `parser.maxFileSizeKB`, `log.level` |

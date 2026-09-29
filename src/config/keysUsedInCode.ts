@@ -38,6 +38,7 @@ export const CONFIG_KEYS_USED_IN_CODE: string[] = [
   'document.autoRefresh',
   'document.previewStyle',
   'document.codeLens',
+  'document.forceTranslate',
   'cache.enabled',
   'cache.memoryEntries',
   'cache.maxDiskMB',

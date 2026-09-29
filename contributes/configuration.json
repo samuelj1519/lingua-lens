@@ -362,6 +362,13 @@
         "order": 2,
         "markdownDescription": "%config.document.codeLens.markdownDescription%"
       },
+      "aiTranslate.document.forceTranslate": {
+        "type": "boolean",
+        "default": false,
+        "scope": "resource",
+        "order": 3,
+        "markdownDescription": "%config.document.forceTranslate.markdownDescription%"
+      },
       "aiTranslate.document.batchSize": {
         "type": "number",
         "default": 8,

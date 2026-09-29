@@ -2,7 +2,7 @@
   "name": "cursor-ai-translate",
   "displayName": "AI Translate",
   "description": "使用 LLM 翻译项目中的注释、字符串和文档",
-  "version": "0.4.5",
+  "version": "0.4.6",
   "publisher": "cursor-ai-translate",
   "repository": {
     "type": "git",
@@ -726,6 +726,13 @@
             "scope": "resource",
             "order": 2,
             "markdownDescription": "%config.document.codeLens.markdownDescription%"
+          },
+          "aiTranslate.document.forceTranslate": {
+            "type": "boolean",
+            "default": false,
+            "scope": "resource",
+            "order": 3,
+            "markdownDescription": "%config.document.forceTranslate.markdownDescription%"
           },
           "aiTranslate.document.batchSize": {
             "type": "number",

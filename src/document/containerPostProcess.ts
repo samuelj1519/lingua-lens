@@ -1,14 +1,19 @@
 import type { DocSession } from './DocTranslationService';
 import type { TranslationService } from '../translation/TranslationService';
 import type { TargetLang } from '../types';
+import type { TranslateConfig } from '../config/types';
 import { restore } from '../parsing/placeholders';
 import { validateContainerTranslation } from './containerStructure';
 import { reassembleListFromLineTranslations } from './listFallback';
+import { shouldTranslateDocumentText } from './documentSegmentDetection';
+import { isSameTranslationAsSource } from '../util/textEquivalence';
+
 export async function validateAndFallbackContainers(
   session: DocSession,
   source: string,
   translation: TranslationService,
   target: TargetLang,
+  cfg: TranslateConfig,
 ): Promise<void> {
   for (const seg of session.segments) {
     if (!seg.containerKind) continue;
@@ -24,6 +29,12 @@ export async function validateAndFallbackContainers(
     if (seg.containerKind === 'list' && seg.listFallbackItems?.length) {
       const map = new Map<string, string>();
       for (const item of seg.listFallbackItems) {
+        if (
+          !cfg.document.forceTranslate &&
+          !shouldTranslateDocumentText(item.text, cfg, 'paragraph', false)
+        ) {
+          continue;
+        }
         const unit = {
           kind: 'documentParagraph' as const,
           range: { start: 0, end: item.text.length },
@@ -38,7 +49,9 @@ export async function validateAndFallbackContainers(
             kind: 'hover',
             uri: session.sourceUri,
           });
-          map.set(item.id, r.text);
+          if (!isSameTranslationAsSource(item.text, r.text, item.placeholders)) {
+            map.set(item.id, r.text);
+          }
         } catch (e) {
           session.results.set(seg.id, {
             status: 'failed',

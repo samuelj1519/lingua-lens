@@ -12,6 +12,9 @@ function mockSession(source: string, translations: Record<string, string>): DocS
     if (s.kind === 'preserved') continue;
     results.set(s.id, { status: 'done', text: translations[s.id] ?? s.sourceText });
   }
+  const plans = new Map(
+    segments.filter((s) => s.kind !== 'preserved').map((s) => [s.id, { mode: 'batch' as const }]),
+  );
   return {
     sourceUri: { toString: () => 'file:///t.md' } as never,
     previewUri: { toString: () => 'aitranslate:/t' } as never,
@@ -19,6 +22,7 @@ function mockSession(source: string, translations: Record<string, string>): DocS
     sourceVersion: 1,
     sourceLabel: 't.md',
     segments,
+    plans,
     results,
     cts: { cancel: () => {}, token: { isCancellationRequested: false } } as never,
     doneCount: results.size,

@@ -86,6 +86,7 @@ function translationBlockForSegment(
   const gap = gapBeforeTranslation(original);
 
   const st = session.results.get(seg.id);
+  if (st?.status === 'skipped') return '';
   if (!st || st.status === 'pending') {
     if (seg.kind === 'frontmatter' && style === 'interleaved') {
       return '\n> *(翻译中…)*';

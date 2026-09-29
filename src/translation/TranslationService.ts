@@ -8,6 +8,7 @@ import type { Placeholder, Segment, TargetLang, TextUnit } from '../types';
 import { restore } from '../parsing/placeholders';
 import type { StatsService } from '../stats/StatsService';
 import { isCacheableTranslation } from './cacheable';
+import { isSameTranslationAsSource } from '../util/textEquivalence';
 import { sha256HexPrefix } from '../util/hash';
 import * as vscode from 'vscode';
 
@@ -257,6 +258,14 @@ export class TranslationService {
             continue;
           }
           const restored = restore(cleaned, item.placeholders);
+          if (isSameTranslationAsSource(item.text, restored.text, item.placeholders)) {
+            results.set(item.id, {
+              text: restored.text,
+              fromCache: false,
+              placeholderOk: restored.ok,
+            });
+            continue;
+          }
           const itemBatchKind = item.batchCacheKind ?? 'documentBatch';
           const key = this.cache.key({
             text: item.text,

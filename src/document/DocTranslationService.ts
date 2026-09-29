@@ -10,6 +10,15 @@ import type { PreviewContentProvider } from './PreviewContentProvider';
 import { SideFileWriter } from './SideFileWriter';
 import { canTranslateWholeDocument } from './documentEligibility';
 import { validateAndFallbackContainers } from './containerPostProcess';
+import {
+  buildDocumentTranslationPlan,
+  DOCUMENT_ALREADY_TARGET_MESSAGE,
+  type DocumentSegmentPlan,
+} from './documentTranslationPlan';
+import { translatePartialDocumentSegments } from './documentPartialTranslate';
+import { isSameTranslationAsSource } from '../util/textEquivalence';
+
+export type SegmentResultStatus = 'pending' | 'done' | 'failed' | 'skipped';
 
 export interface DocSession {
   sourceUri: vscode.Uri;
@@ -18,7 +27,8 @@ export interface DocSession {
   sourceVersion: number;
   sourceLabel: string;
   segments: Segment[];
-  results: Map<string, { status: 'pending' | 'done' | 'failed'; text?: string; error?: string }>;
+  plans: Map<string, DocumentSegmentPlan>;
+  results: Map<string, { status: SegmentResultStatus; text?: string; error?: string }>;
   cts: vscode.CancellationTokenSource;
   doneCount: number;
   totalTranslatable: number;
@@ -68,8 +78,14 @@ export class DocTranslationService {
       }
     }
     const cfg = this.config.get(doc.uri);
+    const segments = this.segment(doc);
+    const { plans, translatableCount } = buildDocumentTranslationPlan(segments, doc.getText(), cfg);
+    if (translatableCount === 0 && !cfg.document.forceTranslate) {
+      void vscode.window.showInformationMessage(DOCUMENT_ALREADY_TARGET_MESSAGE);
+      return;
+    }
     const previewUri = this.previewUriFor(doc.uri, cfg.targetLanguage);
-    await this.startSession(doc, previewUri, cfg.targetLanguage);
+    await this.startSession(doc, previewUri, cfg.targetLanguage, segments, plans);
     await vscode.window.showTextDocument(previewUri, {
       viewColumn: vscode.ViewColumn.Beside,
       preview: true,
@@ -95,10 +111,16 @@ export class DocTranslationService {
     const doc = await vscode.workspace.openTextDocument(session.sourceUri);
     session.sourceVersion = doc.version;
     session.sourceText = doc.getText();
+    const cfg = this.config.get(doc.uri);
     session.segments = this.segment(doc);
-    for (const seg of session.segments) {
-      if (seg.kind !== 'preserved') session.results.set(seg.id, { status: 'pending' });
-    }
+    const { plans, translatableCount } = buildDocumentTranslationPlan(
+      session.segments,
+      session.sourceText,
+      cfg,
+    );
+    session.plans = plans;
+    session.totalTranslatable = translatableCount;
+    this.initResultsFromPlans(session);
     session.doneCount = 0;
     if (opts?.bypassCache) {
       await this.translation.invalidateDocumentSegmentCaches(
@@ -112,10 +134,16 @@ export class DocTranslationService {
 
   async generateSideFile(doc: vscode.TextDocument): Promise<void> {
     const cfg = this.config.get(doc.uri);
+    const segments = this.segment(doc);
+    const { plans, translatableCount } = buildDocumentTranslationPlan(segments, doc.getText(), cfg);
+    if (translatableCount === 0 && !cfg.document.forceTranslate) {
+      void vscode.window.showInformationMessage(DOCUMENT_ALREADY_TARGET_MESSAGE);
+      return;
+    }
     const previewUri = this.previewUriFor(doc.uri, cfg.targetLanguage);
     let session = this.sessions.get(previewUri.toString());
     if (!session) {
-      await this.startSession(doc, previewUri, cfg.targetLanguage);
+      await this.startSession(doc, previewUri, cfg.targetLanguage, segments, plans);
       session = this.sessions.get(previewUri.toString())!;
       await this.runTranslation(session, doc.getText(), true);
     } else if (session.doneCount < session.totalTranslatable) {
@@ -142,11 +170,27 @@ export class DocTranslationService {
     return this.plain.segment(text);
   }
 
-  private async startSession(doc: vscode.TextDocument, previewUri: vscode.Uri, target: TargetLang): Promise<void> {
-    const segments = this.segment(doc);
-    const results = new Map<string, { status: 'pending' | 'done' | 'failed'; text?: string; error?: string }>();
-    const translatable = segments.filter((s) => s.kind !== 'preserved');
-    for (const s of translatable) results.set(s.id, { status: 'pending' });
+  private initResultsFromPlans(session: DocSession): void {
+    for (const seg of session.segments) {
+      if (seg.kind === 'preserved') continue;
+      const plan = session.plans.get(seg.id);
+      if (!plan || plan.mode === 'skip') {
+        session.results.set(seg.id, { status: 'skipped' });
+      } else {
+        session.results.set(seg.id, { status: 'pending' });
+      }
+    }
+  }
+
+  private async startSession(
+    doc: vscode.TextDocument,
+    previewUri: vscode.Uri,
+    target: TargetLang,
+    segments: Segment[],
+    plans: Map<string, DocumentSegmentPlan>,
+  ): Promise<void> {
+    const results = new Map<string, { status: SegmentResultStatus; text?: string; error?: string }>();
+    const translatableCount = [...plans.values()].filter((p) => p.mode !== 'skip').length;
     const session: DocSession = {
       sourceUri: doc.uri,
       previewUri,
@@ -154,12 +198,14 @@ export class DocTranslationService {
       sourceVersion: doc.version,
       sourceLabel: doc.fileName,
       segments,
+      plans,
       results,
       cts: new vscode.CancellationTokenSource(),
       doneCount: 0,
-      totalTranslatable: results.size,
+      totalTranslatable: translatableCount,
       sourceText: doc.getText(),
     };
+    this.initResultsFromPlans(session);
     this.sessions.set(previewUri.toString(), session);
     this.preview.registerSession(session);
     await this.runTranslation(session, doc.getText());
@@ -174,6 +220,8 @@ export class DocTranslationService {
     }[] = [];
     for (const seg of session.segments) {
       if (seg.kind === 'preserved') continue;
+      const plan = session.plans.get(seg.id);
+      if (!plan || plan.mode === 'skip' || plan.mode === 'list-lines') continue;
       items.push({
         id: seg.id,
         text: seg.sourceText,
@@ -223,14 +271,23 @@ export class DocTranslationService {
             if (r instanceof Error) {
               session.results.set(id, { status: 'failed', error: r.message });
             } else {
-              session.results.set(id, { status: 'done', text: r.text });
-              done++;
+              const seg = session.segments.find((s) => s.id === id);
+              if (
+                seg &&
+                isSameTranslationAsSource(seg.sourceText, r.text, seg.placeholders)
+              ) {
+                session.results.set(id, { status: 'skipped' });
+              } else {
+                session.results.set(id, { status: 'done', text: r.text });
+                done++;
+              }
             }
           }
           session.doneCount = [...session.results.values()].filter((v) => v.status === 'done').length;
           this.preview.notify(session.previewUri);
         }
-        await validateAndFallbackContainers(session, _source, this.translation, session.target);
+        await translatePartialDocumentSegments(session, _source, cfg, this.translation, session.target);
+        await validateAndFallbackContainers(session, _source, this.translation, session.target, cfg);
         session.doneCount = [...session.results.values()].filter((v) => v.status === 'done').length;
         this.preview.notify(session.previewUri);
       },

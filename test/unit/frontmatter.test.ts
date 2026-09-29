@@ -84,6 +84,7 @@ Interview the user.
       sourceVersion: 1,
       sourceLabel: 'SKILL.md',
       segments: segs,
+      plans: new Map([[fm.id, { mode: 'batch' }]]),
       results: new Map([[fm.id, { status: 'done', text: '无情拷问用户的计划。' }]]),
       cts: { token: { isCancellationRequested: false }, cancel: () => {} } as import('vscode').CancellationTokenSource,
       doneCount: 1,

@@ -46,6 +46,7 @@ export interface TranslateConfig {
     autoRefresh: boolean;
     previewStyle: 'interleaved' | 'append';
     codeLens: boolean;
+    forceTranslate: boolean;
   };
   cache: {
     enabled: boolean;

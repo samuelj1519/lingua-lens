@@ -97,6 +97,7 @@ export class ConfigService implements vscode.Disposable {
         autoRefresh: cfg.get<boolean>('document.autoRefresh', false),
         previewStyle: cfg.get<'interleaved' | 'append'>('document.previewStyle', 'interleaved'),
         codeLens: cfg.get<boolean>('document.codeLens', true),
+        forceTranslate: cfg.get<boolean>('document.forceTranslate', false),
       },
       cache: {
         enabled: cfg.get<boolean>('cache.enabled', true),

@@ -61,6 +61,7 @@
   "config.document.previewStyle.enum.interleaved": "Original block, blank line, then translation (lists/tables as whole blocks)",
   "config.document.previewStyle.enum.append": "Legacy style: translation appended after each block",
   "config.document.codeLens.markdownDescription": "Show **Translate document** CodeLens at the top of Markdown/plain-text files.",
+  "config.document.forceTranslate.markdownDescription": "When enabled, skip language detection for whole-document translation and send every segment to the model (may duplicate text already in the target language). Default follows [#aiTranslate.detection.targetRatio#](settings://aiTranslate.detection.targetRatio) like hover translation.",
   "config.document.batchSize.markdownDescription": "Number of document segments per API batch when translating whole files.",
   "config.document.maxBatchChars.markdownDescription": "Maximum total source characters per document batch (splits batches with [#aiTranslate.document.batchSize#](settings://aiTranslate.document.batchSize)).",
   "config.document.sideFileNamePattern.markdownDescription": "Filename pattern for **Generate translation file**; `${lang}` is replaced with the target language code.",

@@ -1,56 +1,120 @@
-# AI Translate (cursor-ai-translate)
+# AI Translate
 
 English | [简体中文](README.zh-CN.md)
 
-Translate code comments, string literals, and Markdown/plain-text docs in Cursor / VS Code using an OpenAI-compatible LLM. API keys are stored only in VS Code **SecretStorage**, never in `settings.json`.
+**Translate comments, strings, and docs inside VS Code and Cursor with your own OpenAI-compatible LLM—without sending API keys to settings files.**
 
-The repository root is the extension source tree.
+AI Translate (`cursor-ai-translate.cursor-ai-translate`) adds hover translation, selection and clipboard workflows, whole-document bilingual preview, config-file hovers, Git helpers, a glossary, LRU + disk cache, and a settings webview. Keys are stored in **SecretStorage** per API origin; only text you hover or explicitly translate is sent to your configured endpoint.
 
-## Features
+<!-- TODO: screenshot — hover translation on a code comment and Markdown document preview -->
 
-- **Hover translation** for code, config files, and documents; optional diagnostic and symbol-doc blocks
-- **Config-file hovers** for YAML, TOML, JSON/JSONC/JSON5, INI, XML, `.properties`, and `key=value` files
-- **Selection, terminal, and clipboard** translation with keybindings
-- **Whole-document preview** on the `aitranslate:` virtual URI with side-file export (e.g. `README.zh-CN.md`)
-- **Git** commit-message hovers and SCM input helpers
-- **Glossary**, **LRU + disk cache**, privacy guards, and a **settings webview**
+## Why use it
 
-<!-- TODO: add screenshot or GIF of hover + document preview -->
+| Capability | What you get |
+| --- | --- |
+| **Hover translation** | Tree-sitter (with regex fallback) extracts comments, strings, Markdown paragraphs, config values/keys, template UI text, and more. Optional blocks for diagnostics, symbol docs, Git commit messages, and active selections. |
+| **Document preview** | `aitranslate:` virtual document with interleaved or append layout; progress per translatable segment; side files such as `README.zh-CN.md`. |
+| **Editor workflows** | Keybindings for selection, clipboard/terminal, replace/insert, and popup translation. CodeLens on Markdown for translate / refresh / side file. |
+| **Operations** | Per-origin API keys, connection test, cache clear, workspace disable, privacy acknowledgement, secret blocking, and exclude globs. |
+| **i18n** | Runtime UI follows `aiTranslate.targetLanguage` (`l10n/bundle`); built-in settings labels follow the editor UI language (`package.nls`). |
 
 ## Quick start
 
-1. Build or install the `.vsix` (`npm run package`).
-2. Run **AI Translate: Set API Key**.
-3. Set `aiTranslate.llm.baseUrl` and `aiTranslate.llm.model` (see [Configure providers](docs/en/how-to/configure-providers.md)).
-4. Hover a comment or run **Translate document (preview)** on a Markdown file.
+1. Install the `.vsix` (`npm run package` in this repo) or launch from **F5** after `npm install && npm run build`.
+2. Set `aiTranslate.llm.baseUrl` and `aiTranslate.llm.model` in settings (see table below).
+3. Run **AI Translate: Set API Key** and **AI Translate: Test Connection**.
+4. Hover a comment or run **Translate document (preview)** on a `.md` file.
 
-Full walkthrough: [Getting started](docs/en/tutorials/getting-started.md).
+Step-by-step tutorial: [Getting started](docs/en/tutorials/getting-started.md).
 
-## LLM providers
+## Provider setup (OpenAI-compatible)
 
-OpenAI-compatible `POST /chat/completions` endpoints work out of the box (OpenAI, DeepSeek, Qwen/DashScope, Doubao, etc.). Use `aiTranslate.llm.extraBody` to disable “thinking” modes when your provider supports it—see [extraBody how-to](docs/en/how-to/extra-body-thinking.md).
+All providers use `POST {baseUrl}/chat/completions` with a Bearer token from **Set API Key**.
 
-## Commands and settings
+| Provider | Example `aiTranslate.llm.baseUrl` | Notes |
+| --- | --- | --- |
+| OpenAI | `https://api.openai.com/v1` | Default in `package.json`. |
+| DeepSeek | `https://api.deepseek.com/v1` | Often needs `extraBody` to disable thinking. |
+| Qwen (DashScope) | `https://dashscope.aliyuncs.com/compatible-mode/v1` | Compatible-mode endpoint. |
+| Doubao / Ark | `https://ark.cn-beijing.volces.com/api/v3` | Use your Ark OpenAI-compatible base URL. |
 
-| Resource | Link |
-| --- | --- |
-| Settings reference | [docs/en/reference/settings.md](docs/en/reference/settings.md) (auto-generated) |
-| Commands | [docs/en/reference/commands.md](docs/en/reference/commands.md) |
-| All documentation | [docs/README.md](docs/README.md) |
+Example `settings.json` (User):
 
-## FAQ and troubleshooting
+```json
+{
+  "aiTranslate.llm.baseUrl": "https://api.deepseek.com/v1",
+  "aiTranslate.llm.model": "deepseek-chat",
+  "aiTranslate.llm.extraBody": {
+    "thinking": { "type": "disabled" }
+  },
+  "aiTranslate.targetLanguage": "zh-CN"
+}
+```
 
-- **Nothing on hover?** Check `aiTranslate.enabled`, file exclusions, and privacy acknowledgement.
-- **Connection errors?** Use **Test connection** and see [troubleshoot connection](docs/en/how-to/troubleshoot-connection.md).
-- **Already in target language?** Detection skips segments; use selection translate or `aiTranslate.document.forceTranslate`.
+Details and pitfalls: [Configure providers](docs/en/how-to/configure-providers.md), [Extra body / thinking](docs/en/how-to/extra-body-thinking.md).
+
+## Key settings
+
+| Setting | Default | Purpose |
+| --- | --- | --- |
+| `aiTranslate.enabled` | `true` | Master switch per resource. |
+| `aiTranslate.targetLanguage` | `zh-CN` | Translation output + extension-owned UI language. |
+| `aiTranslate.llm.baseUrl` | `https://api.openai.com/v1` | API root (include `/v1` when required). |
+| `aiTranslate.llm.model` | _(empty)_ | Required before any LLM call. |
+| `aiTranslate.llm.extraBody` | `{}` | Merged into chat JSON (thinking flags, etc.). |
+| `aiTranslate.hover.enabled` | `true` | Hover translation master switch. |
+| `aiTranslate.document.forceTranslate` | `false` | Skip language detection for whole documents. |
+| `aiTranslate.cache.enabled` | `true` | Memory LRU + disk JSONL under global storage. |
+
+Full list (52 keys, seven UI sections): [Settings reference](docs/en/reference/settings.md) (auto-generated).
+
+## Commands (palette)
+
+| Command | Default key | When |
+| --- | --- | --- |
+| `aiTranslate.setApiKey` | — | Always (palette / status bar). |
+| `aiTranslate.translateSelection` | `Ctrl+Alt+Shift+T` | Editor with selection. |
+| `aiTranslate.translateDocument` | `Ctrl+Alt+Shift+D` | Markdown / plain text editor. |
+| `aiTranslate.translateClipboardOrSelection` | `Ctrl+Alt+Shift+Y` | Terminal selection or clipboard. |
+| `aiTranslate.openSettingsPanel` | — | QuickPick / palette. |
+| `aiTranslate.clearCache` | — | Palette / status bar tooltip link. |
+
+All commands, CodeLens, and context menus: [Commands reference](docs/en/reference/commands.md).
+
+## FAQ
+
+**Hover shows nothing** — Check `aiTranslate.enabled`, file exclude globs, privacy acknowledgement, and whether detection skipped the fragment (already in target language). Enable `aiTranslate.log.level`: `debug` and open **AI Translate: Show Log**.
+
+**401 / connection errors** — Confirm `baseUrl` includes `/v1` if your vendor requires it, model id is set, and the key matches that origin. See [Troubleshoot connection](docs/en/how-to/troubleshoot-connection.md).
+
+**Document already in Chinese but still translating** — Turn off `aiTranslate.document.forceTranslate`. Detection uses the same rules as hover unless forced.
+
+**Stale translation after changing model** — Cache keys include `model`, `baseUrl`, and `extraBody` hash; use **Refresh** on hover or **Clear cache** if needed. See [Caching](docs/en/explanation/caching.md).
 
 ## Privacy and security
 
-The extension sends text you hover or translate to the configured LLM endpoint. Keys live in SecretStorage per API origin. Disk cache is stored under the extension global storage path. Details: [SECURITY.md](SECURITY.md).
+- Text under the cursor, in selections, or in document segments you translate is sent to `aiTranslate.llm.baseUrl`.
+- API keys never appear in `settings.json` or settings panel HTML ([CSP](docs/en/explanation/settings-panel-security.md)).
+- `.env`, keys, and custom exclude globs are not read for translation.
+- Disk cache lives under the extension global storage path (`cache/v2`).
 
-## Contributing
+[SECURITY.md](SECURITY.md) · [Contributing](CONTRIBUTING.md)
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). Design notes: [docs/DESIGN.md](docs/DESIGN.md), [docs/DECISIONS.md](docs/DECISIONS.md).
+## Documentation map
+
+- [Documentation home](docs/README.md)
+- [Tutorials](docs/en/tutorials/index.md) · [How-to](docs/en/how-to/index.md) · [Reference](docs/en/reference/index.md) · [Explanation](docs/en/explanation/index.md)
+
+## Development
+
+```bash
+npm install
+npm run build
+npm test
+npm run package
+```
+
+`pretest` runs `merge-config`, `merge-nls`, and `generate-docs`.
 
 ## License
 

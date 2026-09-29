@@ -3,10 +3,9 @@
 ## 0.6.0
 
 - **English-first codebase**: comments, logs, errors, and tests in `src/`, `scripts/`, and `test/` use English; user-facing runtime UI remains in `l10n/` and `package.nls.*`
-- **Documentation**: Diátaxis bilingual docs under `docs/en/` and `docs/zh-CN/` (tutorials, how-to, reference, explanation), plus `CONTRIBUTING` / `SECURITY` in EN and zh-CN
-- **Generated settings reference** from `contributes/configuration.json` + nls (`scripts/generate-settings-reference.mjs`) with sync test
-- **Quality**: CJK-in-`src/` guard test (allowlist for native language labels); docs parity and link resolution tests
-- **README**: English default (`README.md`) and `README.zh-CN.md` with language switcher
+- **Documentation**: full Diátaxis bilingual docs under `docs/en/` and `docs/zh-CN/` (substantive tutorials, how-to, explanation, and reference pages); legacy `DESIGN.md` / `DECISIONS.md` folded into explanation + ADR `decisions.md`
+- **Generated reference**: settings (`generate-settings-reference.mjs`) and commands (`generate-commands-reference.mjs`) with sync tests; README landing pages in EN and zh-CN
+- **Quality**: CJK guards for `src/`, `scripts/`, and `test/`; docs parity, link resolution, and minimum page length tests
 
 ## 0.5.3
 

@@ -933,7 +933,7 @@
     "merge-config": "node scripts/merge-configuration.mjs",
     "merge-nls": "node scripts/merge-nls.mjs",
     "prebuild": "npm run merge-config && npm run merge-nls",
-    "generate-docs": "node scripts/generate-settings-reference.mjs",
+    "generate-docs": "node scripts/generate-settings-reference.mjs && node scripts/generate-commands-reference.mjs",
     "pretest": "npm run merge-config && npm run merge-nls && npm run generate-docs",
     "build": "node esbuild.mjs && node scripts/copy-wasm.mjs",
     "watch": "node esbuild.mjs --watch",

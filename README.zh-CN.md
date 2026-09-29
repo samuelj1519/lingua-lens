@@ -1,77 +1,109 @@
-# AI Translate（cursor-ai-translate）
+# AI Translate
 
 [English](README.md) | 简体中文
 
-在 Cursor / VS Code 中使用 OpenAI 兼容 LLM 翻译代码注释、字符串字面量，以及 Markdown / 纯文本文档。API Key 仅存于编辑器 SecretStorage，不会写入设置文件。
+**在 VS Code / Cursor 内用自有的 OpenAI 兼容 LLM 翻译注释、字符串与文档，API Key 只进 SecretStorage，不会写入 settings.json。**
 
-完整文档见 [docs/zh-CN](docs/zh-CN/README.md)。
+AI Translate（扩展 ID：`cursor-ai-translate.cursor-ai-translate`）提供悬停翻译、选区与剪贴板工作流、全文双语预览、配置文件悬停、Git 辅助、术语表、内存 LRU + 磁盘缓存以及设置 Webview。密钥按 API **origin** 存入 SecretStorage；只有你悬停或主动翻译的文本会发往所配置的端点。
 
-克隆本仓库后，项目根目录即为扩展源码（无需再进入子目录）。
+<!-- TODO：截图 — 代码注释悬停与 Markdown 全文预览 -->
 
-## 功能
+## 为什么选择它
 
-- **悬停翻译**：代码、配置与文档（见下）；**诊断/符号文档**以独立块并列显示（`aiTranslate.hover.diagnostics` / `symbolDocs`，无法改写内置 Hover）
-- **配置文件悬停**：代码文件中针对注释与字符串（tree-sitter + 正则回退）；**配置文件**在 YAML / TOML / **JSON / JSONC / JSON5** / INI / `.cfg` / `.conf` / `.properties` / **XML**（注释、属性值、元素文本、字段名）及其它 `key=value` / `key: value` 文件上行为一致：可悬停翻译注释、字符串值与键名（`aiTranslate.hover.configKeys`）。JSON 键名在 tree-sitter 标为字符串时会自动提升为键名翻译。`.env` 仍由隐私排除规则屏蔽。Markdown / 纯文本段落悬停与「翻译文档」分段一致。共享延迟、检测、缓存与隐私守卫
-- **诊断日志**：设置 `aiTranslate.log.level` 为 `debug` 可查看悬停流水线（守卫、提取、检测、缓存）
-- **选区翻译**：`Ctrl+Alt+Shift+T`；悬停选区译文（可关）；灯泡 Code Action；弹窗 `Ctrl+Alt+Shift+P`
-- **终端/剪贴板**：`Ctrl+Alt+Shift+Y` 翻译终端选区或剪贴板（读后恢复剪贴板）
-- **Git**：翻译当前行提交说明、翻译 SCM 输入框（可替换为英文提交信息）
-- **语言包**：`generateLocaleFile` 对 JSON/YAML/properties 增量生成 `*.zh-CN.json` 等
-- **Notebook / 模板**：Markdown 单元格段落悬停；HTML/Vue/JSX 的 UI 属性与文本节点
-- **命名助手**：根据中文描述建议 camelCase / snake_case / PascalCase 标识符
-- **文档双语预览**：虚拟文档 `aitranslate:`，默认**交错**（每个块：完整原文 → 一空行 → 完整译文；列表/表格/引用整块翻译）；已是目标语言的段落会跳过（与悬停相同检测）；`aiTranslate.document.forceTranslate` 可强制全文请求模型；Markdown **frontmatter** 白名单字段（默认 `description` 等）在预览中以 YAML 注释显示译文；`aiTranslate.markdown.frontmatterFields` 可定制或 `[]` 关闭；顶部 CodeLens / `Ctrl+Alt+Shift+D` / 状态栏 `译` 菜单；配置文件不支持整篇翻译
-- **生成译文文件**：如 `README.zh-CN.md`，覆盖前确认
-- **状态栏**：开关与目标语言 QuickPick
-- **缓存**：内存 LRU + 磁盘分片 JSONL
-- **术语表**：`.translate-glossary.json`
-- **隐私**：工作区禁用、排除 glob、首次确认、密钥检测
-
-## 从 .vsix 安装（Cursor）
-
-1. 构建或获取 `cursor-ai-translate-0.1.0.vsix`
-2. Cursor → 扩展 → `...` → **Install from VSIX**
-3. 重载窗口
-
-## 配置 API Key
-
-命令面板执行 **AI Translate: 设置 API Key**（`aiTranslate.setApiKey`）。Key 与 `aiTranslate.llm.baseUrl` 的 origin 绑定。
-
-在设置中搜索 **AI Translate**，左侧可按分组浏览（支持 **zh-CN / zh-TW / en / ja / ko / fr / de / es / ru / pt-BR** 等 `package.nls.*`）；状态栏 **译** → **打开设置** 进入原生设置页，**设置面板** 打开 Webview 常用项编辑器（命令 `aiTranslate.openSettingsPanel`）。面板与扩展自绘 UI 文案均跟随 `aiTranslate.targetLanguage`（`l10n/bundle.l10n.*` + `t()`）。命令面板/右键菜单/原生设置说明仍来自 `package.nls.*`，随 Cursor 界面语言。扩展清单翻译源文件在仓库 `i18n/` 目录，合并后生成根目录 `package.nls*.json` 与 `l10n/`。
-
-### 配置分组（`aiTranslate.*`）
-
-| 分组 | 主要键 |
+| 能力 | 说明 |
 | --- | --- |
-| **常规** | `enabled`, `targetLanguage`, `detection.*`, `selection.output`, `privacy.exclude`, `statusBar.enabled` |
-| **模型与 API** | `llm.baseUrl`, `llm.model`, `llm.stream`, `llm.extraBody`, `llm.systemPrompt`, `llm.timeoutMs`, `llm.maxConcurrency`, `glossary.path`, `glossary.maxTerms` |
-| **悬停翻译** | `hover.enabled`, `hover.extraDelayMs`, `hover.comments`, `hover.strings`, `hover.documents`, `hover.configKeys`, `hover.diagnostics`, `hover.symbolDocs`, `hover.gitCommitMessage`, `hover.selection` |
-| **全文翻译与预览** | `document.previewStyle`, `document.codeLens`, `document.forceTranslate`, `document.batchSize`, `document.maxBatchChars`, `document.sideFileNamePattern`, `document.sideFileContent` |
-| **Markdown 与文档** | `markdown.frontmatterFields` |
-| **缓存** | `cache.enabled`, `cache.memoryEntries`, `cache.maxDiskMB` |
-| **高级与调试** | `privacy.blockSecrets`, `privacy.allowedSchemes`, `parser.maxFileSizeKB`, `log.level` |
+| **悬停翻译** | tree-sitter（含正则回退）提取注释、字符串、Markdown 段落、配置值/键名、模板 UI 文本等；可选诊断、符号文档、Git 提交说明与选区块。 |
+| **全文预览** | `aitranslate:` 虚拟文档，支持交错或追加布局；按可译段落显示进度；可生成 `README.zh-CN.md` 等侧车文件。 |
+| **编辑器工作流** | 选区、剪贴板/终端、替换/插入、弹窗翻译等快捷键；Markdown 顶部 CodeLens（翻译 / 刷新 / 生成译文）。 |
+| **运维与隐私** | 分 origin 管理 API Key、测试连接、清缓存、工作区禁用、首次隐私确认、密钥检测与排除 glob。 |
+| **国际化** | 扩展自绘 UI 跟随 `aiTranslate.targetLanguage`（`l10n/bundle`）；内置设置页标签跟随编辑器界面语言（`package.nls`）。 |
 
-常用项（用户级）：
+## 快速开始
 
-- `aiTranslate.llm.baseUrl`（默认 `https://api.openai.com/v1`）
-- `aiTranslate.llm.model`
-- `aiTranslate.targetLanguage`（默认 `zh-CN`）
-- `aiTranslate.llm.extraBody`（如 DeepSeek `{"thinking":{"type":"disabled"}}`）
-- `aiTranslate.hover.documents`（默认 `true`）
-- `aiTranslate.markdown.frontmatterFields`（默认翻译 `description` 等 frontmatter 字段）
+1. 安装 `.vsix`（仓库根目录 `npm run package`）或 `npm install && npm run build` 后按 **F5** 启动扩展开发宿主。
+2. 在设置中配置 `aiTranslate.llm.baseUrl` 与 `aiTranslate.llm.model`（见下表）。
+3. 执行 **AI Translate: 设置 API Key** 与 **AI Translate: 测试连接**。
+4. 悬停注释，或在 `.md` 文件上执行 **翻译全文（对照预览）**。
 
-配置贡献源文件：`contributes/configuration.json`（构建时合并进 `package.json`）。
+分步教程：[快速开始](docs/zh-CN/tutorials/getting-started.md)。
 
-## 命令
+## 提供商配置（OpenAI 兼容）
 
-| 命令 | 说明 |
-| --- | --- |
-| `aiTranslate.toggle` | 切换启用 |
-| `aiTranslate.selectTargetLanguage` | 选择目标语言 |
-| `aiTranslate.translateSelection` | 翻译选区 |
-| `aiTranslate.translateDocument` | 文档双语预览 |
-| `aiTranslate.generateSideFile` | 生成译文文件 |
-| `aiTranslate.clearCache` | 清除缓存 |
-| `aiTranslate.disableForWorkspace` | 工作区禁用 |
+均使用 `POST {baseUrl}/chat/completions`，Bearer 令牌来自 **设置 API Key** 命令。
+
+| 提供商 | 示例 `aiTranslate.llm.baseUrl` | 说明 |
+| --- | --- | --- |
+| OpenAI | `https://api.openai.com/v1` | `package.json` 默认值。 |
+| DeepSeek | `https://api.deepseek.com/v1` | 常需 `extraBody` 关闭思考模式。 |
+| 通义千问（DashScope） | `https://dashscope.aliyuncs.com/compatible-mode/v1` | 兼容模式端点。 |
+| 豆包 / 火山 Ark | `https://ark.cn-beijing.volces.com/api/v3` | 使用控制台提供的 OpenAI 兼容 base URL。 |
+
+用户级 `settings.json` 示例：
+
+```json
+{
+  "aiTranslate.llm.baseUrl": "https://api.deepseek.com/v1",
+  "aiTranslate.llm.model": "deepseek-chat",
+  "aiTranslate.llm.extraBody": {
+    "thinking": { "type": "disabled" }
+  },
+  "aiTranslate.targetLanguage": "zh-CN"
+}
+```
+
+更多细节与踩坑：[配置 LLM 提供商](docs/zh-CN/how-to/configure-providers.md)、[extraBody 与思考模式](docs/zh-CN/how-to/extra-body-thinking.md)。
+
+## 常用设置
+
+| 设置 | 默认值 | 作用 |
+| --- | --- | --- |
+| `aiTranslate.enabled` | `true` | 按资源开关总启用。 |
+| `aiTranslate.targetLanguage` | `zh-CN` | 译文语言 + 扩展自绘 UI 语言。 |
+| `aiTranslate.llm.baseUrl` | `https://api.openai.com/v1` | API 根路径（按需包含 `/v1`）。 |
+| `aiTranslate.llm.model` | _(空)_ | 调用前必填。 |
+| `aiTranslate.llm.extraBody` | `{}` | 合并进聊天 JSON（思考开关等）。 |
+| `aiTranslate.hover.enabled` | `true` | 悬停翻译总开关。 |
+| `aiTranslate.document.forceTranslate` | `false` | 全文翻译跳过语言检测。 |
+| `aiTranslate.cache.enabled` | `true` | 内存 LRU + globalStorage 下 JSONL。 |
+
+完整 52 项、七个设置分组：[设置参考](docs/zh-CN/reference/settings.md)（自动生成）。
+
+## 常用命令（命令面板）
+
+| 命令 | 默认快捷键 | 条件 |
+| --- | --- | --- |
+| `aiTranslate.setApiKey` | — | 随时可用。 |
+| `aiTranslate.translateSelection` | `Ctrl+Alt+Shift+T` | 编辑器有选区。 |
+| `aiTranslate.translateDocument` | `Ctrl+Alt+Shift+D` | Markdown / 纯文本编辑器。 |
+| `aiTranslate.translateClipboardOrSelection` | `Ctrl+Alt+Shift+Y` | 终端选区或剪贴板。 |
+| `aiTranslate.openSettingsPanel` | — | QuickPick / 命令面板。 |
+| `aiTranslate.clearCache` | — | 命令面板 / 状态栏链接。 |
+
+全部命令、CodeLens 与右键菜单：[命令参考](docs/zh-CN/reference/commands.md)。
+
+## 常见问题
+
+**悬停没有反应** — 检查 `aiTranslate.enabled`、排除 glob、隐私确认，以及检测是否因已是目标语言而跳过。将 `aiTranslate.log.level` 设为 `debug`，打开 **AI Translate: 显示日志**。
+
+**401 / 连接失败** — 确认 `baseUrl` 是否需带 `/v1`、模型 id 已填、Key 与 origin 一致。见 [排查连接错误](docs/zh-CN/how-to/troubleshoot-connection.md)。
+
+**中文文档仍被翻译** — 关闭 `aiTranslate.document.forceTranslate`；全文与悬停共用检测规则（除非强制）。
+
+**更换模型后译文不对** — 缓存键含 `model`、`baseUrl` 与 `extraBody` 哈希；可悬停 **刷新** 或 **清除缓存**。见 [缓存说明](docs/zh-CN/explanation/caching.md)。
+
+## 隐私与安全
+
+- 悬停、选区或全文段落中的文本会发往 `aiTranslate.llm.baseUrl`。
+- API Key 不会出现在 `settings.json` 或设置面板 HTML 中（[CSP](docs/zh-CN/explanation/settings-panel-security.md)）。
+- `.env`、密钥文件与自定义排除 glob 不会被读取翻译。
+- 磁盘缓存位于扩展 globalStorage（`cache/v2`）。
+
+[SECURITY.zh-CN.md](SECURITY.zh-CN.md) · [参与贡献](CONTRIBUTING.zh-CN.md)
+
+## 文档导航
+
+- [文档首页](docs/README.md)
+- [教程](docs/zh-CN/tutorials/index.md) · [操作指南](docs/zh-CN/how-to/index.md) · [参考](docs/zh-CN/reference/index.md) · [说明](docs/zh-CN/explanation/index.md)
 
 ## 开发
 
@@ -79,23 +111,11 @@
 npm install
 npm run build
 npm test
-npm run smoke:tree-sitter
-npx @vscode/vsce package --no-dependencies
+npm run package
 ```
 
-设计文档见 [docs/DESIGN.md](docs/DESIGN.md)，工程决策见 [docs/DECISIONS.md](docs/DECISIONS.md)。
+`pretest` 会执行 `merge-config`、`merge-nls` 与 `generate-docs`。
 
-## 已知限制
+## 许可证
 
-- 正则回退语言可能误判注释与字符串
-- 短拉丁文本在拉丁目标语言下可能保守跳过（可用选区翻译）
-- Hover 尺寸由编辑器决定，扩展无法调整
-- `@vscode/test-electron` 集成测试需图形环境，本仓库含测试骨架，CI/无头环境可能跳过
-- 文档表格双语渲染为简化实现，复杂 GFM 表格建议人工校对
-
-## TODO
-
-- 更完整的各语言 tree-sitter 夹具与合并注释边界测试
-- 文档翻译失败段批量重试 UI
-- `aiTranslate.document.autoRefresh` 防抖刷新
-- Open VSX 发布流程（见设计文档 Release 里程碑）
+MIT — 见 [LICENSE](LICENSE)。

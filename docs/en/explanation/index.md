@@ -5,3 +5,4 @@
 - [Segmentation, batching, and progress](segmentation.md)
 - [Caching and cache keys](caching.md)
 - [Settings panel security (CSP)](settings-panel-security.md)
+- [Architecture decision records](decisions.md)

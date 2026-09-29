@@ -1,3 +1,4 @@
+/** ALLOW_CJK_FIXTURE: intentional Chinese samples for detection, documents, or l10n assertions. */
 import { describe, expect, it } from 'vitest';
 import { isCacheableTranslation } from '../../src/translation/cacheable';
 import { sha256Hex } from '../../src/util/hash';

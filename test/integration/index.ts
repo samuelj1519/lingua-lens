@@ -1,3 +1,4 @@
+/** ALLOW_CJK_FIXTURE: intentional Chinese samples for detection, documents, or l10n assertions. */
 import * as path from 'path';
 import * as assert from 'assert';
 import * as vscode from 'vscode';

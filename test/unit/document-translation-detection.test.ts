@@ -1,3 +1,4 @@
+/** ALLOW_CJK_FIXTURE: intentional Chinese samples for detection, documents, or l10n assertions. */
 import { describe, expect, it } from 'vitest';
 import { assembleDocument } from '../../src/document/DocumentAssembler';
 import { MarkdownSegmenter } from '../../src/document/MarkdownSegmenter';

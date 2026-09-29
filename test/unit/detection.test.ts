@@ -1,3 +1,4 @@
+/** ALLOW_CJK_FIXTURE: intentional Chinese samples for detection, documents, or l10n assertions. */
 import { describe, expect, it } from 'vitest';
 import { decide } from '../../src/detection/LanguageDetector';
 import { checkSkipRules } from '../../src/detection/SkipRules';

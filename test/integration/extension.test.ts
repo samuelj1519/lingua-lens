@@ -1,3 +1,4 @@
+/** ALLOW_CJK_FIXTURE: intentional Chinese samples for detection, documents, or l10n assertions. */
 /**
  * 集成测试需在本机安装 @vscode/test-electron 并具备图形/Xvfb 环境。
  * CI 无头环境可跳过：npm test 仅运行 vitest 单元测试。

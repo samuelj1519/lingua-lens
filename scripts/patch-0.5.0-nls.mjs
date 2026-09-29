@@ -1,3 +1,4 @@
+// ALLOW_CJK_LOCALE_DATA: one-off nls patch strings per locale.
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 

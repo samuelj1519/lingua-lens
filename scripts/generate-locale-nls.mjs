@@ -1,3 +1,4 @@
+// ALLOW_CJK_LOCALE_DATA: OpenCC conversion pairs for zh-TW generation.
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';

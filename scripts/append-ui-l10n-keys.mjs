@@ -1,3 +1,4 @@
+// ALLOW_CJK_LOCALE_DATA: zh-CN string values for bundle key backfill.
 import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 

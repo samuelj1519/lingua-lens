@@ -1,3 +1,4 @@
+/** ALLOW_CJK_FIXTURE: intentional Chinese samples for detection, documents, or l10n assertions. */
 import { describe, expect, it } from 'vitest';
 import { locateSegmentAtOffset } from '../../src/document/DocumentSegmentLocator';
 import { DocumentHoverExtractor } from '../../src/document/DocumentHoverExtractor';

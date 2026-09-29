@@ -18,6 +18,9 @@ import { StatusBarController } from './ui/StatusBarController';
 import { Logger } from './util/logger';
 import { translateClipboardOrSelection } from './commands/clipboardTranslate';
 import { translateInsertBelow, translateReplaceSelection } from './commands/selectionReplace';
+import { translateGitCommitAtLine, translateScmInput } from './commands/gitTranslate';
+import { generateLocaleFile } from './locale/LocaleFileGenerator';
+import { suggestVariableNames } from './commands/variableNaming';
 
 let parserService: ParserService | undefined;
 let cacheService: CacheService | undefined;
@@ -232,6 +235,17 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   );
 
   reg('aiTranslate.translateInsertBelow', () => translateInsertBelow(config, guard, translation));
+
+  reg('aiTranslate.translateGitCommitAtLine', () =>
+    translateGitCommitAtLine(config, guard, translation),
+  );
+  reg('aiTranslate.translateScmInput', () => translateScmInput(config, guard, translation));
+  reg('aiTranslate.generateLocaleFile', async () => {
+    const uri = vscode.window.activeTextEditor?.document.uri;
+    if (!uri) return;
+    return generateLocaleFile(uri, config, guard, translation);
+  });
+  reg('aiTranslate.suggestVariableNames', () => suggestVariableNames(config, guard, llm));
 
   reg('aiTranslate.acknowledgePrivacy', async () => {
     await guard.acknowledgeOrigin();

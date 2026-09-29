@@ -20,5 +20,9 @@
   "command.hoverRetranslate": "重新翻译",
   "command.translateClipboardOrSelection": "翻译终端选区或剪贴板",
   "command.translateReplaceSelection": "翻译并替换选区",
-  "command.translateInsertBelow": "翻译并在下方插入"
+  "command.translateInsertBelow": "翻译并在下方插入",
+  "command.translateGitCommitAtLine": "翻译当前行 Git 提交说明",
+  "command.translateScmInput": "翻译 SCM 提交说明",
+  "command.generateLocaleFile": "生成语言包译文文件",
+  "command.suggestVariableNames": "根据描述建议英文变量名"
 }

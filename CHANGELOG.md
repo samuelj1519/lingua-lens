@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.4.0
+
+- 新增：Jupyter **Markdown 单元格**段落悬停（`vscode-notebook-cell` + `hover.documents`）
+- 新增：HTML/Vue/JSX 等模板 **UI 属性与文本节点**悬停（placeholder、title、alt、aria-* 等）
+- 新增：`aiTranslate.suggestVariableNames` — 根据中文描述生成 camelCase/snake_case/PascalCase 标识符
+
+## 0.3.0
+
+- 新增：`aiTranslate.translateGitCommitAtLine`（`git log -L` / blame summary）
+- 新增：`aiTranslate.translateScmInput`（内置 Git 扩展 inputBox，可替换为译文）
+- 新增：`aiTranslate.generateLocaleFile` — JSON/YAML/properties 增量语言包（保留占位符）
+
 ## 0.2.0
 
 - 新增：悬停翻译**诊断信息**（`aiTranslate.hover.diagnostics`）：在波浪线位置追加独立「AI 翻译 · 诊断信息」块

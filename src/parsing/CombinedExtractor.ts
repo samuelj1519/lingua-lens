@@ -4,6 +4,7 @@ import type { AppLogger } from '../util/logger';
 import type { ParserService } from './ParserService';
 import { promoteConfigKeyUnit } from './configKeyPromote';
 import { extractConfigRegexHoverAt } from './ConfigRegexHover';
+import { extractTemplateUiTextAt } from './TemplateTextExtractor';
 import { configFilePath, isConfigHoverLanguage } from './languages/configLanguages';
 import { RegexExtractor } from './RegexExtractor';
 import { TreeSitterExtractor } from './TreeSitterExtractor';
@@ -57,6 +58,17 @@ export class CombinedExtractor {
         `extract: regex ${fromRegex.kind} (${doc.languageId}) offsets ${fromRegex.range.start}-${fromRegex.range.end}`,
       );
       return fromRegex;
+    }
+
+    const tpl = extractTemplateUiTextAt(doc, offset);
+    if (tpl) {
+      this.log.debug(`extract: template UI text offsets ${tpl.range.start}-${tpl.range.end}`);
+      return tpl;
+    }
+
+    if (doc.uri.startsWith('vscode-notebook-cell:') && doc.languageId === 'markdown' && options?.documentHover) {
+      const fromNb = this.document.extractAt(doc, offset);
+      if (fromNb) return fromNb;
     }
 
     const path = configFilePath(doc);

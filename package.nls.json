@@ -20,5 +20,9 @@
   "command.hoverRetranslate": "Retranslate",
   "command.translateClipboardOrSelection": "Translate Terminal Selection or Clipboard",
   "command.translateReplaceSelection": "Translate and Replace Selection",
-  "command.translateInsertBelow": "Translate and Insert Below Selection"
+  "command.translateInsertBelow": "Translate and Insert Below Selection",
+  "command.translateGitCommitAtLine": "Translate Git Commit Message at Line",
+  "command.translateScmInput": "Translate SCM Commit Message",
+  "command.generateLocaleFile": "Generate Locale Translation File",
+  "command.suggestVariableNames": "Suggest English Variable Names"
 }

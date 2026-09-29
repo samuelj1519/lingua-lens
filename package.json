@@ -2,7 +2,7 @@
   "name": "cursor-ai-translate",
   "displayName": "AI Translate",
   "description": "使用 LLM 翻译项目中的注释、字符串和文档",
-  "version": "0.2.0",
+  "version": "0.4.0",
   "publisher": "cursor-ai-translate",
   "repository": { "type": "git", "url": "https://github.com/local/cursor-ai-translate" },
   "license": "MIT",
@@ -63,7 +63,11 @@
       { "command": "aiTranslate.hover.retranslate", "title": "%command.hoverRetranslate%", "category": "AI Translate" },
       { "command": "aiTranslate.translateClipboardOrSelection", "title": "%command.translateClipboardOrSelection%", "category": "AI Translate" },
       { "command": "aiTranslate.translateReplaceSelection", "title": "%command.translateReplaceSelection%", "category": "AI Translate" },
-      { "command": "aiTranslate.translateInsertBelow", "title": "%command.translateInsertBelow%", "category": "AI Translate" }
+      { "command": "aiTranslate.translateInsertBelow", "title": "%command.translateInsertBelow%", "category": "AI Translate" },
+      { "command": "aiTranslate.translateGitCommitAtLine", "title": "%command.translateGitCommitAtLine%", "category": "AI Translate" },
+      { "command": "aiTranslate.translateScmInput", "title": "%command.translateScmInput%", "category": "AI Translate" },
+      { "command": "aiTranslate.generateLocaleFile", "title": "%command.generateLocaleFile%", "category": "AI Translate" },
+      { "command": "aiTranslate.suggestVariableNames", "title": "%command.suggestVariableNames%", "category": "AI Translate" }
     ],
     "keybindings": [
       {
@@ -195,7 +199,12 @@
           "default": ["**/.env", "**/.env.*", "**/*.pem", "**/*.key", "**/*.p12", "**/id_rsa*", "**/secrets/**", "**/.git/**", "**/node_modules/**"],
           "scope": "resource"
         },
-        "aiTranslate.privacy.allowedSchemes": { "type": "array", "items": { "type": "string" }, "default": ["file", "untitled", "vscode-remote"], "scope": "application" },
+        "aiTranslate.privacy.allowedSchemes": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": ["file", "untitled", "vscode-remote", "vscode-notebook-cell"],
+          "scope": "application"
+        },
         "aiTranslate.privacy.blockSecrets": { "type": "boolean", "default": true, "scope": "application" },
         "aiTranslate.glossary.path": { "type": "string", "default": ".translate-glossary.json", "scope": "resource" },
         "aiTranslate.glossary.maxTerms": { "type": "number", "default": 50, "minimum": 0, "scope": "resource" },

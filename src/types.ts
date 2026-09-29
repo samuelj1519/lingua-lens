@@ -12,7 +12,9 @@ export type UnitKind =
   | 'documentParagraph'
   | 'documentHeading'
   | 'documentTableCell'
-  | 'configKey';
+  | 'configKey'
+  | 'diagnostic'
+  | 'symbolDoc';
 
 export interface OffsetRange {
   start: number;

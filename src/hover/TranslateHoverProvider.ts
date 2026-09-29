@@ -10,6 +10,7 @@ import type { TranslationService } from '../translation/TranslationService';
 import { cancellableDelay } from '../util/delay';
 import type { AppLogger } from '../util/logger';
 import type { HoverActionRegistry } from './HoverActionRegistry';
+import { buildSupplementalHoverBlocks } from './HoverBlocks';
 
 export class TranslateHoverProvider implements vscode.HoverProvider {
   constructor(
@@ -74,21 +75,25 @@ export class TranslateHoverProvider implements vscode.HoverProvider {
       documentHover: cfg.hover.documents,
       configKeys: cfg.hover.configKeys,
     });
-    if (!unit) return undefined;
+
+    let primary: vscode.Hover | undefined;
+    if (!unit) {
+      primary = undefined;
+    } else {
 
     const commentKinds = new Set(['lineComment', 'blockComment', 'docComment', 'docstring']);
-    if (unit.kind === 'configKey' && !cfg.hover.configKeys) {
-      return undefined;
-    }
-    if (unit.source !== 'document' && unit.kind !== 'configKey') {
-      if (!cfg.hover.comments && commentKinds.has(unit.kind)) return undefined;
-      if (!cfg.hover.strings && !commentKinds.has(unit.kind)) return undefined;
-    } else if (unit.source === 'document' && !cfg.hover.documents) {
-      return undefined;
+    let skipPrimary = false;
+    if (unit.kind === 'configKey' && !cfg.hover.configKeys) skipPrimary = true;
+    if (!skipPrimary && unit.source !== 'document' && unit.kind !== 'configKey') {
+      if (!cfg.hover.comments && commentKinds.has(unit.kind)) skipPrimary = true;
+      if (!cfg.hover.strings && !commentKinds.has(unit.kind)) skipPrimary = true;
+    } else if (!skipPrimary && unit.source === 'document' && !cfg.hover.documents) {
+      skipPrimary = true;
     }
 
-    if (this.guard.containsSecret(unit.text)) {
-      return errorHover(doc, pos, '疑似密钥，未发送', []);
+    if (!skipPrimary && this.guard.containsSecret(unit.text)) {
+      primary = errorHover(doc, pos, '疑似密钥，未发送', []);
+      skipPrimary = true;
     }
 
     const detOpts = {
@@ -100,47 +105,61 @@ export class TranslateHoverProvider implements vscode.HoverProvider {
       userSkipPatterns: cfg.detection.skipPatterns.map((p) => new RegExp(p)),
       blockSecrets: cfg.privacy.blockSecrets,
     };
+    if (!skipPrimary && !primary) {
     const decision = decide(unit.text, detOpts);
     this.log.debug(`hover: detection -> ${decision.action}${decision.action === 'skip' ? ` (${decision.reason})` : ''}`);
     if (decision.action === 'skip') {
       this.stats.inc('skipped');
-      return undefined;
-    }
+      primary = undefined;
+    } else {
+      const range = new vscode.Range(doc.positionAt(unit.range.start), doc.positionAt(unit.range.end));
 
-    const range = new vscode.Range(doc.positionAt(unit.range.start), doc.positionAt(unit.range.end));
-
-    const cached = await this.translation.peekCache(unit, cfg.targetLanguage, doc.uri);
-    if (cached) {
-      this.log.debug(`hover: cache hit (${cached.fromCache})`);
-      if (cached.fromCache === 'memory') this.stats.inc('memoryHits');
-      return this.buildHover(doc, range, unit, cached.text, cfg, true, cached.placeholderOk);
-    }
-
-    if (this.translation.isPaused()) {
-      return errorHover(doc, pos, '翻译服务暂停中 (连续失败)，60 秒后自动恢复', []);
-    }
-
-    const ok = await cancellableDelay(cfg.hover.extraDelayMs, token);
-    if (!ok) {
-      this.log.debug('hover: cancelled during extra delay');
-      return undefined;
-    }
-
-    const t0 = Date.now();
-    try {
-      const result = await this.translation.translate(unit, cfg.targetLanguage, {
-        kind: 'hover',
-        uri: doc.uri,
-      });
-      this.log.debug(`hover: API ok in ${Date.now() - t0}ms`);
-      return this.buildHover(doc, range, unit, result.text, cfg, false, result.placeholderOk);
-    } catch (e) {
-      this.log.warn(`hover: API failed in ${Date.now() - t0}ms: ${e instanceof Error ? e.message : e}`);
-      if (e instanceof LlmError) {
-        return this.errorFromLlm(doc, range, e);
+      const cached = await this.translation.peekCache(unit, cfg.targetLanguage, doc.uri);
+      if (cached) {
+        this.log.debug(`hover: cache hit (${cached.fromCache})`);
+        if (cached.fromCache === 'memory') this.stats.inc('memoryHits');
+        primary = this.buildHover(doc, range, unit, cached.text, cfg, true, cached.placeholderOk);
+      } else if (this.translation.isPaused()) {
+        primary = errorHover(doc, pos, '翻译服务暂停中 (连续失败)，60 秒后自动恢复', []);
+      } else {
+        const ok = await cancellableDelay(cfg.hover.extraDelayMs, token);
+        if (!ok) {
+          this.log.debug('hover: cancelled during extra delay');
+          primary = undefined;
+        } else {
+          const t0 = Date.now();
+          try {
+            const result = await this.translation.translate(unit, cfg.targetLanguage, {
+              kind: 'hover',
+              uri: doc.uri,
+            });
+            this.log.debug(`hover: API ok in ${Date.now() - t0}ms`);
+            primary = this.buildHover(doc, range, unit, result.text, cfg, false, result.placeholderOk);
+          } catch (e) {
+            this.log.warn(`hover: API failed in ${Date.now() - t0}ms: ${e instanceof Error ? e.message : e}`);
+            if (e instanceof LlmError) {
+              primary = this.errorFromLlm(doc, range, e);
+            } else {
+              primary = errorHover(doc, pos, String(e), []);
+            }
+          }
+        }
       }
-      return errorHover(doc, pos, String(e), []);
     }
+    }
+    }
+
+    const supplemental = await buildSupplementalHoverBlocks(
+      doc,
+      pos,
+      token,
+      cfg,
+      this.guard,
+      this.translation,
+      this.stats,
+      this.log,
+    );
+    return mergeHoverBlocks(primary, supplemental, doc, pos);
   }
 
   private buildHover(
@@ -218,6 +237,45 @@ export function createHoverProvider(
   const selector = buildHoverDocumentSelector(schemes);
   log.info(`注册悬停提供器，scheme: ${schemes.join(', ')}`);
   return vscode.languages.registerHoverProvider(selector, provider);
+}
+
+function mergeHoverBlocks(
+  primary: vscode.Hover | undefined,
+  supplemental: import('./HoverBlocks').HoverBlockResult[],
+  doc: vscode.TextDocument,
+  pos: vscode.Position,
+): vscode.Hover | undefined {
+  if (!primary && !supplemental.length) return undefined;
+  const parts: vscode.MarkdownString[] = [];
+  if (primary) {
+    for (const c of primary.contents) {
+      if (typeof c === 'string') {
+        parts.push(new vscode.MarkdownString(c));
+      } else if (c instanceof vscode.MarkdownString) {
+        parts.push(c);
+      } else {
+        parts.push(new vscode.MarkdownString(c.value));
+      }
+    }
+  }
+  for (const s of supplemental) {
+    parts.push(s.markdown);
+  }
+  const combined = new vscode.MarkdownString();
+  combined.supportHtml = false;
+  combined.isTrusted = primary?.contents[0] && typeof primary.contents[0] !== 'string'
+    ? (primary.contents[0] as vscode.MarkdownString).isTrusted
+    : { enabledCommands: ['aiTranslate.setApiKey', 'aiTranslate.acknowledgePrivacy', 'aiTranslate.showLog'] };
+  for (let i = 0; i < parts.length; i++) {
+    if (i > 0) combined.appendMarkdown('\n\n---\n\n');
+    combined.appendMarkdown(parts[i].value);
+  }
+  const range =
+    primary?.range ??
+    supplemental[0]?.range ??
+    doc.getWordRangeAtPosition(pos) ??
+    new vscode.Range(pos, pos);
+  return new vscode.Hover(combined, range);
 }
 
 function errorHover(doc: vscode.TextDocument, pos: vscode.Position, msg: string, links: string[]): vscode.Hover {

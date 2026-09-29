@@ -2,7 +2,7 @@
   "name": "cursor-ai-translate",
   "displayName": "AI Translate",
   "description": "使用 LLM 翻译项目中的注释、字符串和文档",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "publisher": "cursor-ai-translate",
   "repository": { "type": "git", "url": "https://github.com/local/cursor-ai-translate" },
   "license": "MIT",
@@ -60,13 +60,33 @@
       { "command": "aiTranslate.acknowledgePrivacy", "title": "%command.acknowledgePrivacy%", "category": "AI Translate" },
       { "command": "aiTranslate.hover.copy", "title": "%command.hoverCopy%", "category": "AI Translate" },
       { "command": "aiTranslate.hover.insertComment", "title": "%command.hoverInsertComment%", "category": "AI Translate" },
-      { "command": "aiTranslate.hover.retranslate", "title": "%command.hoverRetranslate%", "category": "AI Translate" }
+      { "command": "aiTranslate.hover.retranslate", "title": "%command.hoverRetranslate%", "category": "AI Translate" },
+      { "command": "aiTranslate.translateClipboardOrSelection", "title": "%command.translateClipboardOrSelection%", "category": "AI Translate" },
+      { "command": "aiTranslate.translateReplaceSelection", "title": "%command.translateReplaceSelection%", "category": "AI Translate" },
+      { "command": "aiTranslate.translateInsertBelow", "title": "%command.translateInsertBelow%", "category": "AI Translate" }
     ],
     "keybindings": [
       {
         "command": "aiTranslate.translateSelection",
         "key": "ctrl+alt+shift+t",
         "mac": "cmd+alt+shift+t",
+        "when": "editorTextFocus && editorHasSelection"
+      },
+      {
+        "command": "aiTranslate.translateClipboardOrSelection",
+        "key": "ctrl+alt+shift+y",
+        "mac": "cmd+alt+shift+y"
+      },
+      {
+        "command": "aiTranslate.translateReplaceSelection",
+        "key": "ctrl+alt+shift+r",
+        "mac": "cmd+alt+shift+r",
+        "when": "editorTextFocus && editorHasSelection"
+      },
+      {
+        "command": "aiTranslate.translateInsertBelow",
+        "key": "ctrl+alt+shift+b",
+        "mac": "cmd+alt+shift+b",
         "when": "editorTextFocus && editorHasSelection"
       }
     ],
@@ -131,6 +151,18 @@
           "default": true,
           "scope": "resource",
           "description": "在 YAML/TOML/JSON 等配置文件中悬停翻译字段名（会将 snake_case、camelCase 等拆成词）"
+        },
+        "aiTranslate.hover.diagnostics": {
+          "type": "boolean",
+          "default": true,
+          "scope": "resource",
+          "description": "悬停诊断波浪线时追加翻译后的错误/警告信息"
+        },
+        "aiTranslate.hover.symbolDocs": {
+          "type": "boolean",
+          "default": true,
+          "scope": "resource",
+          "description": "悬停时翻译其他提供器显示的外语符号文档（独立块，遵守延迟）"
         },
         "aiTranslate.hover.maxChars": { "type": "number", "default": 4000, "minimum": 100, "scope": "resource" },
         "aiTranslate.hover.showOriginal": { "type": "boolean", "default": false, "scope": "resource" },

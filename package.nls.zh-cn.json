@@ -17,5 +17,8 @@
   "command.acknowledgePrivacy": "确认隐私提示",
   "command.hoverCopy": "复制译文",
   "command.hoverInsertComment": "插入为注释",
-  "command.hoverRetranslate": "重新翻译"
+  "command.hoverRetranslate": "重新翻译",
+  "command.translateClipboardOrSelection": "翻译终端选区或剪贴板",
+  "command.translateReplaceSelection": "翻译并替换选区",
+  "command.translateInsertBelow": "翻译并在下方插入"
 }

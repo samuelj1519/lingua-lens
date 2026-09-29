@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.0
+
+- 新增：悬停翻译**诊断信息**（`aiTranslate.hover.diagnostics`）：在波浪线位置追加独立「AI 翻译 · 诊断信息」块
+- 新增：悬停翻译**符号文档**（`aiTranslate.hover.symbolDocs`）：读取其他 Hover 提供器文档并翻译，防递归、遵守延迟
+- 新增：`aiTranslate.translateClipboardOrSelection`（终端选区/剪贴板，可恢复剪贴板）
+- 新增：`aiTranslate.translateReplaceSelection` / `aiTranslate.translateInsertBelow`（目标语言 QuickPick，中文默认译英）
+- 说明：扩展无法修改内置 Hover，所有译文以独立 Markdown 块并列展示
+
 ## 0.1.1
 
 - 修复：悬停提供器使用无效的 `{ language: '*' }` 选择器导致 Cursor/VS Code 从不调用 `provideHover`

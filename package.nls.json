@@ -17,5 +17,8 @@
   "command.acknowledgePrivacy": "Acknowledge Privacy",
   "command.hoverCopy": "Copy Translation",
   "command.hoverInsertComment": "Insert as Comment",
-  "command.hoverRetranslate": "Retranslate"
+  "command.hoverRetranslate": "Retranslate",
+  "command.translateClipboardOrSelection": "Translate Terminal Selection or Clipboard",
+  "command.translateReplaceSelection": "Translate and Replace Selection",
+  "command.translateInsertBelow": "Translate and Insert Below Selection"
 }

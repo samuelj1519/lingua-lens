@@ -10,6 +10,8 @@ export interface TranslateConfig {
     strings: boolean;
     documents: boolean;
     configKeys: boolean;
+    diagnostics: boolean;
+    symbolDocs: boolean;
     maxChars: number;
     showOriginal: boolean;
   };

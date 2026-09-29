@@ -16,6 +16,8 @@ import { StatsService } from './stats/StatsService';
 import { TranslationService } from './translation/TranslationService';
 import { StatusBarController } from './ui/StatusBarController';
 import { Logger } from './util/logger';
+import { translateClipboardOrSelection } from './commands/clipboardTranslate';
+import { translateInsertBelow, translateReplaceSelection } from './commands/selectionReplace';
 
 let parserService: ParserService | undefined;
 let cacheService: CacheService | undefined;
@@ -220,6 +222,16 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
   reg('aiTranslate.showLog', () => logger.show());
   reg('aiTranslate.openSettings', () => vscode.commands.executeCommand('workbench.action.openSettings', 'aiTranslate'));
+
+  reg('aiTranslate.translateClipboardOrSelection', () =>
+    translateClipboardOrSelection(config, guard, translation),
+  );
+
+  reg('aiTranslate.translateReplaceSelection', () =>
+    translateReplaceSelection(config, guard, translation),
+  );
+
+  reg('aiTranslate.translateInsertBelow', () => translateInsertBelow(config, guard, translation));
 
   reg('aiTranslate.acknowledgePrivacy', async () => {
     await guard.acknowledgeOrigin();

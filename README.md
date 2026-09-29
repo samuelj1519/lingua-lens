@@ -6,7 +6,7 @@
 
 ## 功能
 
-- **悬停翻译**：仅在**代码文件**中针对注释与字符串（tree-sitter + 正则回退），额外延迟可配置（默认 700ms）。在 **`.md` / 纯文本** 里悬停不会有反应**（符合设计）；请用编辑器标题栏的 **书本图标**「翻译文档」、命令面板，或选区翻译
+- **悬停翻译**：代码文件中针对注释与字符串（tree-sitter + 正则回退）；在 **Markdown / 纯文本**（`.md`、`.txt`、`.rst`、`.adoc` 等）中悬停**段落**可显示译文，分段规则与「翻译文档」预览一致（跳过围栏代码块、front matter、HTML 块；列表项为当前项；表格为**光标所在单元格**）。可用 `aiTranslate.hover.documents`（默认 `true`）关闭文档悬停。额外延迟 `aiTranslate.hover.extraDelayMs`（默认 700ms），并共享语言检测、缓存与隐私守卫
 - **诊断日志**：设置 `aiTranslate.log.level` 为 `debug` 可查看悬停流水线（守卫、提取、检测、缓存）
 - **选区翻译**：`Ctrl+Alt+Shift+T`（macOS：`Cmd+Alt+Shift+T`）
 - **文档双语预览**：虚拟文档 `aitranslate:`，原文在上、译文在下
@@ -31,6 +31,7 @@
 - `aiTranslate.llm.baseUrl`（默认 `https://api.openai.com/v1`）
 - `aiTranslate.llm.model`
 - `aiTranslate.targetLanguage`（默认 `zh-CN`）
+- `aiTranslate.hover.documents`（默认 `true`，Markdown/纯文本段落悬停）
 
 ## 命令
 

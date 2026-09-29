@@ -59,11 +59,17 @@ export class PromptBuilder {
     const contentKind =
       ctx.kind === 'selection'
         ? 'selected text'
-        : ctx.unitKind === 'string' || ctx.unitKind === 'templateString'
-          ? 'string literal'
-          : ctx.unitKind === 'docstring'
-            ? 'docstring'
-            : 'code comment';
+        : ctx.unitKind === 'documentHeading'
+          ? 'Markdown heading'
+          : ctx.unitKind === 'documentTableCell'
+            ? 'Markdown table cell'
+            : ctx.unitKind === 'documentParagraph'
+              ? 'Markdown paragraph'
+              : ctx.unitKind === 'string' || ctx.unitKind === 'templateString'
+                ? 'string literal'
+                : ctx.unitKind === 'docstring'
+                  ? 'docstring'
+                  : 'code comment';
     const glossaryBlock = formatGlossary(ctx.glossary, ctx.targetLang);
     const user = `Content type: ${contentKind} in a ${ctx.languageId ?? 'unknown'} file.
 Source language: ${ctx.sourceLangHint ?? 'auto-detect'}.

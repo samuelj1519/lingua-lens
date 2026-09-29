@@ -27,6 +27,21 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   const apiKeys = new ApiKeyStore(context);
   const llm = new LlmClient(() => config.get(), apiKeys);
   const cfg = config.get();
+  if (process.env.AITRANSLATE_INTEGRATION_TEST === '1') {
+    const port = process.env.AITRANSLATE_MOCK_PORT ?? '18765';
+    const baseUrl = `http://127.0.0.1:${port}/v1`;
+    await vscode.workspace
+      .getConfiguration('aiTranslate')
+      .update('llm.baseUrl', baseUrl, vscode.ConfigurationTarget.Global);
+    await vscode.workspace
+      .getConfiguration('aiTranslate')
+      .update('llm.model', 'mock', vscode.ConfigurationTarget.Global);
+    await vscode.workspace
+      .getConfiguration('aiTranslate')
+      .update('hover.extraDelayMs', 0, vscode.ConfigurationTarget.Global);
+    await apiKeys.set(baseUrl, 'integration-test-key');
+    logger.info(`集成测试模式：LLM -> ${baseUrl}`);
+  }
   cacheService = new CacheService(context, cfg.cache.memoryEntries, cfg.cache.maxDiskMB);
   await cacheService.initialize();
 

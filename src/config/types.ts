@@ -8,6 +8,7 @@ export interface TranslateConfig {
     extraDelayMs: number;
     comments: boolean;
     strings: boolean;
+    documents: boolean;
     maxChars: number;
     showOriginal: boolean;
   };

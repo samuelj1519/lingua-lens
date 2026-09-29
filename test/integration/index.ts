@@ -2,31 +2,49 @@ import * as path from 'path';
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 
+async function hoverMarkdownAt(uri: vscode.Uri, search: string): Promise<string | undefined> {
+  const doc = await vscode.workspace.openTextDocument(uri);
+  const idx = doc.getText().indexOf(search);
+  assert.ok(idx >= 0, `fixture should contain: ${search}`);
+  const pos = doc.positionAt(idx);
+  const hovers = await vscode.commands.executeCommand<vscode.Hover[] | undefined>(
+    'vscode.executeHoverProvider',
+    doc.uri,
+    pos,
+  );
+  if (!hovers?.length) return undefined;
+  return hovers[0].contents.map((c) => (typeof c === 'string' ? c : c.value)).join('\n');
+}
+
 export async function run(): Promise<void> {
   const ext = vscode.extensions.getExtension('cursor-ai-translate.cursor-ai-translate');
   assert.ok(ext, 'extension should be loaded');
   await ext.activate();
 
   await vscode.workspace.getConfiguration('aiTranslate').update('log.level', 'debug', true);
+  await vscode.workspace.getConfiguration('aiTranslate').update('hover.extraDelayMs', 0, true);
+  await vscode.workspace.getConfiguration('aiTranslate').update('hover.documents', true, true);
   await vscode.commands.executeCommand('aiTranslate.acknowledgePrivacy');
 
   const root = path.join(ext.extensionPath, 'test', 'fixtures', 'hover');
 
-  // Code-file hover (not supported for markdown/plaintext body text)
   for (const file of ['sample.ts', 'sample.py']) {
     const uri = vscode.Uri.file(path.join(root, file));
-    const doc = await vscode.workspace.openTextDocument(uri);
-    const text = doc.getText();
-    const idx = text.indexOf('English');
-    assert.ok(idx >= 0, `fixture ${file} should contain English`);
-    const pos = doc.positionAt(idx);
-    const hovers = await vscode.commands.executeCommand<vscode.Hover[] | undefined>(
-      'vscode.executeHoverProvider',
-      doc.uri,
-      pos,
-    );
-    assert.ok(hovers && hovers.length > 0, `expected hover for ${file}`);
-    const md = hovers[0].contents.map((c) => (typeof c === 'string' ? c : c.value)).join('\n');
-    assert.ok(/AI 翻译|翻译|zh-CN/i.test(md) || md.length > 0, `hover content for ${file}: ${md.slice(0, 200)}`);
+    const md = await hoverMarkdownAt(uri, 'English');
+    assert.ok(md && md.length > 0, `expected hover for code file ${file}`);
   }
+
+  const mdUri = vscode.Uri.file(path.join(root, 'sample-doc.md'));
+  const enMd = await hoverMarkdownAt(mdUri, 'English paragraph');
+  assert.ok(enMd && /AI 翻译|\[zh-CN\]|翻译/i.test(enMd), `expected EN md hover: ${enMd?.slice(0, 120)}`);
+
+  const inCode = await hoverMarkdownAt(mdUri, 'not hoverable');
+  assert.ok(!inCode, 'code block should not produce hover');
+
+  const zhMd = await hoverMarkdownAt(mdUri, '简体中文');
+  assert.ok(!zhMd, 'Chinese paragraph should not produce hover');
+
+  const txtUri = vscode.Uri.file(path.join(root, 'sample-doc.txt'));
+  const enTxt = await hoverMarkdownAt(txtUri, 'English plain');
+  assert.ok(enTxt && /AI 翻译|\[zh-CN\]|翻译/i.test(enTxt), `expected EN txt hover: ${enTxt?.slice(0, 120)}`);
 }

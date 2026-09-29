@@ -8,7 +8,10 @@ export type UnitKind =
   | 'docstring'
   | 'string'
   | 'templateString'
-  | 'rawString';
+  | 'rawString'
+  | 'documentParagraph'
+  | 'documentHeading'
+  | 'documentTableCell';
 
 export interface OffsetRange {
   start: number;
@@ -27,7 +30,7 @@ export interface TextUnit {
   text: string;
   placeholders: Placeholder[];
   languageId: string;
-  source: 'tree-sitter' | 'regex' | 'selection';
+  source: 'tree-sitter' | 'regex' | 'selection' | 'document';
 }
 
 export type Decision =
@@ -67,7 +70,10 @@ export interface Segment {
   hash: string;
   linePrefix: string;
   headingDepth?: number;
-  table?: { align: string; cells: { id: string; text: string; placeholders: Placeholder[] }[][] };
+  table?: {
+    align: string;
+    cells: { id: string; text: string; placeholders: Placeholder[]; range?: OffsetRange }[][];
+  };
 }
 
 export interface GlossaryTerm {

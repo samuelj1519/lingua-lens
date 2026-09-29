@@ -70,17 +70,18 @@ export class TranslateHoverProvider implements vscode.HoverProvider {
       languageId: doc.languageId,
       getText: () => doc.getText(),
     };
-    const unit = await this.extractor.extractAt(snapshot, offset);
-    if (!unit) {
-      if (doc.languageId === 'markdown' || doc.languageId === 'plaintext') {
-        this.log.debug('hover: markdown/plaintext — use「翻译文档」或选区翻译（悬停仅针对代码注释/字符串）');
-      }
-      return undefined;
-    }
+    const unit = await this.extractor.extractAt(snapshot, offset, {
+      documentHover: cfg.hover.documents,
+    });
+    if (!unit) return undefined;
 
     const commentKinds = new Set(['lineComment', 'blockComment', 'docComment', 'docstring']);
-    if (!cfg.hover.comments && commentKinds.has(unit.kind)) return undefined;
-    if (!cfg.hover.strings && !commentKinds.has(unit.kind)) return undefined;
+    if (unit.source !== 'document') {
+      if (!cfg.hover.comments && commentKinds.has(unit.kind)) return undefined;
+      if (!cfg.hover.strings && !commentKinds.has(unit.kind)) return undefined;
+    } else if (!cfg.hover.documents) {
+      return undefined;
+    }
 
     if (this.guard.containsSecret(unit.text)) {
       return errorHover(doc, pos, '疑似密钥，未发送', []);

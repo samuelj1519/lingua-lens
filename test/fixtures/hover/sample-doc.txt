@@ -1,0 +1,3 @@
+English plain text paragraph for hover test.
+
+另一段中文不应翻译。

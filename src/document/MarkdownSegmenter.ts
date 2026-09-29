@@ -97,15 +97,32 @@ function inlineToText(children: PhrasingContent[], _source: string): string {
 function tableSegment(node: import('mdast').Table, source: string, id: number): Segment {
   const start = node.position?.start.offset ?? 0;
   const end = node.position?.end.offset ?? source.length;
-  const cells: { id: string; text: string; placeholders: import('../types').Placeholder[] }[][] = [];
+  const cells: {
+    id: string;
+    text: string;
+    placeholders: import('../types').Placeholder[];
+    range: import('../types').OffsetRange;
+  }[][] = [];
   let r = 0;
   for (const row of node.children) {
-    const rowCells: { id: string; text: string; placeholders: import('../types').Placeholder[] }[] = [];
+    const rowCells: {
+      id: string;
+      text: string;
+      placeholders: import('../types').Placeholder[];
+      range: import('../types').OffsetRange;
+    }[] = [];
     let c = 0;
     for (const cell of row.children) {
       const text = inlineToText(cell.children, source);
       const p = protect(text);
-      rowCells.push({ id: `s${id}.r${r}.c${c}`, text: p.text, placeholders: p.placeholders });
+      const cs = cell.position?.start.offset ?? start;
+      const ce = cell.position?.end.offset ?? end;
+      rowCells.push({
+        id: `s${id}.r${r}.c${c}`,
+        text: p.text,
+        placeholders: p.placeholders,
+        range: { start: cs, end: ce },
+      });
       c++;
     }
     cells.push(rowCells);

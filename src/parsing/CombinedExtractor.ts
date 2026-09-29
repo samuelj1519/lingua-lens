@@ -2,7 +2,9 @@ import type { DocumentSnapshot, TextUnit } from '../types';
 import { DocumentHoverExtractor } from '../document/DocumentHoverExtractor';
 import type { AppLogger } from '../util/logger';
 import type { ParserService } from './ParserService';
-import { extractConfigKeyAt, extractYamlHoverAt } from './ConfigRegexHover';
+import { promoteConfigKeyUnit } from './configKeyPromote';
+import { extractConfigRegexHoverAt } from './ConfigRegexHover';
+import { configFilePath, isConfigHoverLanguage } from './languages/configLanguages';
 import { RegexExtractor } from './RegexExtractor';
 import { TreeSitterExtractor } from './TreeSitterExtractor';
 
@@ -30,10 +32,16 @@ export class CombinedExtractor {
           configKeys: options?.configKeys,
         });
         if (fromTree) {
-          this.log.debug(
-            `extract: tree-sitter ${fromTree.kind} (${doc.languageId}) offsets ${fromTree.range.start}-${fromTree.range.end}`,
+          const promoted = promoteConfigKeyUnit(
+            doc,
+            offset,
+            fromTree,
+            options?.configKeys ?? false,
           );
-          return fromTree;
+          this.log.debug(
+            `extract: tree-sitter ${promoted.kind} (${doc.languageId}) offsets ${promoted.range.start}-${promoted.range.end}`,
+          );
+          return promoted;
         }
         this.log.debug(`extract: tree-sitter found no unit at offset ${offset} (${doc.languageId})`);
       } catch (e) {
@@ -51,23 +59,14 @@ export class CombinedExtractor {
       return fromRegex;
     }
 
-    if (doc.languageId === 'yaml') {
-      const fromYaml = extractYamlHoverAt(doc, offset, options?.configKeys ?? false);
-      if (fromYaml) {
+    const path = configFilePath(doc);
+    if (isConfigHoverLanguage(doc.languageId, path)) {
+      const fromConfig = extractConfigRegexHoverAt(doc, offset, options?.configKeys ?? false);
+      if (fromConfig) {
         this.log.debug(
-          `extract: yaml regex ${fromYaml.kind} offsets ${fromYaml.range.start}-${fromYaml.range.end}`,
+          `extract: config regex ${fromConfig.kind} (${doc.languageId}) offsets ${fromConfig.range.start}-${fromConfig.range.end}`,
         );
-        return fromYaml;
-      }
-    }
-
-    if (options?.configKeys) {
-      const fromKey = extractConfigKeyAt(doc, offset);
-      if (fromKey) {
-        this.log.debug(
-          `extract: config key (${doc.languageId}) offsets ${fromKey.range.start}-${fromKey.range.end}`,
-        );
-        return fromKey;
+        return fromConfig;
       }
     }
 

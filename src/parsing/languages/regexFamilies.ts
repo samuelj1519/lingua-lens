@@ -15,6 +15,7 @@ export const LANGUAGE_TO_FAMILY: Record<string, CommentFamily> = {
   scss: 'cLike',
   less: 'cLike',
   jsonc: 'cLike',
+  json5: 'cLike',
   ruby: 'hash',
   shellscript: 'hash',
   perl: 'hash',

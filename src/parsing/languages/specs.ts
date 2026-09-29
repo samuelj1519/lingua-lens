@@ -145,6 +145,14 @@ export const LANGUAGE_SPECS: Record<string, LanguageSpec> = {
     classifyComment: () => 'line',
     lineCommentPrefixForInsert: '//',
   },
+  json5: {
+    grammar: 'tree-sitter-json.wasm',
+    commentTypes: new Set(),
+    stringTypes: new Set(['string']),
+    pairTypes: new Set(['pair']),
+    classifyComment: () => 'line',
+    lineCommentPrefixForInsert: '//',
+  },
 };
 
 export function getSpec(languageId: string): LanguageSpec | undefined {

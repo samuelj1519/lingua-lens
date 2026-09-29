@@ -69,4 +69,53 @@ describe('config file hover extraction', () => {
 
     parser.dispose();
   });
+
+  it('json: comment, value, key (regex + tree)', async () => {
+    const src = `{
+  // English json comment
+  "max_retry_count": "Hello from json",
+  "label": "不应翻译"
+}`;
+    const doc = { uri: 'file:///app.json', version: 1, languageId: 'json', getText: () => src };
+    const parser = new ParserService(wasmDir, 1024, noopLog);
+    const ex = new CombinedExtractor(parser, noopLog);
+
+    const comment = await ex.extractAt(doc, src.indexOf('English json') + 2, { configKeys: true });
+    expect(comment?.kind).toMatch(/Comment/);
+
+    const value = await ex.extractAt(doc, src.indexOf('Hello from json') + 2, { configKeys: true });
+    expect(value?.kind).toBe('string');
+
+    const key = await ex.extractAt(doc, src.indexOf('max_retry') + 3, { configKeys: true });
+    expect(key?.kind).toBe('configKey');
+
+    const zh = await ex.extractAt(doc, src.indexOf('不应翻译') + 1, { configKeys: true });
+    expect(zh?.kind).toBe('string');
+    expect(decide(zh!.text, detOpts).action).toBe('skip');
+
+    parser.dispose();
+  });
+
+  it('xml: comment, attribute value, name, text node', async () => {
+    const src =
+      `<!-- English xml comment -->\n<root max_retry_count="Hello from xml">Inner text node</root>\n`;
+    const doc = { uri: 'file:///app.xml', version: 1, languageId: 'xml', getText: () => src };
+    const parser = new ParserService(wasmDir, 1024, noopLog);
+    const ex = new CombinedExtractor(parser, noopLog);
+
+    const comment = await ex.extractAt(doc, src.indexOf('English xml') + 2, { configKeys: true });
+    expect(comment?.kind).toBe('blockComment');
+
+    const value = await ex.extractAt(doc, src.indexOf('Hello from xml') + 2, { configKeys: true });
+    expect(value?.kind).toBe('string');
+
+    const key = await ex.extractAt(doc, src.indexOf('max_retry') + 3, { configKeys: true });
+    expect(key?.kind).toBe('configKey');
+
+    const text = await ex.extractAt(doc, src.indexOf('Inner text') + 2, { configKeys: true });
+    expect(text?.kind).toBe('string');
+    expect(text?.text).toContain('Inner');
+
+    parser.dispose();
+  });
 });

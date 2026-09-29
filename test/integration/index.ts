@@ -74,4 +74,24 @@ export async function run(): Promise<void> {
 
   const tomlZh = await hoverMarkdownAt(tomlUri, '不应翻译');
   assert.ok(!tomlZh, 'toml Chinese value should not hover');
+
+  const jsonUri = vscode.Uri.file(path.join(root, 'sample-config.json'));
+  const jsonValue = await hoverMarkdownAt(jsonUri, 'Hello from json');
+  assert.ok(jsonValue && /AI 翻译|\[zh-CN\]|翻译/i.test(jsonValue), 'json value hover');
+  const jsonKey = await hoverMarkdownAt(jsonUri, 'max_retry');
+  assert.ok(jsonKey && /AI 翻译|\[zh-CN\]|翻译/i.test(jsonKey), 'json key hover');
+  const jsonZh = await hoverMarkdownAt(jsonUri, '不应翻译');
+  assert.ok(!jsonZh, 'json Chinese value should not hover');
+
+  const jsoncUri = vscode.Uri.file(path.join(root, 'sample-config.jsonc'));
+  const jsoncComment = await hoverMarkdownAt(jsoncUri, 'English jsonc');
+  assert.ok(jsoncComment && /AI 翻译|\[zh-CN\]|翻译/i.test(jsoncComment), 'jsonc comment hover');
+
+  const xmlUri = vscode.Uri.file(path.join(root, 'sample-config.xml'));
+  const xmlComment = await hoverMarkdownAt(xmlUri, 'English xml');
+  assert.ok(xmlComment && /AI 翻译|\[zh-CN\]|翻译/i.test(xmlComment), 'xml comment hover');
+  const xmlValue = await hoverMarkdownAt(xmlUri, 'Hello from xml');
+  assert.ok(xmlValue && /AI 翻译|\[zh-CN\]|翻译/i.test(xmlValue), 'xml attribute value hover');
+  const xmlKey = await hoverMarkdownAt(xmlUri, 'max_retry');
+  assert.ok(xmlKey && /AI 翻译|\[zh-CN\]|翻译/i.test(xmlKey), 'xml attribute name hover');
 }

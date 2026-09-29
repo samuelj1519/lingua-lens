@@ -1,0 +1,4 @@
+<!-- English xml comment -->
+<config max_retry_count="Hello from xml config">
+  <message>不应翻译</message>
+</config>

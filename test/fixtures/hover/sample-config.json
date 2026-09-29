@@ -1,0 +1,4 @@
+{
+  "max_retry_count": "Hello from json config",
+  "chinese_value": "不应翻译"
+}

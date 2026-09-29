@@ -9,8 +9,9 @@
 - 改进：Markdown/纯文本编辑器标题栏「翻译文档」「刷新翻译」使用 SVG/codicon 图标（Cursor 标题栏更易见）
 - 新增：文档段落悬停翻译（`aiTranslate.hover.documents`，默认开启）；与文档预览相同分段，跳过代码块/front matter/HTML；表格悬停单位为**单元格**
 - 测试：文档悬停单元测试与集成测试（英文段落有译文、中文段落与代码块无悬停）
-- 新增：配置文件悬停（YAML/TOML/JSON/JSONC、INI、properties、XML 等）：注释、字符串值、字段名（`aiTranslate.hover.configKeys`）；新增 tree-sitter yaml/toml/json 语法 WASM
-- 测试：YAML/TOML 配置悬停单元与集成测试
+- 新增：配置文件悬停（YAML/TOML/JSON/JSONC/JSON5、INI、cfg/conf、properties、XML 及通用 key=value/key: value）：注释、字符串值、字段名（`aiTranslate.hover.configKeys`）；新增 tree-sitter yaml/toml/json 语法 WASM
+- 改进：JSON 属性名与 YAML/TOML 对齐（键名拆词翻译）；XML 支持注释、属性、元素文本；统一 config 正则回退
+- 测试：YAML/TOML/JSON/XML 配置悬停单元与集成测试
 
 ## 0.1.0
 

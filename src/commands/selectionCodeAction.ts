@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import type { ConfigService } from '../config/ConfigService';
+import { t } from '../l10n/uiL10n';
 import { decide } from '../detection/LanguageDetector';
 
 export class SelectionTranslateCodeActionProvider implements vscode.CodeActionProvider {
@@ -27,10 +28,11 @@ export class SelectionTranslateCodeActionProvider implements vscode.CodeActionPr
     });
     if (det.action === 'skip') return [];
 
-    const action = new vscode.CodeAction('Translate Selection', vscode.CodeActionKind.RefactorRewrite);
+    const title = t('codeAction.translateSelection');
+    const action = new vscode.CodeAction(title, vscode.CodeActionKind.RefactorRewrite);
     action.command = {
       command: 'aiTranslate.translateSelectionPopup',
-      title: 'Translate Selection',
+      title,
     };
     return [action];
   }

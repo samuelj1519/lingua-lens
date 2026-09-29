@@ -2,6 +2,7 @@ import picomatch from 'picomatch';
 import * as vscode from 'vscode';
 import type { ConfigService } from '../config/ConfigService';
 import { containsSecret } from '../detection/secrets';
+import { t } from '../l10n/uiL10n';
 
 export type BlockReason = 'disabled' | 'workspaceDisabled' | 'excluded' | 'scheme' | 'untrusted' | 'noAck';
 
@@ -36,22 +37,25 @@ export class PrivacyGuard {
     if (this.context.globalState.get<boolean>(key)) return true;
     if (!interactive) return false;
     const host = origin;
+    const continueLabel = t('privacy.continue');
+    const disableWs = t('privacy.disableWorkspace');
+    const openSettings = t('privacy.openSettings');
     const choice = await vscode.window.showInformationMessage(
-      `AI Translate 会把注释、字符串和文档内容发送到 ${host} 进行翻译。公司项目请确认是否允许。`,
+      t('privacy.prompt', host),
       { modal: true },
-      '继续',
-      '仅对此工作区禁用',
-      '打开设置',
+      continueLabel,
+      disableWs,
+      openSettings,
     );
-    if (choice === '继续') {
+    if (choice === continueLabel) {
       await this.context.globalState.update(key, true);
       return true;
     }
-    if (choice === '仅对此工作区禁用') {
+    if (choice === disableWs) {
       await this.config.setEnabled(false, vscode.workspace.workspaceFolders?.[0]?.uri);
       return false;
     }
-    if (choice === '打开设置') {
+    if (choice === openSettings) {
       await vscode.commands.executeCommand('aiTranslate.openSettings');
     }
     return false;

@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import type { ConfigService } from '../config/ConfigService';
+import { t } from '../l10n/uiL10n';
 import type { PrivacyGuard } from '../privacy/PrivacyGuard';
 import type { TranslationService } from '../translation/TranslationService';
 import { resolveSelectionTargetLanguage } from './selectionTarget';
@@ -25,13 +26,13 @@ export async function translateClipboardOrSelection(
   }
 
   if (!text?.trim()) {
-    void vscode.window.showWarningMessage('未找到终端选区或剪贴板文本');
+    void vscode.window.showWarningMessage(t('msg.clipboardEmpty'));
     return;
   }
 
   if (!(await guard.ensureAcknowledged(true))) return;
   if (guard.containsSecret(text)) {
-    void vscode.window.showWarningMessage('疑似密钥，未发送');
+    void vscode.window.showWarningMessage(t('msg.secretNotSent'));
     return;
   }
 
@@ -52,12 +53,13 @@ export async function translateClipboardOrSelection(
     const panel = await vscode.window.showTextDocument(
       await vscode.workspace.openTextDocument({
         language: 'markdown',
-        content: `# 翻译 (${target})\n\n${result.text}\n`,
+        content: `# ${t('msg.translationDone')} (${target})\n\n${result.text}\n`,
       }),
       { viewColumn: vscode.ViewColumn.Beside, preview: true },
     );
-    const copy = await vscode.window.showInformationMessage('翻译完成', '复制译文');
-    if (copy === '复制译文') {
+    const copyLabel = t('msg.copyTranslation');
+    const copy = await vscode.window.showInformationMessage(t('msg.translationDone'), copyLabel);
+    if (copy === copyLabel) {
       await vscode.env.clipboard.writeText(result.text);
     }
     void panel;

@@ -12,13 +12,13 @@ import { canTranslateWholeDocument } from './documentEligibility';
 import { validateAndFallbackContainers } from './containerPostProcess';
 import {
   buildDocumentTranslationPlan,
-  DOCUMENT_ALREADY_TARGET_MESSAGE,
   type DocumentSegmentPlan,
 } from './documentTranslationPlan';
 import { translatePartialDocumentSegments } from './documentPartialTranslate';
 import { isSameTranslationAsSource } from '../util/textEquivalence';
 import { DocumentSegmentProgressReporter } from './DocumentSegmentProgressReporter';
 import type { Placeholder } from '../types';
+import { t } from '../l10n/uiL10n';
 
 export type SegmentResultStatus = 'pending' | 'done' | 'failed' | 'skipped';
 
@@ -63,19 +63,19 @@ export class DocTranslationService {
 
   async openPreview(doc: vscode.TextDocument): Promise<void> {
     if (!canTranslateWholeDocument(doc)) {
-      void vscode.window.showWarningMessage('整篇翻译仅支持 Markdown / 纯文本；配置文件请使用悬停翻译。');
+      void vscode.window.showWarningMessage(t('doc.markdownOnly'));
       return;
     }
     const block = this.guard.check(doc);
     if (block === 'excluded') {
-      void vscode.window.showWarningMessage('该文件已被排除');
+      void vscode.window.showWarningMessage(t('doc.fileExcluded'));
       return;
     }
     if (block) {
       if (block === 'noAck') {
         if (!(await this.guard.ensureAcknowledged(true))) return;
       } else if (block === 'disabled') {
-        void vscode.window.showWarningMessage('AI Translate 已禁用');
+        void vscode.window.showWarningMessage(t('doc.disabled'));
         return;
       }
     }
@@ -83,7 +83,7 @@ export class DocTranslationService {
     const segments = this.segment(doc);
     const { plans, translatableCount } = buildDocumentTranslationPlan(segments, doc.getText(), cfg);
     if (translatableCount === 0 && !cfg.document.forceTranslate) {
-      void vscode.window.showInformationMessage(DOCUMENT_ALREADY_TARGET_MESSAGE);
+      void vscode.window.showInformationMessage(t('doc.alreadyTarget'));
       return;
     }
     const previewUri = this.previewUriFor(doc.uri, cfg.targetLanguage);
@@ -100,7 +100,7 @@ export class DocTranslationService {
     const previewUri = this.previewUriFor(doc.uri, cfg.targetLanguage);
     const session = this.sessions.get(previewUri.toString());
     if (!session) {
-      void vscode.window.showInformationMessage('请先打开全文翻译预览');
+      void vscode.window.showInformationMessage(t('doc.openPreviewFirst'));
       await this.openPreview(doc);
       return;
     }
@@ -139,7 +139,7 @@ export class DocTranslationService {
     const segments = this.segment(doc);
     const { plans, translatableCount } = buildDocumentTranslationPlan(segments, doc.getText(), cfg);
     if (translatableCount === 0 && !cfg.document.forceTranslate) {
-      void vscode.window.showInformationMessage(DOCUMENT_ALREADY_TARGET_MESSAGE);
+      void vscode.window.showInformationMessage(t('doc.alreadyTarget'));
       return;
     }
     const previewUri = this.previewUriFor(doc.uri, cfg.targetLanguage);

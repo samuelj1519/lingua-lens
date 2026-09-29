@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import type { ConfigService } from '../config/ConfigService';
 import type { PrivacyGuard } from '../privacy/PrivacyGuard';
 import type { TranslationService } from '../translation/TranslationService';
+import { t } from '../l10n/uiL10n';
 import type { TargetLang } from '../types';
 import { sha256HexPrefix } from '../util/hash';
 
@@ -26,7 +27,7 @@ export async function generateLocaleFile(
   } else if (ext.endsWith('.properties')) {
     flat = parseProperties(raw);
   } else {
-    void vscode.window.showWarningMessage('仅支持 JSON/YAML/properties 语言包');
+    void vscode.window.showWarningMessage(t('msg.localeUnsupported'));
     return;
   }
 
@@ -48,7 +49,7 @@ export async function generateLocaleFile(
   }
 
   if (!toTranslate.length) {
-    void vscode.window.showInformationMessage('语言包已是最新，无需更新');
+    void vscode.window.showInformationMessage(t('msg.localeUpToDate'));
     return;
   }
 
@@ -66,7 +67,7 @@ export async function generateLocaleFile(
   }
   const outJson = JSON.stringify(existing, null, 2);
   await vscode.workspace.fs.writeFile(outUri, Buffer.from(outJson, 'utf8'));
-  void vscode.window.showInformationMessage(`已写入 ${outUri.fsPath}`);
+  void vscode.window.showInformationMessage(t('msg.localeWritten', outUri.fsPath));
 }
 
 function suggestLocaleName(path: string, target: TargetLang): string {

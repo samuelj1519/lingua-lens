@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { t } from '../l10n/uiL10n';
 import { BilingualRenderer } from './BilingualRenderer';
 import type { DocSession } from './DocTranslationService';
 import type { PreviewStyle } from './DocumentAssembler';
@@ -19,6 +20,12 @@ export class PreviewContentProvider implements vscode.TextDocumentContentProvide
     this.previewStyle = style;
   }
 
+  refreshAll(): void {
+    for (const key of this.sessions.keys()) {
+      this.emitter.fire(vscode.Uri.parse(key));
+    }
+  }
+
   notify(uri: vscode.Uri): void {
     const key = uri.toString();
     const existing = this.pending.get(key);
@@ -35,7 +42,7 @@ export class PreviewContentProvider implements vscode.TextDocumentContentProvide
   provideTextDocumentContent(uri: vscode.Uri): string {
     const session = this.sessions.get(uri.toString());
     if (!session) {
-      return '预览已失效，请重新执行「AI Translate: 翻译文档 (双语预览)」命令。';
+      return t('doc.previewExpired');
     }
     return this.renderer.renderBilingual(session.sourceText, session, this.previewStyle);
   }

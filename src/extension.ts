@@ -30,12 +30,14 @@ import { refreshHoverTranslation } from './commands/refreshHover';
 import { SettingsPanelController } from './settingsPanel/SettingsPanelController';
 import { countConfigurationProperties } from './settingsPanel/countSettings';
 import { applyTargetLanguageCursorUiBootstrap } from './l10n/targetLanguageBootstrap';
+import { initUiL10n, resetUiL10nCache, t } from './l10n/uiL10n';
 
 let parserService: ParserService | undefined;
 let cacheService: CacheService | undefined;
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
   const config = new ConfigService();
+  initUiL10n(context.extensionPath, () => config.getRawTargetLanguage());
   await applyTargetLanguageCursorUiBootstrap(context);
   const logger = new Logger(() => config.get().log.level);
   const stats = new StatsService();
@@ -78,8 +80,17 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     countConfigurationProperties(context.extensionPath),
   );
 
+  const codeLensRegistration = registerDocumentCodeLens(config);
   const statusBar = new StatusBarController(config, stats, apiKeys);
   preview.setPreviewStyle(config.get().document.previewStyle);
+  config.onDidChange((e) => {
+    if (e.affectsConfiguration('aiTranslate.targetLanguage')) {
+      resetUiL10nCache();
+      codeLensRegistration.provider.refresh();
+      void statusBar.refresh();
+      preview.refreshAll();
+    }
+  });
   context.subscriptions.push(
     logger,
     config,
@@ -88,7 +99,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     vscode.workspace.registerTextDocumentContentProvider('aitranslate', preview),
     createHoverProvider(config, guard, extractor, translation, stats, hoverRegistry, logger),
     createSelectionHoverProvider(config, guard, translation, hoverRegistry),
-    registerDocumentCodeLens(config),
+    codeLensRegistration.disposable,
     vscode.languages.registerCodeActionsProvider('*', new SelectionTranslateCodeActionProvider(config), {
       providedCodeActionKinds: [vscode.CodeActionKind.RefactorRewrite],
     }),
@@ -117,7 +128,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     const c = config.get();
     const origin = new URL(c.llm.baseUrl).origin;
     const key = await vscode.window.showInputBox({
-      prompt: `为 ${origin} 设置 API Key`,
+      prompt: t('msg.apiKeyPrompt', origin),
       password: true,
       ignoreFocusOut: true,
     });
@@ -129,11 +140,15 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   });
 
   reg('aiTranslate.clearApiKey', async () => {
-    const pick = await vscode.window.showQuickPick(['清除当前 origin', '清除全部'], { title: '清除 API Key' });
+    const pick = await vscode.window.showQuickPick(
+      [t('msg.clearApiKey.current'), t('msg.clearApiKey.all')],
+      { title: t('msg.clearApiKey.title') },
+    );
     if (!pick) return;
-    const confirm = await vscode.window.showWarningMessage('确认清除 API Key？', { modal: true }, '确认');
-    if (confirm !== '确认') return;
-    if (pick === '清除全部') await apiKeys.clearAll();
+    const confirmLabel = t('msg.confirm');
+    const confirm = await vscode.window.showWarningMessage(t('msg.clearApiKey.confirm'), { modal: true }, confirmLabel);
+    if (confirm !== confirmLabel) return;
+    if (pick === t('msg.clearApiKey.all')) await apiKeys.clearAll();
     else await apiKeys.clear(config.get().llm.baseUrl);
     await statusBar.refresh();
   });
@@ -150,13 +165,13 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     const doc = editor.document;
     const block = guard.check(doc);
     if (block === 'excluded') {
-      void vscode.window.showWarningMessage('该文件已被排除');
+      void vscode.window.showWarningMessage(t('doc.fileExcluded'));
       return;
     }
     if (!(await guard.ensureAcknowledged(true))) return;
     const text = doc.getText(editor.selection);
     if (guard.containsSecret(text)) {
-      void vscode.window.showWarningMessage('疑似密钥，未发送');
+      void vscode.window.showWarningMessage(t('msg.secretNotSent'));
       return;
     }
     const c = config.get(doc.uri);
@@ -173,9 +188,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       const result = await translation.translate(unit, c.targetLanguage, { kind: 'selection', uri: doc.uri });
       const out = c.selection.output === 'auto' ? (result.text.length > 300 ? 'document' : 'notification') : c.selection.output;
       if (out === 'notification') {
-        const action = await vscode.window.showInformationMessage(result.text.slice(0, 500), '复制', '替换选区');
-        if (action === '复制') await vscode.env.clipboard.writeText(result.text);
-        if (action === '替换选区') {
+        const copyLabel = t('msg.copy');
+        const replaceLabel = t('msg.replaceSelection');
+        const action = await vscode.window.showInformationMessage(result.text.slice(0, 500), copyLabel, replaceLabel);
+        if (action === copyLabel) await vscode.env.clipboard.writeText(result.text);
+        if (action === replaceLabel) {
           await editor.edit((eb) => eb.replace(editor.selection, result.text));
         }
       } else {
@@ -216,10 +233,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   });
 
   reg('aiTranslate.clearCache', async () => {
-    const ok = await vscode.window.showWarningMessage('清除所有翻译缓存？', { modal: true }, '清除');
-    if (ok === '清除') {
+    const clearLabel = t('msg.clearCacheYes');
+    const ok = await vscode.window.showWarningMessage(t('msg.clearCacheConfirm'), { modal: true }, clearLabel);
+    if (ok === clearLabel) {
       await cacheService?.clear();
-      void vscode.window.showInformationMessage('缓存已清除');
+      void vscode.window.showInformationMessage(t('msg.cacheCleared'));
     }
   });
 
@@ -244,8 +262,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     try {
       await vscode.workspace.fs.stat(uri);
     } catch {
-      const create = await vscode.window.showInformationMessage('术语表不存在，是否创建？', '创建');
-      if (create === '创建') {
+      const createLabel = t('msg.create');
+      const create = await vscode.window.showInformationMessage(t('msg.glossaryCreate'), createLabel);
+      if (create === createLabel) {
         const template = JSON.stringify({ version: 1, terms: [] }, null, 2);
         await vscode.workspace.fs.writeFile(uri, Buffer.from(template, 'utf8'));
       } else return;
@@ -313,7 +332,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
   reg('aiTranslate.acknowledgePrivacy', async () => {
     await guard.acknowledgeOrigin();
-    void vscode.window.showInformationMessage('已确认隐私提示');
+    void vscode.window.showInformationMessage(t('msg.privacyAcknowledged'));
   });
 
   reg('aiTranslate.hover.copy', async (...args: unknown[]) => {
@@ -328,7 +347,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     if (!action) return;
     const editor = vscode.window.visibleTextEditors.find((e) => e.document.uri.toString() === action.uri);
     if (!editor) {
-      void vscode.window.showWarningMessage('原文位置已变化');
+      void vscode.window.showWarningMessage(t('msg.positionChanged'));
       return;
     }
     const spec = getSpec(action.languageId);

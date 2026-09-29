@@ -4,6 +4,7 @@ import type { PrivacyGuard } from '../privacy/PrivacyGuard';
 import type { TranslationService } from '../translation/TranslationService';
 import type { TargetLang } from '../types';
 import { TARGET_LANG_NAMES } from '../detection/families';
+import { t } from '../l10n/uiL10n';
 import { resolveSelectionTargetLanguage } from './selectionTarget';
 
 export async function translateReplaceSelection(
@@ -13,7 +14,7 @@ export async function translateReplaceSelection(
 ): Promise<void> {
   const editor = vscode.window.activeTextEditor;
   if (!editor || editor.selection.isEmpty) {
-    void vscode.window.showWarningMessage('请先选中要翻译的文本');
+    void vscode.window.showWarningMessage(t('msg.selectTextFirst'));
     return;
   }
   const target = await pickTargetLanguage(editor.document.getText(editor.selection), config);
@@ -28,7 +29,7 @@ export async function translateInsertBelow(
 ): Promise<void> {
   const editor = vscode.window.activeTextEditor;
   if (!editor || editor.selection.isEmpty) {
-    void vscode.window.showWarningMessage('请先选中要翻译的文本');
+    void vscode.window.showWarningMessage(t('msg.selectTextFirst'));
     return;
   }
   const target = await pickTargetLanguage(editor.document.getText(editor.selection), config);
@@ -44,11 +45,11 @@ async function pickTargetLanguage(
   const suggested = resolveSelectionTargetLanguage(text, cfg);
   const items = (Object.keys(TARGET_LANG_NAMES) as TargetLang[]).map((id) => ({
     label: TARGET_LANG_NAMES[id],
-    description: id === suggested ? '推荐' : undefined,
+    description: id === suggested ? t('selection.recommended') : undefined,
     id,
   }));
   const pick = await vscode.window.showQuickPick(items, {
-    title: '翻译目标语言',
+    title: t('selection.pickTarget.title'),
     placeHolder: TARGET_LANG_NAMES[suggested],
   });
   return pick?.id;
@@ -65,14 +66,14 @@ async function runSelectionTransform(
   const doc = editor.document;
   const block = guard.check(doc);
   if (block === 'excluded') {
-    void vscode.window.showWarningMessage('该文件已被排除');
+    void vscode.window.showWarningMessage(t('doc.fileExcluded'));
     return;
   }
   if (!(await guard.ensureAcknowledged(true))) return;
 
   const text = doc.getText(editor.selection);
   if (guard.containsSecret(text)) {
-    void vscode.window.showWarningMessage('疑似密钥，未发送');
+    void vscode.window.showWarningMessage(t('msg.secretNotSent'));
     return;
   }
 

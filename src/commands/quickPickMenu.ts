@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import type { ConfigService } from '../config/ConfigService';
 import type { DocTranslationService } from '../document/DocTranslationService';
 import { EXTENSION_SETTINGS_FILTER } from '../constants/extensionId';
+import { t } from '../l10n/uiL10n';
 
 export async function showAiTranslateQuickPick(
   config: ConfigService,
@@ -10,17 +11,17 @@ export async function showAiTranslateQuickPick(
   const cfg = config.get();
   const items: vscode.QuickPickItem[] = [
     {
-      label: cfg.enabled ? '$(circle-slash) 禁用 AI Translate' : '$(check) 启用 AI Translate',
+      label: cfg.enabled ? `$(circle-slash) ${t('quickpick.disable')}` : `$(check) ${t('quickpick.enable')}`,
       description: 'toggle',
     },
-    { label: '$(globe) 选择目标语言', description: 'language' },
-    { label: '$(book) 翻译全文（对照预览）', description: 'document' },
-    { label: '$(new-file) 生成译文文件', description: 'sidefile' },
-    { label: '$(settings-gear) 打开设置', description: 'settings' },
-    { label: '$(layout) 设置面板', description: 'settingsPanel' },
-    { label: '$(key) 设置 API Key', description: 'apikey' },
+    { label: `$(globe) ${t('quickpick.selectLanguage')}`, description: 'language' },
+    { label: `$(book) ${t('quickpick.translateDocument')}`, description: 'document' },
+    { label: `$(new-file) ${t('quickpick.generateSideFile')}`, description: 'sidefile' },
+    { label: `$(settings-gear) ${t('quickpick.openSettings')}`, description: 'settings' },
+    { label: `$(layout) ${t('quickpick.settingsPanel')}`, description: 'settingsPanel' },
+    { label: `$(key) ${t('quickpick.setApiKey')}`, description: 'apikey' },
   ];
-  const pick = await vscode.window.showQuickPick(items, { title: 'AI Translate' });
+  const pick = await vscode.window.showQuickPick(items, { title: t('quickpick.title') });
   if (!pick) return;
   switch (pick.description) {
     case 'toggle':

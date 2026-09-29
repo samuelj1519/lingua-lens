@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { t } from '../l10n/uiL10n';
 import type { TargetLang } from '../types';
 
 export class SideFileWriter {
@@ -24,24 +25,26 @@ export class SideFileWriter {
   ): Promise<'written' | 'cancelled'> {
     const target = this.targetUri(source, lang, pattern);
     if (target.toString() === source.toString()) {
-      void vscode.window.showErrorMessage('译文文件路径不能与源文件相同');
+      void vscode.window.showErrorMessage(t('msg.sideFileSamePath'));
       return 'cancelled';
     }
+    const fileName = target.path.split('/').pop() ?? target.path;
     try {
       await vscode.workspace.fs.stat(target);
+      const overwrite = t('msg.overwrite');
       const choice = await vscode.window.showWarningMessage(
-        `${target.path.split('/').pop()} 已存在，是否覆盖？`,
+        t('msg.sideFileExistsNamed', fileName),
         { modal: true },
-        '覆盖',
+        overwrite,
       );
-      if (choice !== '覆盖') return 'cancelled';
+      if (choice !== overwrite) return 'cancelled';
     } catch {
       /* not exists */
     }
     const crlf = content.includes('\r\n');
     const data = Buffer.from(crlf ? content.replace(/\n/g, '\r\n') : content, 'utf8');
     await vscode.workspace.fs.writeFile(target, data);
-    void vscode.window.showInformationMessage(`已写入 ${target.path.split('/').pop()}`);
+    void vscode.window.showInformationMessage(t('msg.sideFileWritten', fileName));
     return 'written';
   }
 }

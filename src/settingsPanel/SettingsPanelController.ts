@@ -1,11 +1,9 @@
 import * as vscode from 'vscode';
-import * as fs from 'node:fs';
-import * as path from 'node:path';
 import type { ConfigService } from '../config/ConfigService';
 import type { CacheService } from '../cache/CacheService';
 import type { ApiKeyStore } from '../secrets/ApiKeyStore';
 import type { LlmClient } from '../llm/LlmClient';
-import { loadBundleStringsForPanel, type BundleLocale } from '../l10n/bundleStrings';
+import { getUiStringsForRawTarget } from '../l10n/uiL10n';
 import {
   BUILTIN_TARGET_LANGUAGES,
   isBuiltinTargetLanguage,
@@ -75,13 +73,6 @@ export class SettingsPanelController {
     void this.render();
   }
 
-  private readBundle(locale: BundleLocale): Record<string, string> | undefined {
-    const file = locale === 'en' ? 'bundle.l10n.json' : `bundle.l10n.${locale}.json`;
-    const p = path.join(this.context.extensionPath, 'l10n', file);
-    if (!fs.existsSync(p)) return undefined;
-    return JSON.parse(fs.readFileSync(p, 'utf8')) as Record<string, string>;
-  }
-
   private rawTargetLanguage(): string {
     const values = readPanelValues(this.scope);
     const v = values['targetLanguage'];
@@ -89,7 +80,7 @@ export class SettingsPanelController {
   }
 
   private stringsForPanel(rawTarget: string): Record<string, string> {
-    return loadBundleStringsForPanel((loc) => this.readBundle(loc), rawTarget);
+    return getUiStringsForRawTarget(rawTarget);
   }
 
   private languageOptions(): LanguageOption[] {

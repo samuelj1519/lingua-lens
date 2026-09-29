@@ -9,6 +9,7 @@ import type { StatsService } from '../stats/StatsService';
 import type { TranslationService } from '../translation/TranslationService';
 import { cancellableDelay } from '../util/delay';
 import type { AppLogger } from '../util/logger';
+import { t } from '../l10n/uiL10n';
 import type { HoverActionRegistry } from './HoverActionRegistry';
 import { HOVER_TRUSTED_COMMANDS, hoverActionLinks } from './hoverActionLinks';
 import { buildSupplementalHoverBlocks } from './HoverBlocks';
@@ -176,12 +177,12 @@ export class TranslateHoverProvider implements vscode.HoverProvider {
     const md = new vscode.MarkdownString();
     md.isTrusted = { enabledCommands: [...HOVER_TRUSTED_COMMANDS] };
     md.supportHtml = false;
-    const cacheLabel = fromCache ? ' · 缓存' : '';
-    md.appendMarkdown(`**AI 翻译** \`${cfg.targetLanguage}\`${cacheLabel}\n\n`);
+    const cacheLabel = fromCache ? t('hover.fromCache') : '';
+    md.appendMarkdown(`**${t('hover.brand')}** \`${cfg.targetLanguage}\`${cacheLabel}\n\n`);
     const isString = unit.kind === 'string' || unit.kind === 'templateString';
     if (isString) md.appendText(translation);
     else md.appendMarkdown(translation);
-    if (!placeholderOk) md.appendMarkdown('\n\n*部分占位符未保留*');
+    if (!placeholderOk) md.appendMarkdown(`\n\n${t('hover.placeholderWarning')}`);
     if (cfg.hover.showOriginal) {
       const orig = unit.text.slice(0, 500);
       md.appendMarkdown(`\n\n> ${orig}`);
@@ -204,10 +205,10 @@ export class TranslateHoverProvider implements vscode.HoverProvider {
   private errorFromLlm(_doc: vscode.TextDocument, range: vscode.Range, e: LlmError): vscode.Hover {
     const links: string[] = [];
     if (e.kind === 'noKey' || e.kind === 'auth') {
-      links.push(`[设置 API Key](command:aiTranslate.setApiKey)`);
+      links.push(`[${t('hover.error.setApiKey')}](command:aiTranslate.setApiKey)`);
     }
     if (e.kind === 'noModel' || e.kind === 'notFound') {
-      links.push(`[打开设置](command:aiTranslate.openSettings)`);
+      links.push(`[${t('hover.error.openSettings')}](command:aiTranslate.openSettings)`);
     }
     const md = new vscode.MarkdownString(e.message + (links.length ? '\n\n' + links.join(' · ') : ''));
     md.isTrusted = { enabledCommands: ['aiTranslate.setApiKey', 'aiTranslate.openSettings'] };

@@ -16,6 +16,7 @@ import {
   shouldTranslateCommitMessage,
 } from './GitCommitHover';
 import type { HoverActionRegistry } from './HoverActionRegistry';
+import { t } from '../l10n/uiL10n';
 import { HOVER_TRUSTED_COMMANDS, hoverActionLinks } from './hoverActionLinks';
 
 export interface HoverBlockResult {
@@ -62,14 +63,14 @@ export async function buildSupplementalHoverBlocks(
       const cached = await translation.peekCache(unit, cfg.targetLanguage, 'hover', doc.uri);
       if (cached) {
         pending.push({
-          title: 'Git 提交说明',
+          title: t('hover.title.gitCommit'),
           unit,
           range,
           cached: { text: cached.text, fromCache: true, placeholderOk: cached.placeholderOk },
         });
       } else {
         needsDelay = true;
-        pending.push({ title: 'Git 提交说明', unit, range });
+        pending.push({ title: t('hover.title.gitCommit'), unit, range });
       }
     }
   }
@@ -84,10 +85,15 @@ export async function buildSupplementalHoverBlocks(
         const range = diagnosticHoverRange(diags, pos);
         const cached = await translation.peekCache(unit, cfg.targetLanguage, 'hover', doc.uri);
         if (cached) {
-          pending.push({ title: '诊断信息', unit, range, cached: { text: cached.text, fromCache: true, placeholderOk: cached.placeholderOk } });
+          pending.push({
+            title: t('hover.title.diagnostics'),
+            unit,
+            range,
+            cached: { text: cached.text, fromCache: true, placeholderOk: cached.placeholderOk },
+          });
         } else {
           needsDelay = true;
-          pending.push({ title: '诊断信息', unit, range });
+          pending.push({ title: t('hover.title.diagnostics'), unit, range });
         }
       }
     }
@@ -102,10 +108,15 @@ export async function buildSupplementalHoverBlocks(
         const range = doc.getWordRangeAtPosition(pos) ?? new vscode.Range(pos, pos);
         const cached = await translation.peekCache(unit, cfg.targetLanguage, 'hover', doc.uri);
         if (cached) {
-          pending.push({ title: '符号文档', unit, range, cached: { text: cached.text, fromCache: true, placeholderOk: cached.placeholderOk } });
+          pending.push({
+            title: t('hover.title.symbolDocs'),
+            unit,
+            range,
+            cached: { text: cached.text, fromCache: true, placeholderOk: cached.placeholderOk },
+          });
         } else {
           needsDelay = true;
-          pending.push({ title: '符号文档', unit, range });
+          pending.push({ title: t('hover.title.symbolDocs'), unit, range });
         }
       }
     }
@@ -144,10 +155,10 @@ export async function buildSupplementalHoverBlocks(
       const md = new vscode.MarkdownString();
       md.supportHtml = false;
       md.isTrusted = { enabledCommands: [...HOVER_TRUSTED_COMMANDS] };
-      const cacheLabel = fromCache ? ' · 缓存' : '';
-      md.appendMarkdown(`**AI 翻译 · ${item.title}** \`${cfg.targetLanguage}\`${cacheLabel}\n\n`);
+      const cacheLabel = fromCache ? t('hover.fromCache') : '';
+      md.appendMarkdown(`**${t('hover.sectionPrefix', item.title)}** \`${cfg.targetLanguage}\`${cacheLabel}\n\n`);
       md.appendMarkdown(text);
-      if (!placeholderOk) md.appendMarkdown('\n\n*部分占位符未保留*');
+      if (!placeholderOk) md.appendMarkdown(`\n\n${t('hover.placeholderWarning')}`);
       const id = registry.put({
         translation: text,
         uri: doc.uri.toString(),
@@ -162,7 +173,7 @@ export async function buildSupplementalHoverBlocks(
     } catch (e) {
       log.warn(`hover supplemental failed: ${e instanceof Error ? e.message : e}`);
       if (e instanceof LlmError && e.kind === 'noKey') {
-        const md = new vscode.MarkdownString(`**AI 翻译 · ${item.title}**\n\n${e.message}`);
+        const md = new vscode.MarkdownString(`**${t('hover.sectionPrefix', item.title)}**\n\n${e.message}`);
         md.isTrusted = { enabledCommands: ['aiTranslate.setApiKey'] };
         blocks.push({ markdown: md, range: item.range });
       }

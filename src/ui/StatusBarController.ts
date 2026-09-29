@@ -3,6 +3,7 @@ import type { ApiKeyStore } from '../secrets/ApiKeyStore';
 import type { ConfigService } from '../config/ConfigService';
 import type { StatsService } from '../stats/StatsService';
 import { TARGET_LANGUAGE_NATIVE_LABELS } from '../l10n/targetLanguage';
+import { t } from '../l10n/uiL10n';
 import type { TargetLang } from '../types';
 
 export class StatusBarController implements vscode.Disposable {
@@ -52,15 +53,16 @@ export class StatusBarController implements vscode.Disposable {
     const s = this.stats.snapshot();
     const md = new vscode.MarkdownString();
     md.isTrusted = { enabledCommands: ['aiTranslate.setApiKey', 'aiTranslate.clearCache'] };
+    const stateLabel = enabled ? t('statusbar.tooltip.enabled') : t('statusbar.tooltip.disabled');
     md.appendMarkdown(
-      `**AI Translate** ${enabled ? '已启用' : '已禁用'} (目标 ${cfg.targetLanguage})\n\n` +
-        `| 项 | 次数 |\n| --- | --- |\n` +
-        `| API 调用 | ${s.apiCalls} |\n` +
-        `| 缓存命中 (内存/磁盘) | ${s.memoryHits} / ${s.diskHits} |\n` +
-        `| 本地跳过 | ${s.skipped} |\n` +
-        `| 错误 | ${s.errors} |\n` +
-        `| Token (输入/输出) | ${s.promptTokens} / ${s.completionTokens} |\n\n` +
-        `模型 \`${cfg.llm.model || '(未设置)'}\` · [设置 API Key](command:aiTranslate.setApiKey) · [清除缓存](command:aiTranslate.clearCache)`,
+      `**${t('statusbar.tooltip.title')}** ${stateLabel} (${t('statusbar.tooltip.target')} ${cfg.targetLanguage})\n\n` +
+        `| | |\n| --- | --- |\n` +
+        `| ${t('statusbar.tooltip.apiCalls')} | ${s.apiCalls} |\n` +
+        `| ${t('statusbar.tooltip.cacheHits')} | ${s.memoryHits} / ${s.diskHits} |\n` +
+        `| ${t('statusbar.tooltip.skipped')} | ${s.skipped} |\n` +
+        `| ${t('statusbar.tooltip.errors')} | ${s.errors} |\n` +
+        `| ${t('statusbar.tooltip.tokens')} | ${s.promptTokens} / ${s.completionTokens} |\n\n` +
+        `${t('statusbar.tooltip.model')} \`${cfg.llm.model || '—'}\` · [${t('statusbar.tooltip.setApiKey')}](command:aiTranslate.setApiKey) · [${t('statusbar.tooltip.clearCache')}](command:aiTranslate.clearCache)`,
     );
     this.toggleItem.tooltip = md;
     this.langItem.tooltip = md;
@@ -75,7 +77,7 @@ export class StatusBarController implements vscode.Disposable {
       description: code,
       code,
     }));
-    const picked = await vscode.window.showQuickPick(items, { title: '选择目标语言' });
+    const picked = await vscode.window.showQuickPick(items, { title: t('statusbar.pickLanguage.title') });
     if (picked) {
       await this.config.setTargetLanguage(picked.code);
       this.refresh();

@@ -8,6 +8,7 @@ import { cancellableDelay } from '../util/delay';
 import type { HoverActionRegistry } from './HoverActionRegistry';
 import { LlmError } from '../llm/errors';
 import { isCacheableTranslation } from '../translation/cacheable';
+import { t } from '../l10n/uiL10n';
 import { HOVER_TRUSTED_COMMANDS, hoverActionLinks } from './hoverActionLinks';
 
 export class SelectionHoverProvider implements vscode.HoverProvider {
@@ -87,8 +88,8 @@ export class SelectionHoverProvider implements vscode.HoverProvider {
     const md = new vscode.MarkdownString();
     md.isTrusted = { enabledCommands: [...HOVER_TRUSTED_COMMANDS] };
     md.appendMarkdown(
-      `**AI 翻译 · 选区**${fromCache ? ' · 缓存无效' : ''}\n\n` +
-        `译文为空。请再次悬停并点击 **刷新**，或查看 [日志](command:aiTranslate.showLog)。`,
+      `**${t('hover.sectionPrefix', t('hover.title.selection'))}**${fromCache ? t('hover.invalidCache') : ''}\n\n` +
+        `${t('hover.selection.emptyHint')} [log](command:aiTranslate.showLog)`,
     );
     return new vscode.Hover(md, range);
   }
@@ -103,9 +104,11 @@ export class SelectionHoverProvider implements vscode.HoverProvider {
   ): vscode.Hover {
     const md = new vscode.MarkdownString();
     md.isTrusted = { enabledCommands: [...HOVER_TRUSTED_COMMANDS] };
-    md.appendMarkdown(`**AI 翻译 · 选区** \`${cfg.targetLanguage}\`${fromCache ? ' · 缓存' : ''}\n\n`);
+    md.appendMarkdown(
+      `**${t('hover.sectionPrefix', t('hover.title.selection'))}** \`${cfg.targetLanguage}\`${fromCache ? t('hover.fromCache') : ''}\n\n`,
+    );
     if (!isCacheableTranslation(translation)) {
-      md.appendMarkdown('*译文为空，请重新翻译。*');
+      md.appendMarkdown(t('hover.selection.emptyHint'));
     } else {
       md.appendMarkdown(translation);
     }

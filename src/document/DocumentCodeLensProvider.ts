@@ -1,9 +1,17 @@
 import * as vscode from 'vscode';
 import type { ConfigService } from '../config/ConfigService';
+import { t } from '../l10n/uiL10n';
 import { canTranslateWholeDocument } from './documentEligibility';
 
 export class DocumentCodeLensProvider implements vscode.CodeLensProvider {
+  private readonly onDidChangeEmitter = new vscode.EventEmitter<void>();
+  readonly onDidChangeCodeLenses = this.onDidChangeEmitter.event;
+
   constructor(private readonly config: ConfigService) {}
+
+  refresh(): void {
+    this.onDidChangeEmitter.fire();
+  }
 
   provideCodeLenses(
     doc: vscode.TextDocument,
@@ -16,17 +24,17 @@ export class DocumentCodeLensProvider implements vscode.CodeLensProvider {
     const top = new vscode.Range(0, 0, 0, 0);
     return [
       new vscode.CodeLens(top, {
-        title: '🌐 翻译全文（对照预览）',
+        title: t('codelens.translatePreview'),
         command: 'aiTranslate.translateDocument',
         arguments: [],
       }),
       new vscode.CodeLens(top, {
-        title: '生成译文文件',
+        title: t('codelens.generateSideFile'),
         command: 'aiTranslate.generateSideFile',
         arguments: [],
       }),
       new vscode.CodeLens(top, {
-        title: '🔄 刷新全文翻译',
+        title: t('codelens.refreshDocument'),
         command: 'aiTranslate.refreshDocumentTranslation',
         arguments: [],
       }),
@@ -34,10 +42,14 @@ export class DocumentCodeLensProvider implements vscode.CodeLensProvider {
   }
 }
 
-export function registerDocumentCodeLens(config: ConfigService): vscode.Disposable {
+export function registerDocumentCodeLens(config: ConfigService): {
+  disposable: vscode.Disposable;
+  provider: DocumentCodeLensProvider;
+} {
   const provider = new DocumentCodeLensProvider(config);
-  return vscode.languages.registerCodeLensProvider(
+  const disposable = vscode.languages.registerCodeLensProvider(
     [{ language: 'markdown' }, { language: 'plaintext' }],
     provider,
   );
+  return { disposable, provider };
 }

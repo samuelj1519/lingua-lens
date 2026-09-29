@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import type { ConfigService } from '../config/ConfigService';
+import { t } from '../l10n/uiL10n';
 import type { PrivacyGuard } from '../privacy/PrivacyGuard';
 import type { TranslationService } from '../translation/TranslationService';
 
@@ -10,7 +11,7 @@ export async function translateSelectionPopup(
 ): Promise<void> {
   const editor = vscode.window.activeTextEditor;
   if (!editor || editor.selection.isEmpty) {
-    void vscode.window.showWarningMessage('请先选中文本');
+    void vscode.window.showWarningMessage(t('msg.selectTextFirst'));
     return;
   }
   const doc = editor.document;
@@ -42,19 +43,23 @@ export async function translateSelectionPopup(
       },
     });
     editor.setDecorations(deco, [new vscode.Range(pos, pos)]);
+    const copyLabel = t('msg.copy');
+    const replaceLabel = t('msg.replaceSelection');
+    const refreshLabel = t('hover.action.refresh');
+    const closeLabel = t('msg.close');
     const action = await vscode.window.showInformationMessage(
       result.text.slice(0, 500),
-      '复制',
-      '替换选区',
-      '刷新',
-      '关闭',
+      copyLabel,
+      replaceLabel,
+      refreshLabel,
+      closeLabel,
     );
     deco.dispose();
-    if (action === '复制') await vscode.env.clipboard.writeText(result.text);
-    if (action === '替换选区') {
+    if (action === copyLabel) await vscode.env.clipboard.writeText(result.text);
+    if (action === replaceLabel) {
       await editor.edit((eb) => eb.replace(editor.selection, result.text));
     }
-    if (action === '刷新') {
+    if (action === refreshLabel) {
       await showResult(true);
     }
   };

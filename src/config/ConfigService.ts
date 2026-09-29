@@ -31,6 +31,10 @@ export class ConfigService implements vscode.Disposable {
     });
   }
 
+  getRawTargetLanguage(resource?: vscode.Uri): string {
+    return vscode.workspace.getConfiguration('aiTranslate', resource).get<string>('targetLanguage', 'zh-CN');
+  }
+
   get(resource?: vscode.Uri): TranslateConfig {
     const cfg = vscode.workspace.getConfiguration('aiTranslate', resource);
     const userExclude = vscode.workspace.getConfiguration('aiTranslate').inspect<string[]>('privacy.exclude');

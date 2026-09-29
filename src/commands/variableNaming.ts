@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import type { ConfigService } from '../config/ConfigService';
 import type { PrivacyGuard } from '../privacy/PrivacyGuard';
 import type { LlmClient } from '../llm/LlmClient';
+import { t } from '../l10n/uiL10n';
 
 export async function suggestVariableNames(
   _config: ConfigService,
@@ -42,7 +43,7 @@ export async function suggestVariableNames(
       });
     } else {
       await vscode.env.clipboard.writeText(pick.label);
-      void vscode.window.showInformationMessage(`已复制: ${pick.label}`);
+      void vscode.window.showInformationMessage(t('msg.copied', pick.label));
     }
   } catch (e) {
     void vscode.window.showErrorMessage(e instanceof Error ? e.message : String(e));

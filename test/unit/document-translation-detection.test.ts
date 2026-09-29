@@ -4,7 +4,7 @@ import { MarkdownSegmenter } from '../../src/document/MarkdownSegmenter';
 import type { DocSession } from '../../src/document/DocTranslationService';
 import {
   buildDocumentTranslationPlan,
-  DOCUMENT_ALREADY_TARGET_MESSAGE,
+  DOCUMENT_ALREADY_TARGET_MESSAGE_KEY,
 } from '../../src/document/documentTranslationPlan';
 import { shouldTranslateDocumentText } from '../../src/document/documentSegmentDetection';
 import { defaultMarkdownSegmentConfig } from '../../src/document/markdownSegmentConfig';
@@ -84,7 +84,7 @@ describe('document translation detection', () => {
   });
 
   it('exposes user message when document already target language', () => {
-    expect(DOCUMENT_ALREADY_TARGET_MESSAGE).toContain('无需翻译');
+    expect(DOCUMENT_ALREADY_TARGET_MESSAGE_KEY).toBe('doc.alreadyTarget');
   });
 
   it('interleaved preview does not duplicate skipped Chinese body', () => {

@@ -32,7 +32,7 @@
 
 命令面板执行 **AI Translate: 设置 API Key**（`aiTranslate.setApiKey`）。Key 与 `aiTranslate.llm.baseUrl` 的 origin 绑定。
 
-在设置中搜索 **AI Translate**，左侧可按分组浏览（支持 **zh-CN / zh-TW / en / ja / ko / fr / de / es / ru / pt-BR** 等 `package.nls.*`）；状态栏 **译** → **打开设置** 进入原生设置页，**设置面板** 打开 Webview 常用项编辑器（命令 `aiTranslate.openSettingsPanel`）。面板界面语言跟随 `aiTranslate.targetLanguage`；其余运行时文案使用 `l10n/bundle.l10n.*` + `vscode.l10n`（随 Cursor 界面语言）。扩展清单翻译源文件在仓库 `i18n/` 目录，合并后生成根目录 `package.nls*.json` 与 `l10n/`。
+在设置中搜索 **AI Translate**，左侧可按分组浏览（支持 **zh-CN / zh-TW / en / ja / ko / fr / de / es / ru / pt-BR** 等 `package.nls.*`）；状态栏 **译** → **打开设置** 进入原生设置页，**设置面板** 打开 Webview 常用项编辑器（命令 `aiTranslate.openSettingsPanel`）。面板与扩展自绘 UI 文案均跟随 `aiTranslate.targetLanguage`（`l10n/bundle.l10n.*` + `t()`）。命令面板/右键菜单/原生设置说明仍来自 `package.nls.*`，随 Cursor 界面语言。扩展清单翻译源文件在仓库 `i18n/` 目录，合并后生成根目录 `package.nls*.json` 与 `l10n/`。
 
 ### 配置分组（`aiTranslate.*`）
 

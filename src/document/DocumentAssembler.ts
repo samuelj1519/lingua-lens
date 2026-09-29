@@ -1,3 +1,4 @@
+import { t } from '../l10n/uiL10n';
 import type { Segment } from '../types';
 import type { DocSession } from './DocTranslationService';
 import { restore } from '../parsing/placeholders';
@@ -16,8 +17,13 @@ export function assembleDocument(
   let cursor = 0;
   const frontmatterAppendLines: string[] = [];
 
-  const header =
-    `> AI 翻译预览 (只读) · 源文件 ${session.sourceLabel} · 目标 ${session.target} · 进度 ${session.doneCount}/${session.totalTranslatable}\n\n`;
+  const header = `${t(
+    'doc.preview.header',
+    session.sourceLabel,
+    session.target,
+    session.doneCount,
+    session.totalTranslatable,
+  )}\n\n`;
 
   parts.push(header);
 
@@ -60,7 +66,7 @@ function trailingNewlineCount(s: string): number {
 function finalizeTrailingNewlines(source: string, out: string): string {
   const want = trailingNewlineCount(source);
   const headerEnd = out.indexOf('\n\n');
-  const hasPreviewHeader = out.startsWith('> AI 翻译预览');
+  const hasPreviewHeader = out.startsWith('> ');
   const bodyStart = hasPreviewHeader && headerEnd >= 0 ? headerEnd + 2 : 0;
   const header = out.slice(0, bodyStart);
   let body = out.slice(bodyStart).replace(/\n+$/, '');

@@ -122,4 +122,5 @@ function planMultilineContainer(
   return { mode: 'list-lines', lineSpecs: specs };
 }
 
-export const DOCUMENT_ALREADY_TARGET_MESSAGE = '文档已是目标语言，无需翻译';
+/** @deprecated Use `t('doc.alreadyTarget')` — kept for tests that assert message shape. */
+export const DOCUMENT_ALREADY_TARGET_MESSAGE_KEY = 'doc.alreadyTarget';

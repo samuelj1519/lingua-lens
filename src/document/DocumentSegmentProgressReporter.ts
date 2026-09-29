@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { t } from '../l10n/uiL10n';
 import type { DocSession } from './DocTranslationService';
 import { countCompletedTranslatableSegments, segmentProgressIncrement } from './documentProgress';
 
@@ -16,7 +17,7 @@ export class DocumentSegmentProgressReporter {
     const increment = segmentProgressIncrement(completed, this.total, this.lastPercent);
     this.lastPercent += increment;
     this.progress.report({
-      message: vscode.l10n.t('document.progress.message', this.fileName, completed, this.total),
+      message: t('document.progress.message', this.fileName, completed, this.total),
       increment,
     });
   }

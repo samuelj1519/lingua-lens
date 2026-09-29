@@ -11,7 +11,7 @@
 - **Type:** boolean
 - **Default:** `true`
 - **Scope:** `resource`
-- **Description:** 在当前工作区或文件夹启用/禁用 AI Translate。关闭后悬停与选区翻译停止；已有缓存保留。
+- **Description:** 在当前工作区或文件夹启用/禁用 LinguaLens。关闭后悬停与选区翻译停止；已有缓存保留。
 
 ### `targetLanguage`
 
@@ -88,7 +88,7 @@
 - **Type:** boolean
 - **Default:** `true`
 - **Scope:** `application`
-- **Description:** 显示状态栏 **译** 入口，点击打开 AI Translate 快捷菜单。
+- **Description:** 显示状态栏 **译** 入口，点击打开 LinguaLens 快捷菜单。
 
 ## 模型与 API
 
@@ -411,7 +411,7 @@
   - `warn` — 仅警告
   - `error` — 仅错误
   - `off` — 不记录扩展日志
-- **Description:** **AI Translate: 显示日志** 中的扩展日志级别。排查悬停流水线请用 `debug` 或 `trace`。
+- **Description:** **LinguaLens: 显示日志** 中的扩展日志级别。排查悬停流水线请用 `debug` 或 `trace`。
 
 ---
 

@@ -19,7 +19,7 @@ Open `*.md`, `*.markdown`, or a plaintext file. The extension does not offer who
 
 Choose one entry point:
 
-1. **AI Translate: Translate Document** (Command Palette or `Ctrl+Alt+Shift+D` / `Cmd+Alt+Shift+D`).
+1. **LinguaLens: Translate Document** (Command Palette or `Ctrl+Alt+Shift+D` / `Cmd+Alt+Shift+D`).
 2. Editor title bar **globe** icon (when not already in preview).
 3. Explorer context menu on `.md` / `.txt`.
 
@@ -41,14 +41,14 @@ Results render through `BilingualRenderer` and `PreviewContentProvider` using `a
 
 ## Step 4: Refresh when the source changes
 
-- Edit the **source** file, then run **AI Translate: Refresh Document Translation** on the source editor to re-segment and translate (may open preview if session missing).
-- In the **preview** tab, use the title bar **refresh** (**AI Translate: Refresh Preview**) to re-read source, optionally **bypass cache** (`invalidateDocumentSegmentCaches` + new API calls).
+- Edit the **source** file, then run **LinguaLens: Refresh Document Translation** on the source editor to re-segment and translate (may open preview if session missing).
+- In the **preview** tab, use the title bar **refresh** (**LinguaLens: Refresh Preview**) to re-read source, optionally **bypass cache** (`invalidateDocumentSegmentCaches` + new API calls).
 
 `aiTranslate.document.autoRefresh` (advanced, default false) can tie refresh to edits when enabled.
 
 ## Step 5: Export a side file (optional)
 
-1. Run **AI Translate: Generate Side File** from source editor or explorer.
+1. Run **LinguaLens: Generate Side File** from source editor or explorer.
 2. If no session exists, the extension starts one and waits for translation.
 3. Output path uses `aiTranslate.document.sideFileNamePattern` (default `${fileBasenameNoExtension}.${lang}${fileExtname}` → `readme.zh-CN.md`).
 4. Content mode `aiTranslate.document.sideFileContent`: `translated` or `bilingual`.

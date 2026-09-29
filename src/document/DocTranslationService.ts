@@ -296,7 +296,7 @@ export class DocTranslationService {
     const fileName = session.sourceLabel;
 
     await vscode.window.withProgress(
-      { location: vscode.ProgressLocation.Notification, title: 'AI Translate', cancellable: true },
+      { location: vscode.ProgressLocation.Notification, title: 'LinguaLens', cancellable: true },
       async (progress, token) => {
         token.onCancellationRequested(() => session.cts.cancel());
         const segmentProgress = new DocumentSegmentProgressReporter(progress, fileName, totalSegments);

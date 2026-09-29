@@ -19,7 +19,7 @@ Prompts and detection families map variants (e.g. both Chinese targets share `zh
 
 ## Step 1: Change target language in the status bar
 
-1. Click the language segment on the status bar (**AI Translate: Select Target Language**).
+1. Click the language segment on the status bar (**LinguaLens: Select Target Language**).
 2. Pick a language from the quick pick.
 3. `config.onDidChange` for `targetLanguage` resets UI l10n cache, refreshes CodeLens, status bar, and all `aitranslate:` previews.
 
@@ -48,7 +48,7 @@ If you already have any layer’s `targetLanguage` defined, bootstrap does not o
 
 ## Step 4: Settings panel language control
 
-**AI Translate: Open Settings Panel** shows native labels (`TARGET_LANGUAGE_NATIVE_LABELS`):
+**LinguaLens: Open Settings Panel** shows native labels (`TARGET_LANGUAGE_NATIVE_LABELS`):
 
 - 简体中文 → `zh-CN`
 - 繁體中文 → `zh-TW`

@@ -1,6 +1,6 @@
 # Settings panel security
 
-The **AI Translate: Open Settings Panel** command opens a Webview-based UI (`SettingsPanelController` + `settingsPanel/webview/main.ts`) for editing many `aiTranslate.*` keys without hand-editing JSON. This page explains how that UI is hardened and what secrets it never touches.
+The **LinguaLens: Open Settings Panel** command opens a Webview-based UI (`SettingsPanelController` + `settingsPanel/webview/main.ts`) for editing many `aiTranslate.*` keys without hand-editing JSON. This page explains how that UI is hardened and what secrets it never touches.
 
 ## Threat model (practical)
 
@@ -37,7 +37,7 @@ The settings panel:
 
 - Does **not** render an API key field.
 - Does **not** pass keys in `postMessage` payloads.
-- Directs users to command **AI Translate: Set API Key** (password input box in native UI).
+- Directs users to command **LinguaLens: Set API Key** (password input box in native UI).
 
 `testConnection` runs in the extension host after reading the secret there; only success/error strings return to the webview.
 
@@ -64,7 +64,7 @@ User vs Workspace scope toggles determine `ConfigurationTarget` for updates. Wor
 
 ## Comparison to core Settings UI
 
-**AI Translate: Open Settings** opens VS Code’s native settings editor (`@ext:…`). That editor also does not display SecretStorage keys. The webview panel adds templates (DeepSeek/Qwen extra body) and grouped fields.
+**LinguaLens: Open Settings** opens VS Code’s native settings editor (`@ext:…`). That editor also does not display SecretStorage keys. The webview panel adds templates (DeepSeek/Qwen extra body) and grouped fields.
 
 ## Trust and workspace folders
 

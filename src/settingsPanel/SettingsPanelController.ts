@@ -19,6 +19,7 @@ import { readOverrides, readPanelValues, updatePanelKey } from './configState';
 import { getSettingsPanelHtml } from './panelHtml';
 import type { LanguageOption, SettingsPanelMessageFromWebview, SettingsScope } from './protocol';
 import { sanitizeConnectionError } from './sanitize';
+import { EXTENSION_SETTINGS_FILTER } from '../constants/extensionId';
 
 export class SettingsPanelController {
   private panel: vscode.WebviewPanel | undefined;
@@ -59,7 +60,7 @@ export class SettingsPanelController {
     }
     this.panel = vscode.window.createWebviewPanel(
       'aiTranslate.settingsPanel',
-      'AI Translate',
+      'LinguaLens',
       vscode.ViewColumn.One,
       { enableScripts: true, retainContextWhenHidden: true, localResourceRoots: [this.context.extensionUri] },
     );
@@ -114,7 +115,7 @@ export class SettingsPanelController {
 
   private applyPanelTitle(strings: Record<string, string>): void {
     if (!this.panel) return;
-    this.panel.title = strings['panel.title'] ?? 'AI Translate Settings';
+    this.panel.title = strings['panel.title'] ?? 'LinguaLens Settings';
   }
 
   private async postInit(): Promise<void> {
@@ -239,7 +240,7 @@ export class SettingsPanelController {
       case 'openNativeSettings':
         await vscode.commands.executeCommand(
           'workbench.action.openSettings',
-          '@ext:cursor-ai-translate.cursor-ai-translate',
+          EXTENSION_SETTINGS_FILTER,
         );
         break;
       case 'openSetApiKey':

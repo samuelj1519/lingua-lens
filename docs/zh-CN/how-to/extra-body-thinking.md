@@ -77,7 +77,7 @@ OpenAI 公开 API 不使用 DeepSeek/Qwen 思考字段。仍可传入：
 
 ## 步骤 2：在设置面板中编辑
 
-1. **AI Translate: Open Settings Panel**。
+1. **LinguaLens: Open Settings Panel**。
 2. 找到 **Extra body (JSON)**。
 3. 粘贴合法 JSON 对象文本，或点击 **DeepSeek** / **Qwen** / **Clear** 模板按钮。
 4. 非法 JSON 会向 webview 回传 `extraBodyError`；保存前修正语法。
@@ -86,13 +86,13 @@ OpenAI 公开 API 不使用 DeepSeek/Qwen 思考字段。仍可传入：
 
 ## 步骤 3：验证行为
 
-1. **AI Translate: Test Connection** — 仍应成功；额外字段不应破坏最小 completion。
+1. **LinguaLens: Test Connection** — 仍应成功；额外字段不应破坏最小 completion。
 2. 翻译短注释 — 回复应为直接译文，无长段推理前言。
 3. 打开 Markdown 文档预览 — 批量分段应返回可解析的 JSON id。若模型用思考标签或散文包裹输出，请关闭思考或换模型。
 
 ## 步骤 4：重大变更后清空缓存
 
-若先前在**启用**思考时缓存了译文，现在关闭思考，新键会自动应用。旧条目可能留在磁盘直至 LRU 淘汰或 **AI Translate: Clear Cache**。
+若先前在**启用**思考时缓存了译文，现在关闭思考，新键会自动应用。旧条目可能留在磁盘直至 LRU 淘汰或 **LinguaLens: Clear Cache**。
 
 ## 陷阱
 

@@ -1,6 +1,6 @@
 # Locales and target languages
 
-AI Translate uses a fixed set of **target language codes** for LLM prompts, detection families, cache metadata, and side-file naming. UI strings for the extension itself come from the VS Code `l10n` bundle under `./l10n`.
+LinguaLens uses a fixed set of **target language codes** for LLM prompts, detection families, cache metadata, and side-file naming. UI strings for the extension itself come from the VS Code `l10n` bundle under `./l10n`.
 
 ## Built-in target languages
 

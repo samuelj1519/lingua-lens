@@ -1,6 +1,6 @@
 # Language detection
 
-Before calling the LLM, AI Translate decides whether a text unit should be translated. The core function is `decide()` in `LanguageDetector.ts`, used by hover extraction and document segment planning (`shouldTranslateDocumentText`).
+Before calling the LLM, LinguaLens decides whether a text unit should be translated. The core function is `decide()` in `LanguageDetector.ts`, used by hover extraction and document segment planning (`shouldTranslateDocumentText`).
 
 ## Design goals
 

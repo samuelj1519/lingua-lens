@@ -1,6 +1,6 @@
-# AI Translate 入门
+# LinguaLens 入门
 
-AI Translate（扩展 ID `cursor-ai-translate.cursor-ai-translate`）将 OpenAI 兼容的 LLM 翻译带入 VS Code 与 Cursor。它可在悬停时翻译代码注释与字符串字面量、翻译编辑器选区、在并排预览中翻译整篇 Markdown 或纯文本文档，并协助 Git 提交信息与 SCM 输入框。本教程从安装到首次成功的 API 调用与翻译。
+LinguaLens（扩展 ID `samuel-j.lingua-lens`）将 OpenAI 兼容的 LLM 翻译带入 VS Code 与 Cursor。它可在悬停时翻译代码注释与字符串字面量、翻译编辑器选区、在并排预览中翻译整篇 Markdown 或纯文本文档，并协助 Git 提交信息与 SCM 输入框。本教程从安装到首次成功的 API 调用与翻译。
 
 ## 开始前需要准备
 
@@ -10,14 +10,14 @@ AI Translate（扩展 ID `cursor-ai-translate.cursor-ai-translate`）将 OpenAI 
 
 ## 安装扩展
 
-1. **从 VSIX：** 在仓库根目录运行 `npm run package` 生成 `.vsix`，然后通过 **Extensions: Install from VSIX…** 或 `code --install-extension cursor-ai-translate-*.vsix` 安装。
+1. **从 VSIX：** 在仓库根目录运行 `npm run package` 生成 `.vsix`，然后通过 **Extensions: Install from VSIX…** 或 `code --install-extension lingua-lens-*.vsix` 安装。
 2. **从源码（开发）：** 运行 `npm install`、`npm run build`，按 **F5** 启动 Extension Development Host。
 
-安装后，扩展在 **`onStartupFinished`** 激活。当 `aiTranslate.statusBar.enabled` 为 true（默认）时，状态栏应显示 **AI Translate**。
+安装后，扩展在 **`onStartupFinished`** 激活。当 `aiTranslate.statusBar.enabled` 为 true（默认）时，状态栏应显示 **LinguaLens**。
 
 ## 配置 LLM 端点
 
-打开**设置**（`@ext:cursor-ai-translate.cursor-ai-translate`）或运行 **AI Translate: Open Settings Panel** 使用引导表单。至少设置：
+打开**设置**（`@ext:samuel-j.lingua-lens`）或运行 **LinguaLens: Open Settings Panel** 使用引导表单。至少设置：
 
 | 设置 | 用途 |
 |------|------|
@@ -37,9 +37,9 @@ OpenAI 示例：
 
 ## 设置 API 密钥
 
-1. 从命令面板运行 **AI Translate: Set API Key**。
+1. 从命令面板运行 **LinguaLens: Set API Key**。
 2. 在提示中输入密钥。提示会显示从当前 `baseUrl` 派生的**源**，因为密钥按端点源存储。
-3. 运行 **AI Translate: Test Connection** 验证 `baseUrl`、模型与密钥。成功显示信息消息；失败显示 HTTP 客户端错误（鉴权、网络或服务器）。
+3. 运行 **LinguaLens: Test Connection** 验证 `baseUrl`、模型与密钥。成功显示信息消息；失败显示 HTTP 客户端错误（鉴权、网络或服务器）。
 
 设置面板不会在 webview HTML 中嵌入 API 密钥；密钥仅通过扩展宿主的 Secret Storage API 写入。见[设置面板安全](../explanation/settings-panel-security.md)。
 
@@ -49,7 +49,7 @@ OpenAI 示例：
 
 随时更改目标：
 
-- 状态栏语言选择器（**AI Translate: Select Target Language**），或
+- 状态栏语言选择器（**LinguaLens: Select Target Language**），或
 - 设置面板顶部的语言下拉框，或
 - 用户或工作区作用域的 `settings.json`。
 
@@ -57,7 +57,7 @@ OpenAI 示例：
 
 ## 确认隐私（首次使用）
 
-在文本发送到 LLM 之前，**PrivacyGuard** 可能要求您确认内容会离开本机。排除路径（默认含 `.env`、`node_modules`、`.git`、密钥等）会阻止翻译。启用 `aiTranslate.privacy.blockSecrets`（默认）时，启发式密钥检测可跳过悬停与选区。若需重置确认状态，运行 **AI Translate: Acknowledge Privacy**。
+在文本发送到 LLM 之前，**PrivacyGuard** 可能要求您确认内容会离开本机。排除路径（默认含 `.env`、`node_modules`、`.git`、密钥等）会阻止翻译。启用 `aiTranslate.privacy.blockSecrets`（默认）时，启发式密钥检测可跳过悬停与选区。若需重置确认状态，运行 **LinguaLens: Acknowledge Privacy**。
 
 ## 第一次悬停翻译
 
@@ -66,12 +66,12 @@ OpenAI 示例：
 3. 在**注释**或**字符串字面量**上悬停足够久（编辑器悬停延迟 + `aiTranslate.hover.extraDelayMs`，默认 700 ms）。
 4. 若分段通过[语言检测](../explanation/detection.md)，悬停中显示译文及操作（复制、替换、插入注释、重新翻译）。
 
-用 **AI Translate: Toggle** 或状态栏切换扩展全局翻译。
+用 **LinguaLens: Toggle** 或状态栏切换扩展全局翻译。
 
 ## 第一次选区翻译
 
 1. 在编辑器中选中文本。
-2. 运行 **AI Translate: Translate Selection**（有选区时 `Ctrl+Alt+Shift+T` / `Cmd+Alt+Shift+T`）或使用编辑器上下文菜单。
+2. 运行 **LinguaLens: Translate Selection**（有选区时 `Ctrl+Alt+Shift+T` / `Cmd+Alt+Shift+T`）或使用编辑器上下文菜单。
 3. 输出遵循 `aiTranslate.selection.output`：`auto` 对短文本使用通知，对较长结果（>300 字符）在编辑器旁打开虚拟 Markdown 文档。
 
 相关命令：剪贴板或选区（`Ctrl+Alt+Shift+Y`）、替换选区（`Ctrl+Alt+Shift+R`）、在下方插入译文（`Ctrl+Alt+Shift+B`）。
@@ -81,15 +81,15 @@ OpenAI 示例：
 文档翻译仅适用于 **Markdown**（`markdown`）与**纯文本**（`plaintext`）。
 
 1. 打开 `README.md` 或任意 `.md` 文件。
-2. 运行 **AI Translate: Translate Document**（资源语言为 markdown 或 plaintext 时 `Ctrl+Alt+Shift+D` / `Cmd+Alt+Shift+D`），或点击编辑器标题栏地球图标。
+2. 运行 **LinguaLens: Translate Document**（资源语言为 markdown 或 plaintext 时 `Ctrl+Alt+Shift+D` / `Cmd+Alt+Shift+D`），或点击编辑器标题栏地球图标。
 3. 打开 scheme 为 `aitranslate:` 的虚拟文档，显示双语预览（`aiTranslate.document.previewStyle`：`interleaved` 或 `append`）。
-4. 在预览标题栏使用刷新图标（**AI Translate: Refresh Preview**）绕过缓存并重新获取分段。
+4. 在预览标题栏使用刷新图标（**LinguaLens: Refresh Preview**）绕过缓存并重新获取分段。
 
-翻译完成后，使用 **AI Translate: Generate Side File** 将译文文件写入磁盘。模式：`aiTranslate.document.sideFileNamePattern`（默认 `${fileBasenameNoExtension}.${lang}${fileExtname}`）。
+翻译完成后，使用 **LinguaLens: Generate Side File** 将译文文件写入磁盘。模式：`aiTranslate.document.sideFileNamePattern`（默认 `${fileBasenameNoExtension}.${lang}${fileExtname}`）。
 
 ## 术语表（可选）
 
-在工作区放置 `.translate-glossary.json`（可通过 `aiTranslate.glossary.path` 配置）。与源文本匹配的术语会注入提示词。运行 **AI Translate: Open Glossary** 创建或编辑文件。JSON 按捆绑 schema 校验。
+在工作区放置 `.translate-glossary.json`（可通过 `aiTranslate.glossary.path` 配置）。与源文本匹配的术语会注入提示词。运行 **LinguaLens: Open Glossary** 创建或编辑文件。JSON 按捆绑 schema 校验。
 
 ## 缓存与成本控制
 
@@ -99,14 +99,14 @@ OpenAI 示例：
 
 ## 工作区启用/禁用
 
-- **AI Translate: Disable for Workspace** 将第一个工作区文件夹的 `enabled` 设为 false。
-- **AI Translate: Enable for Workspace** 清除文件夹覆盖。
+- **LinguaLens: Disable for Workspace** 将第一个工作区文件夹的 `enabled` 设为 false。
+- **LinguaLens: Enable for Workspace** 清除文件夹覆盖。
 
 若需更细控制，资源作用域的 `aiTranslate.enabled` 仍可按文件模式应用。
 
 ## 诊断与日志
 
-- **AI Translate: Show Log** 打开输出通道；级别来自 `aiTranslate.log.level`（默认 `info`）。
+- **LinguaLens: Show Log** 打开输出通道；级别来自 `aiTranslate.log.level`（默认 `info`）。
 - 状态栏反映启用状态、目标语言与密钥是否存在。
 
 ## 下一步

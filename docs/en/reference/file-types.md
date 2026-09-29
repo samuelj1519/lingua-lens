@@ -1,6 +1,6 @@
 # File types and language support
 
-AI Translate treats **code**, **config**, **Markdown/plain documents**, and **Git messages** differently. This reference lists what the extension extracts for hover/selection and what supports whole-document translation.
+LinguaLens treats **code**, **config**, **Markdown/plain documents**, and **Git messages** differently. This reference lists what the extension extracts for hover/selection and what supports whole-document translation.
 
 ## Whole-document translation
 
@@ -81,7 +81,7 @@ Allowed URI schemes: `aiTranslate.privacy.allowedSchemes` (default `file`, `unti
 
 ## Locale file generation
 
-**AI Translate: Generate Locale File** operates on the active editor URI (often JSON/JSONC locale bundles). It uses translation services to produce localized string files — pair with glossary for product terminology.
+**LinguaLens: Generate Locale File** operates on the active editor URI (often JSON/JSONC locale bundles). It uses translation services to produce localized string files — pair with glossary for product terminology.
 
 ## Virtual and untrusted workspaces
 

@@ -2,7 +2,7 @@
 
 English | [简体中文](../zh-CN/README.md)
 
-Welcome to the AI Translate docs. They follow the [Diátaxis](https://diataxis.fr/) framework.
+Welcome to the LinguaLens docs. They follow the [Diátaxis](https://diataxis.fr/) framework.
 
 | Section | Purpose |
 | --- | --- |

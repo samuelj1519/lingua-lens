@@ -19,7 +19,7 @@
   "command.selectionReplace": "Заменить выделение переводом",
   "command.setApiKey": "Задать ключ API",
   "command.showLog": "Показать журнал",
-  "command.showQuickPick": "Меню AI Translate",
+  "command.showQuickPick": "Меню LinguaLens",
   "command.suggestVariableNames": "Предложить английские имена переменных",
   "command.testConnection": "Проверить подключение",
   "command.toggle": "Переключить включение",

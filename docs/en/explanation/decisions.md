@@ -4,7 +4,7 @@ This document mirrors and extends `docs/DECISIONS.md` for English readers. Statu
 
 | ID | Topic | Decision | Status |
 |----|-------|----------|--------|
-| D1 | Publisher ID | `cursor-ai-translate` | Active |
+| D1 | Publisher ID | `lingua-lens` | Active |
 | D2 | Minimum VS Code | `^1.85.0` (logged at activation) | Active |
 | D3 | Language ID library | `tinyld` for Latin/Cyrillic long text only | Active |
 | D4 | Parser WASM | `tree-sitter-wasms` + `web-tree-sitter`, copied to `dist/wasm/` | Active |

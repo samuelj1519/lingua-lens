@@ -19,7 +19,7 @@
   "command.selectionReplace": "Reemplazar selección con traducción",
   "command.setApiKey": "Establecer clave API",
   "command.showLog": "Mostrar registro",
-  "command.showQuickPick": "Menú AI Translate",
+  "command.showQuickPick": "Menú LinguaLens",
   "command.suggestVariableNames": "Sugerir nombres de variables en inglés",
   "command.testConnection": "Probar conexión",
   "command.toggle": "Alternar activado",

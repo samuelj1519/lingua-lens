@@ -77,7 +77,7 @@ Consult Volcengine docs for OpenAI-compatible parameters. If no thinking flag is
 
 ## Step 2: Edit in the settings panel
 
-1. **AI Translate: Open Settings Panel**.
+1. **LinguaLens: Open Settings Panel**.
 2. Find **Extra body (JSON)**.
 3. Paste valid JSON object text, or click template buttons **DeepSeek** / **Qwen** / **Clear**.
 4. Invalid JSON posts `extraBodyError` back to the webview; fix syntax before saving.
@@ -86,13 +86,13 @@ The panel serializes objects with `JSON.stringify` for display; updates parse th
 
 ## Step 3: Verify behavior
 
-1. **AI Translate: Test Connection** — should still succeed; extra fields should not break a minimal completion.
+1. **LinguaLens: Test Connection** — should still succeed; extra fields should not break a minimal completion.
 2. Translate a short comment — response should be direct translation without long reasoning preamble.
 3. Open a Markdown document preview — batch segments should return parseable JSON ids. If the model wraps output in thinking tags or prose, disable thinking or switch model.
 
 ## Step 4: Clear cache after material changes
 
-If you previously cached translations **with** thinking enabled and now disable it, new keys apply automatically. Old entries may remain on disk until LRU eviction or **AI Translate: Clear Cache**.
+If you previously cached translations **with** thinking enabled and now disable it, new keys apply automatically. Old entries may remain on disk until LRU eviction or **LinguaLens: Clear Cache**.
 
 ## Pitfalls
 

@@ -55,7 +55,7 @@ Frontmatter 批量使用缓存 kind `documentFrontmatterBatch`（与正文 `docu
 ## 步骤 3：通过文档预览翻译
 
 1. 打开 Markdown 文件。
-2. 运行 **AI Translate: Translate Document**。
+2. 运行 **LinguaLens: Translate Document**。
 3. 预览中 frontmatter 值被翻译，`---` 行与键名保持完整。
 
 检测仍适用：若字段值已多为目标语言（例如目标 `zh-CN` 且中文标题），除非启用[强制翻译](./force-translate.md)，计划可能**跳过**该分段。

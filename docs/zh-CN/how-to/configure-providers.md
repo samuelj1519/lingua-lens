@@ -2,7 +2,7 @@
 
 ## 目标
 
-将 AI Translate 指向 OpenAI 兼容的 chat completions API：设置 `aiTranslate.llm.baseUrl`、`aiTranslate.llm.model`，存储 API 密钥，并可选择调整超时、并发与面向厂商的 `extraBody` 请求字段。
+将 LinguaLens 指向 OpenAI 兼容的 chat completions API：设置 `aiTranslate.llm.baseUrl`、`aiTranslate.llm.model`，存储 API 密钥，并可选择调整超时、并发与面向厂商的 `extraBody` 请求字段。
 
 ## 前提
 
@@ -12,7 +12,7 @@
 
 ## 步骤 1：选择提供商配置
 
-AI Translate 使用 **OpenAI Chat Completions** 协议。客户端构建 URL 为 `{baseUrl}/chat/completions`，除非 `baseUrl` 已以 `/chat/completions` 结尾（`LlmClient.chatUrl`）。
+LinguaLens 使用 **OpenAI Chat Completions** 协议。客户端构建 URL 为 `{baseUrl}/chat/completions`，除非 `baseUrl` 已以 `/chat/completions` 结尾（`LlmClient.chatUrl`）。
 
 密钥保存在 VS Code Secret Storage 中，按 `baseUrl` 的**源**（scheme + host + port）。仅在同主机上改路径会复用同一密钥；改主机需新密钥。
 
@@ -86,7 +86,7 @@ Ark 端点将**端点 id**（`ep-…`）作为 model 字段。区域与 URL 须�
 
 ## 步骤 3：存储 API 密钥
 
-1. **AI Translate: Set API Key** — 输入密钥（密码字段）。
+1. **LinguaLens: Set API Key** — 输入密钥（密码字段）。
 2. 无鉴权的本地服务器，部分用户仍设置占位密钥（服务器忽略 `Authorization`）；未配置密钥时会看到 `noKey`。
 
 ## 步骤 4：可选高级 LLM 设置
@@ -102,15 +102,15 @@ Ark 端点将**端点 id**（`ep-…`）作为 model 字段。区域与 URL 须�
 
 ## 步骤 5：验证
 
-1. 运行 **AI Translate: Test Connection**。
+1. 运行 **LinguaLens: Test Connection**。
 2. 悬停注释或对短英文短语运行**翻译选区**，目标设为 `zh-CN`。
-3. 需要请求级细节时将 **AI Translate: Show Log** 设为 `debug`。
+3. 需要请求级细节时将 **LinguaLens: Show Log** 设为 `debug`。
 
 成功标准：测试连接成功消息、悬停或选区显示译文、日志显示 API 调用且无重复鉴权错误。
 
 ## 步骤 6：使用设置面板（可选）
 
-**AI Translate: Open Settings Panel** 通过 webview 与作用域切换（用户 / 工作区）编辑相同键。DeepSeek 与 Qwen 的 extra body 模板与上文 JSON 一致。API 密钥**不在**面板中编辑；请使用 **Set API Key**。
+**LinguaLens: Open Settings Panel** 通过 webview 与作用域切换（用户 / 工作区）编辑相同键。DeepSeek 与 Qwen 的 extra body 模板与上文 JSON 一致。API 密钥**不在**面板中编辑；请使用 **Set API Key**。
 
 ## 陷阱
 

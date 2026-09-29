@@ -19,7 +19,7 @@
   "command.selectionReplace": "用译文替换选区",
   "command.setApiKey": "设置 API Key",
   "command.showLog": "显示日志",
-  "command.showQuickPick": "AI Translate 菜单",
+  "command.showQuickPick": "LinguaLens 菜单",
   "command.suggestVariableNames": "根据描述建议英文变量名",
   "command.testConnection": "测试连接",
   "command.toggle": "切换启用",

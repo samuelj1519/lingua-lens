@@ -2,7 +2,7 @@
 
 ## Goal
 
-Control how AI Translate stores and reuses LLM results to save latency and API cost, and know when to clear cache after configuration or content changes.
+Control how LinguaLens stores and reuses LLM results to save latency and API cost, and know when to clear cache after configuration or content changes.
 
 ## Prerequisites
 
@@ -46,7 +46,7 @@ Changing temperature alone does **not** change the key unless it is moved into `
 
 ## Step 3: Clear cache manually
 
-1. Run **AI Translate: Clear Cache** from Command Palette.
+1. Run **LinguaLens: Clear Cache** from Command Palette.
 2. Confirm the modal warning.
 3. Memory and disk stores are wiped; message `msg.cacheCleared` appears.
 

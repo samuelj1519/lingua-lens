@@ -16,7 +16,7 @@ export class Logger implements AppLogger {
   private getLevel: () => LogLevel;
 
   constructor(getLevel: () => LogLevel = () => 'info') {
-    this.channel = vscode.window.createOutputChannel('AI Translate', { log: true });
+    this.channel = vscode.window.createOutputChannel('LinguaLens', { log: true });
     this.getLevel = getLevel;
   }
 

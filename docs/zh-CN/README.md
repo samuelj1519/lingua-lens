@@ -2,7 +2,7 @@
 
 [English](../en/README.md) | 简体中文
 
-欢迎使用 AI Translate 文档。结构遵循 [Diátaxis](https://diataxis.fr/) 框架。
+欢迎使用 LinguaLens 文档。结构遵循 [Diátaxis](https://diataxis.fr/) 框架。
 
 | 分区 | 用途 |
 | --- | --- |

@@ -2,7 +2,7 @@
 
 ## 目标
 
-控制 AI Translate 如何存储与复用 LLM 结果以节省延迟与 API 成本，并了解配置或内容变更后何时应清空缓存。
+控制 LinguaLens 如何存储与复用 LLM 结果以节省延迟与 API 成本，并了解配置或内容变更后何时应清空缓存。
 
 ## 前提
 
@@ -46,7 +46,7 @@
 
 ## 步骤 3：手动清空缓存
 
-1. 从命令面板运行 **AI Translate: Clear Cache**。
+1. 从命令面板运行 **LinguaLens: Clear Cache**。
 2. 确认模态警告。
 3. 内存与磁盘存储被清空；显示消息 `msg.cacheCleared`。
 

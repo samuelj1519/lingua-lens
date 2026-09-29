@@ -1,4 +1,4 @@
-# AI Translate documentation
+# LinguaLens documentation
 
 | Language | Home |
 | --- | --- |

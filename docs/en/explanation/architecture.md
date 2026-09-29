@@ -1,6 +1,6 @@
 # Architecture
 
-AI Translate is a VS Code extension that connects editor events (hover, selection, documents, Git) to a shared **translation pipeline** backed by an OpenAI-compatible LLM, optional glossary, and two-tier cache. This page describes how components wire together at activation and runtime.
+LinguaLens is a VS Code extension that connects editor events (hover, selection, documents, Git) to a shared **translation pipeline** backed by an OpenAI-compatible LLM, optional glossary, and two-tier cache. This page describes how components wire together at activation and runtime.
 
 ## Activation overview
 

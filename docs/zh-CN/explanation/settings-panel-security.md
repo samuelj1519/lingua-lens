@@ -1,6 +1,6 @@
 # 设置面板安全
 
-**AI Translate: Open Settings Panel** 命令打开基于 Webview 的 UI（`SettingsPanelController` + `settingsPanel/webview/main.ts`），用于编辑诸多 `aiTranslate.*` 键而无需手写 JSON。本文说明该 UI 的加固方式以及哪些密钥它绝不接触。
+**LinguaLens: Open Settings Panel** 命令打开基于 Webview 的 UI（`SettingsPanelController` + `settingsPanel/webview/main.ts`），用于编辑诸多 `aiTranslate.*` 键而无需手写 JSON。本文说明该 UI 的加固方式以及哪些密钥它绝不接触。
 
 ## 威胁模型（实用视角）
 
@@ -37,7 +37,7 @@ Webview 在扩展提供的隔离上下文中运行 HTML。需要缓解的风险�
 
 - **不**渲染 API 密钥输入框。
 - **不**在 `postMessage` 载荷中传递密钥。
-- 引导用户使用命令 **AI Translate: Set API Key**（原生 UI 密码输入框）。
+- 引导用户使用命令 **LinguaLens: Set API Key**（原生 UI 密码输入框）。
 
 `testConnection` 在扩展宿主读取密钥后运行；仅成功/错误字符串返回 webview。
 
@@ -64,7 +64,7 @@ Webview 在扩展提供的隔离上下文中运行 HTML。需要缓解的风险�
 
 ## 与核心设置 UI 的对比
 
-**AI Translate: Open Settings** 打开 VS Code 原生设置编辑器（`@ext:…`）。该编辑器同样不显示 SecretStorage 密钥。Webview 面板额外提供模板（DeepSeek/Qwen extra body）与分组字段。
+**LinguaLens: Open Settings** 打开 VS Code 原生设置编辑器（`@ext:…`）。该编辑器同样不显示 SecretStorage 密钥。Webview 面板额外提供模板（DeepSeek/Qwen extra body）与分组字段。
 
 ## 信任与工作区文件夹
 
@@ -90,7 +90,7 @@ Webview HTML 使用 VS Code CSS 变量（`var(--vscode-*)`）渲染表单控件�
 
 ## 无障碍与键盘
 
-Webview 表单控件继承 VS Code 主题对比度；焦点顺序与原生设置编辑器可能不同。屏幕阅读器用户仍可使用 **AI Translate: Open Settings** 打开核心设置 JSON 编辑 LLM 字段。面板适合视觉化分组，非唯一配置入口。
+Webview 表单控件继承 VS Code 主题对比度；焦点顺序与原生设置编辑器可能不同。屏幕阅读器用户仍可使用 **LinguaLens: Open Settings** 打开核心设置 JSON 编辑 LLM 字段。面板适合视觉化分组，非唯一配置入口。
 
 ## 版本升级与 CSP
 

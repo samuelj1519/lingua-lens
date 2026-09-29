@@ -19,7 +19,7 @@
   "command.selectionReplace": "선택 영역을 번역으로 바꾸기",
   "command.setApiKey": "API 키 설정",
   "command.showLog": "로그 표시",
-  "command.showQuickPick": "AI Translate 메뉴",
+  "command.showQuickPick": "LinguaLens 메뉴",
   "command.suggestVariableNames": "영어 변수명 제안",
   "command.testConnection": "연결 테스트",
   "command.toggle": "사용 전환",

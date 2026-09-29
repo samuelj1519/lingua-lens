@@ -1,10 +1,12 @@
-# AI Translate
+# LinguaLens
 
 English | [简体中文](README.zh-CN.md)
 
 **Translate comments, strings, and docs inside VS Code and Cursor with your own OpenAI-compatible LLM—without sending API keys to settings files.**
 
-AI Translate (`cursor-ai-translate.cursor-ai-translate`) adds hover translation, selection and clipboard workflows, whole-document bilingual preview, config-file hovers, Git helpers, a glossary, LRU + disk cache, and a settings webview. Keys are stored in **SecretStorage** per API origin; only text you hover or explicitly translate is sent to your configured endpoint.
+LinguaLens works in **Visual Studio Code** and compatible editors (**Cursor**, **Windsurf**, **VSCodium**, etc.)—the marketplace display name follows Microsoft branding: **LinguaLens for Visual Studio Code**.
+
+LinguaLens (`samuel-j.lingua-lens`) adds hover translation, selection and clipboard workflows, whole-document bilingual preview, config-file hovers, Git helpers, a glossary, LRU + disk cache, and a settings webview. Keys are stored in **SecretStorage** per API origin; only text you hover or explicitly translate is sent to your configured endpoint.
 
 <!-- TODO: screenshot — hover translation on a code comment and Markdown document preview -->
 
@@ -22,7 +24,7 @@ AI Translate (`cursor-ai-translate.cursor-ai-translate`) adds hover translation,
 
 1. Install the `.vsix` (`npm run package` in this repo) or launch from **F5** after `npm install && npm run build`.
 2. Set `aiTranslate.llm.baseUrl` and `aiTranslate.llm.model` in settings (see table below).
-3. Run **AI Translate: Set API Key** and **AI Translate: Test Connection**.
+3. Run **LinguaLens: Set API Key** and **LinguaLens: Test Connection**.
 4. Hover a comment or run **Translate document (preview)** on a `.md` file.
 
 Step-by-step tutorial: [Getting started](docs/en/tutorials/getting-started.md).
@@ -83,7 +85,7 @@ All commands, CodeLens, and context menus: [Commands reference](docs/en/referenc
 
 ## FAQ
 
-**Hover shows nothing** — Check `aiTranslate.enabled`, file exclude globs, privacy acknowledgement, and whether detection skipped the fragment (already in target language). Enable `aiTranslate.log.level`: `debug` and open **AI Translate: Show Log**.
+**Hover shows nothing** — Check `aiTranslate.enabled`, file exclude globs, privacy acknowledgement, and whether detection skipped the fragment (already in target language). Enable `aiTranslate.log.level`: `debug` and open **LinguaLens: Show Log**.
 
 **401 / connection errors** — Confirm `baseUrl` includes `/v1` if your vendor requires it, model id is set, and the key matches that origin. See [Troubleshoot connection](docs/en/how-to/troubleshoot-connection.md).
 
@@ -104,6 +106,13 @@ All commands, CodeLens, and context menus: [Commands reference](docs/en/referenc
 
 - [Documentation home](docs/README.md)
 - [Tutorials](docs/en/tutorials/index.md) · [How-to](docs/en/how-to/index.md) · [Reference](docs/en/reference/index.md) · [Explanation](docs/en/explanation/index.md)
+
+## Upgrading from AI Translate (cursor-ai-translate)
+
+1. Uninstall the old extension **`cursor-ai-translate.cursor-ai-translate`** from the Extensions view.
+2. Install **`lingua-lens-0.7.0.vsix`** (or the current build from `npm run package`).
+3. Reload the window. Your **`aiTranslate.*` settings are unchanged** (same configuration keys).
+4. Disk translation cache is stored per extension ID in global storage—it **does not carry over**; expect cache misses until new entries are written. API keys in SecretStorage are per API origin and remain available.
 
 ## Development
 

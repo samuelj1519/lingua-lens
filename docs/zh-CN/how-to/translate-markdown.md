@@ -19,7 +19,7 @@
 
 任选入口：
 
-1. **AI Translate: Translate Document**（命令面板或 `Ctrl+Alt+Shift+D` / `Cmd+Alt+Shift+D`）。
+1. **LinguaLens: Translate Document**（命令面板或 `Ctrl+Alt+Shift+D` / `Cmd+Alt+Shift+D`）。
 2. 编辑器标题栏**地球**图标（尚未在预览中时）。
 3. 资源管理器对 `.md` / `.txt` 的上下文菜单。
 
@@ -41,14 +41,14 @@
 
 ## 步骤 4：源变更后刷新
 
-- 编辑**源**文件后，在源编辑器运行 **AI Translate: Refresh Document Translation** 重新分段翻译（会话缺失时可能打开预览）。
-- 在**预览**标签标题栏**刷新**（**AI Translate: Refresh Preview**）重新读取源，可选**绕过缓存**（`invalidateDocumentSegmentCaches` + 新 API 调用）。
+- 编辑**源**文件后，在源编辑器运行 **LinguaLens: Refresh Document Translation** 重新分段翻译（会话缺失时可能打开预览）。
+- 在**预览**标签标题栏**刷新**（**LinguaLens: Refresh Preview**）重新读取源，可选**绕过缓存**（`invalidateDocumentSegmentCaches` + 新 API 调用）。
 
 启用 `aiTranslate.document.autoRefresh`（高级，默认 false）可在编辑时联动刷新。
 
 ## 步骤 5：导出旁路文件（可选）
 
-1. 从源编辑器或资源管理器运行 **AI Translate: Generate Side File**。
+1. 从源编辑器或资源管理器运行 **LinguaLens: Generate Side File**。
 2. 若无会话，扩展会启动并等待翻译完成。
 3. 输出路径使用 `aiTranslate.document.sideFileNamePattern`（默认 `${fileBasenameNoExtension}.${lang}${fileExtname}` → `readme.zh-CN.md`）。
 4. 内容模式 `aiTranslate.document.sideFileContent`：`translated` 或 `bilingual`。

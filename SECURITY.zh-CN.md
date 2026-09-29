@@ -8,7 +8,7 @@
 
 ## 发送至 LLM 的数据
 
-AI Translate 仅将您悬停、选中或主动翻译的文本（注释、字符串、文档段落、Git 提交说明等）发送到 `aiTranslate.llm.baseUrl` 配置的 HTTP 端点，不会上传整个工作区。
+LinguaLens 仅将您悬停、选中或主动翻译的文本（注释、字符串、文档段落、Git 提交说明等）发送到 `aiTranslate.llm.baseUrl` 配置的 HTTP 端点，不会上传整个工作区。
 
 ## 密钥
 

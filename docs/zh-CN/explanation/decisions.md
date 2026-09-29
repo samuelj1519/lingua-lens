@@ -4,7 +4,7 @@
 
 | ID | 主题 | 决策 | 状态 |
 |----|------|------|------|
-| D1 | 发布者 ID | `cursor-ai-translate` | 有效 |
+| D1 | 发布者 ID | `lingua-lens` | 有效 |
 | D2 | 最低 VS Code 版本 | `^1.85.0`（激活时记录日志） | 有效 |
 | D3 | 语言识别库 | 仅对足够长的拉丁/西里尔文本使用 `tinyld` | 有效 |
 | D4 | 解析器 WASM | `tree-sitter-wasms` + `web-tree-sitter`，复制到 `dist/wasm/` | 有效 |
@@ -57,7 +57,7 @@ Webview 适合富 HTML，但不利于 diff、无障碍与编辑器快捷键。`T
 
 ## D1–D2：发布者与平台基线
 
-发布者 ID `cursor-ai-translate` 与扩展 marketplace 标识一致，便于设置搜索（`@ext:cursor-ai-translate.cursor-ai-translate`）与密钥存储命名空间区分。最低 VS Code `^1.85.0` 与 D6 悬停命令白名单、部分 API 行为绑定；激活日志记录实际引擎版本，便于支持人员对照用户环境。
+发布者 ID `lingua-lens` 与扩展 marketplace 标识一致，便于设置搜索（`@ext:samuel-j.lingua-lens`）与密钥存储命名空间区分。最低 VS Code `^1.85.0` 与 D6 悬停命令白名单、部分 API 行为绑定；激活日志记录实际引擎版本，便于支持人员对照用户环境。
 
 ## D4、D9、D11 补充说明
 

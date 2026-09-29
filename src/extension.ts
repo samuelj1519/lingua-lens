@@ -31,6 +31,7 @@ import { SettingsPanelController } from './settingsPanel/SettingsPanelController
 import { countConfigurationProperties } from './settingsPanel/countSettings';
 import { applyTargetLanguageCursorUiBootstrap } from './l10n/targetLanguageBootstrap';
 import { initUiL10n, resetUiL10nCache, t } from './l10n/uiL10n';
+import { EXTENSION_SETTINGS_FILTER } from './constants/extensionId';
 
 let parserService: ParserService | undefined;
 let cacheService: CacheService | undefined;
@@ -276,7 +277,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   reg('aiTranslate.openSettings', () =>
     vscode.commands.executeCommand(
       'workbench.action.openSettings',
-      '@ext:cursor-ai-translate.cursor-ai-translate',
+      EXTENSION_SETTINGS_FILTER,
     ),
   );
 
@@ -385,7 +386,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   });
 
   void glossary.ensureLoaded();
-  logger.info(`AI Translate activated (VS Code ${vscode.version})`);
+  logger.info(`LinguaLens activated (VS Code ${vscode.version})`);
 }
 
 export async function deactivate(): Promise<void> {

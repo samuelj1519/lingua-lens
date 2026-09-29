@@ -1,6 +1,6 @@
 # Caching
 
-AI Translate caches LLM **model output strings** (before placeholder restore in memory, stored raw from model) to reduce latency and repeated charges for identical work.
+LinguaLens caches LLM **model output strings** (before placeholder restore in memory, stored raw from model) to reduce latency and repeated charges for identical work.
 
 ## Key composition (since 0.4.3)
 

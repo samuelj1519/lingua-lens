@@ -1,10 +1,12 @@
-# AI Translate
+# LinguaLens
 
 [English](README.md) | 简体中文
 
 **在 VS Code / Cursor 内用自有的 OpenAI 兼容 LLM 翻译注释、字符串与文档，API Key 只进 SecretStorage，不会写入 settings.json。**
 
-AI Translate（扩展 ID：`cursor-ai-translate.cursor-ai-translate`）提供悬停翻译、选区与剪贴板工作流、全文双语预览、配置文件悬停、Git 辅助、术语表、内存 LRU + 磁盘缓存以及设置 Webview。密钥按 API **origin** 存入 SecretStorage；只有你悬停或主动翻译的文本会发往所配置的端点。
+LinguaLens 适用于 **Visual Studio Code** 及兼容编辑器（**Cursor**、**Windsurf**、**VSCodium** 等）；市场显示名遵循微软品牌规范：**LinguaLens for Visual Studio Code**。
+
+LinguaLens（扩展 ID：`samuel-j.lingua-lens`）提供悬停翻译、选区与剪贴板工作流、全文双语预览、配置文件悬停、Git 辅助、术语表、内存 LRU + 磁盘缓存以及设置 Webview。密钥按 API **origin** 存入 SecretStorage；只有你悬停或主动翻译的文本会发往所配置的端点。
 
 <!-- TODO：截图 — 代码注释悬停与 Markdown 全文预览 -->
 
@@ -22,7 +24,7 @@ AI Translate（扩展 ID：`cursor-ai-translate.cursor-ai-translate`）提供悬
 
 1. 安装 `.vsix`（仓库根目录 `npm run package`）或 `npm install && npm run build` 后按 **F5** 启动扩展开发宿主。
 2. 在设置中配置 `aiTranslate.llm.baseUrl` 与 `aiTranslate.llm.model`（见下表）。
-3. 执行 **AI Translate: 设置 API Key** 与 **AI Translate: 测试连接**。
+3. 执行 **LinguaLens: 设置 API Key** 与 **LinguaLens: 测试连接**。
 4. 悬停注释，或在 `.md` 文件上执行 **翻译全文（对照预览）**。
 
 分步教程：[快速开始](docs/zh-CN/tutorials/getting-started.md)。
@@ -83,7 +85,7 @@ AI Translate（扩展 ID：`cursor-ai-translate.cursor-ai-translate`）提供悬
 
 ## 常见问题
 
-**悬停没有反应** — 检查 `aiTranslate.enabled`、排除 glob、隐私确认，以及检测是否因已是目标语言而跳过。将 `aiTranslate.log.level` 设为 `debug`，打开 **AI Translate: 显示日志**。
+**悬停没有反应** — 检查 `aiTranslate.enabled`、排除 glob、隐私确认，以及检测是否因已是目标语言而跳过。将 `aiTranslate.log.level` 设为 `debug`，打开 **LinguaLens: 显示日志**。
 
 **401 / 连接失败** — 确认 `baseUrl` 是否需带 `/v1`、模型 id 已填、Key 与 origin 一致。见 [排查连接错误](docs/zh-CN/how-to/troubleshoot-connection.md)。
 
@@ -104,6 +106,13 @@ AI Translate（扩展 ID：`cursor-ai-translate.cursor-ai-translate`）提供悬
 
 - [文档首页](docs/README.md)
 - [教程](docs/zh-CN/tutorials/index.md) · [操作指南](docs/zh-CN/how-to/index.md) · [参考](docs/zh-CN/reference/index.md) · [说明](docs/zh-CN/explanation/index.md)
+
+## 从 AI Translate（cursor-ai-translate）升级
+
+1. 在扩展视图中卸载旧扩展 **`cursor-ai-translate.cursor-ai-translate`**。
+2. 安装 **`lingua-lens-0.7.0.vsix`**（或执行 `npm run package` 生成的当前构建）。
+3. 重载窗口。**`aiTranslate.*` 设置键保持不变**。
+4. 磁盘翻译缓存按扩展 ID 存放在 globalStorage 中，**不会随扩展迁移**；需重新积累缓存。SecretStorage 中的 API Key 按 origin 存储，一般仍可继续使用。
 
 ## 开发
 

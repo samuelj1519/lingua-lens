@@ -2,7 +2,7 @@
 
 > 由 `scripts/generate-commands-reference.mjs` 根据 `package.json` 的 `contributes` 自动生成。
 
-命令面板中的标题格式为 **AI Translate: …**（`category` 为 `AI Translate`）。悬停内链命令（`aiTranslate.hover.*`）默认不在命令面板中列出（`when: false`）。
+命令面板中的标题格式为 **LinguaLens: …**（`category` 为 `LinguaLens`）。悬停内链命令（`aiTranslate.hover.*`）默认不在命令面板中列出（`when: false`）。
 
 | Command ID | Title | Keybinding | Surfaces |
 | --- | --- | --- | --- |
@@ -16,7 +16,7 @@
 | `aiTranslate.refreshPreview` | 刷新翻译 | — | command palette, editor title |
 | `aiTranslate.refreshDocumentTranslation` | 刷新全文翻译 | — | command palette, CodeLens (Markdown) |
 | `aiTranslate.hover.refresh` | 刷新译文 | — | hover markdown link |
-| `aiTranslate.showQuickPick` | AI Translate 菜单 | — | command palette, status bar |
+| `aiTranslate.showQuickPick` | LinguaLens 菜单 | — | command palette, status bar |
 | `aiTranslate.translateSelectionPopup` | 翻译选区（弹窗） | `ctrl+alt+shift+p` / mac: `cmd+alt+shift+p` (when: `editorTextFocus && editorHasSelection`) | command palette |
 | `aiTranslate.selection.replace` | 用译文替换选区 | — | command palette |
 | `aiTranslate.selection.insertBelow` | 在下方插入译文 | — | command palette |

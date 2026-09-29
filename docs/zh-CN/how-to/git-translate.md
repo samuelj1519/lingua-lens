@@ -15,14 +15,14 @@
 
 | 命令 | 用途 |
 |------|------|
-| **AI Translate: Translate Git Commit at Line** | 读取受跟踪文件中活动行关联提交的提交信息。 |
-| **AI Translate: Translate SCM Input** | 翻译源代码管理提交信息输入框中的当前文本。 |
+| **LinguaLens: Translate Git Commit at Line** | 读取受跟踪文件中活动行关联提交的提交信息。 |
+| **LinguaLens: Translate SCM Input** | 翻译源代码管理提交信息输入框中的当前文本。 |
 
 ## 步骤 1：翻译历史提交信息
 
 1. 在 **file** scheme 工作区（`file://`）打开 Git 跟踪的文件。
 2. 将光标放在属于某提交的行上（blame/历史上下文）。
-3. 运行 **AI Translate: Translate Git Commit at Line**。
+3. 运行 **LinguaLens: Translate Git Commit at Line**。
 4. `getCommitMessageAtLine` 解析信息；若为空，显示警告（`msg.git.noCommitMessage`）。
 5. 除非适用 SCM 替换流程，译文在虚拟 Markdown 文档中打开（标题来自 `hover.title.gitCommit`）。
 
@@ -34,7 +34,7 @@
 ## 步骤 2：翻译 SCM 输入框
 
 1. 在**源代码管理**输入框中输入或粘贴草稿提交信息。
-2. 运行 **AI Translate: Translate SCM Input**。
+2. 运行 **LinguaLens: Translate SCM Input**。
 3. 输入为空时警告 `msg.scm.empty`。
 4. 翻译后提示 **Replace**（写入第一个仓库的 `inputBox.value`）或仅查看。
 
@@ -103,7 +103,7 @@ Qwen：
 
 ## 键盘与菜单发现
 
-Git 翻译命令在命令面板 **AI Translate** 分类下。`package.json` 未绑定默认快捷键；若常翻译提交信息，可在 `keybindings.json` 自定义：
+Git 翻译命令在命令面板 **LinguaLens** 分类下。`package.json` 未绑定默认快捷键；若常翻译提交信息，可在 `keybindings.json` 自定义：
 
 ```json
 {

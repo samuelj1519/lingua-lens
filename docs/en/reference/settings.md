@@ -11,7 +11,7 @@ Keys appear in VS Code settings as `aiTranslate.<key>`. Sections match the seven
 - **Type:** boolean
 - **Default:** `true`
 - **Scope:** `resource`
-- **Description:** Turn AI Translate on or off for this workspace or folder. When disabled, hover and selection translation stop; existing cache is kept.
+- **Description:** Turn LinguaLens on or off for this workspace or folder. When disabled, hover and selection translation stop; existing cache is kept.
 
 ### `targetLanguage`
 
@@ -81,14 +81,14 @@ Keys appear in VS Code settings as `aiTranslate.<key>`. Sections match the seven
 - **Type:** array of string
 - **Default:** `["**/.env","**/.env.*","**/*.pem","**/*.key","**/*.p12","**/id_rsa*","**/secrets/**","**/.git/**","**/node_modules/**"]`
 - **Scope:** `resource`
-- **Description:** Glob patterns for files that AI Translate will not read or translate (e.g. secrets). Works with `aiTranslate.*` cross-link.
+- **Description:** Glob patterns for files that LinguaLens will not read or translate (e.g. secrets). Works with `aiTranslate.*` cross-link.
 
 ### `statusBar.enabled`
 
 - **Type:** boolean
 - **Default:** `true`
 - **Scope:** `application`
-- **Description:** Show the **译** status bar entry that opens the AI Translate quick menu.
+- **Description:** Show the **译** status bar entry that opens the LinguaLens quick menu.
 
 ## Model & API
 
@@ -411,7 +411,7 @@ Keys appear in VS Code settings as `aiTranslate.<key>`. Sections match the seven
   - `warn` — Warnings only
   - `error` — Errors only
   - `off` — No extension logs
-- **Description:** Extension log verbosity in **AI Translate: Show Log**. Use `debug` or `trace` to diagnose hover pipeline issues.
+- **Description:** Extension log verbosity in **LinguaLens: Show Log**. Use `debug` or `trace` to diagnose hover pipeline issues.
 
 ---
 

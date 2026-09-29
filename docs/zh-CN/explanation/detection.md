@@ -1,6 +1,6 @@
 # 语言检测
 
-在调用 LLM 之前，AI Translate 会判断文本单元是否应被翻译。核心函数为 `LanguageDetector.ts` 中的 `decide()`，用于悬停提取与文档分段计划（`shouldTranslateDocumentText`）。
+在调用 LLM 之前，LinguaLens 会判断文本单元是否应被翻译。核心函数为 `LanguageDetector.ts` 中的 `decide()`，用于悬停提取与文档分段计划（`shouldTranslateDocumentText`）。
 
 ## 设计目标
 

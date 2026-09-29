@@ -19,7 +19,7 @@
 
 ## 步骤 1：在状态栏更改目标语言
 
-1. 点击状态栏语言段（**AI Translate: Select Target Language**）。
+1. 点击状态栏语言段（**LinguaLens: Select Target Language**）。
 2. 从快速选择中挑选语言。
 3. `targetLanguage` 的 `config.onDidChange` 会重置 UI l10n 缓存、刷新 CodeLens、状态栏与所有 `aitranslate:` 预览。
 
@@ -48,7 +48,7 @@
 
 ## 步骤 4：设置面板语言控件
 
-**AI Translate: Open Settings Panel** 显示原生标签（`TARGET_LANGUAGE_NATIVE_LABELS`）：
+**LinguaLens: Open Settings Panel** 显示原生标签（`TARGET_LANGUAGE_NATIVE_LABELS`）：
 
 - 简体中文 → `zh-CN`
 - 繁體中文 → `zh-TW`
@@ -96,7 +96,7 @@
 
 ## 与扩展内文案的关系
 
-扩展命令标题通过 `package.json` NLS 与 VS Code 显示语言合并；`initUiL10n` 则按 `targetLanguage` 选择部分运行时消息语言。因此可能出现：VS Code 界面为英文，而 AI Translate 通知为日文（当目标为 `ja` 且目录有对应条目）。这不改变 LLM 输出语言——输出始终由 `targetLanguage` 驱动。更改目标后 `resetUiL10nCache()` 确保不会继续显示上一目标的 UI 字符串。
+扩展命令标题通过 `package.json` NLS 与 VS Code 显示语言合并；`initUiL10n` 则按 `targetLanguage` 选择部分运行时消息语言。因此可能出现：VS Code 界面为英文，而 LinguaLens 通知为日文（当目标为 `ja` 且目录有对应条目）。这不改变 LLM 输出语言——输出始终由 `targetLanguage` 驱动。更改目标后 `resetUiL10nCache()` 确保不会继续显示上一目标的 UI 字符串。
 
 ## 迁移与团队规范
 

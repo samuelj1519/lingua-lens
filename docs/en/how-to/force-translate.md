@@ -35,7 +35,7 @@ Default is `false` in `package.json`.
 ## Step 2: Run document translation
 
 1. Open your `.md` file.
-2. Run **AI Translate: Translate Document**.
+2. Run **LinguaLens: Translate Document**.
 3. `isDocumentAlreadyInTargetLanguage(translatableCount, forceTranslate)` returns false when force is true, so preview opens even if every segment would otherwise be skipped.
 4. Per-segment planning (`buildDocumentTranslationPlan` + `shouldTranslateDocumentText`) respects force when evaluating whether to batch each segment.
 

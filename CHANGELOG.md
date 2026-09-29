@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.7.0
+
+- **Rebrand** to **LinguaLens** (`lingua-lens`): display name **LinguaLens for Visual Studio Code**; publisher `samuel-j`; new extension ID **`samuel-j.lingua-lens`**
+- User-visible strings (commands, settings UI, hovers, status bar, output channel, settings webview, progress notifications) now say **LinguaLens** instead of AI Translate
+- **Unchanged**: all `aiTranslate.*` settings keys, command IDs (`aiTranslate.*`), preview URI scheme `aitranslate:`, and sidecar filename patterns—existing user settings continue to work
+- **Upgrade**: uninstall the old extension **`cursor-ai-translate.cursor-ai-translate`**, then install `lingua-lens-0.7.0.vsix`. Workspace/user settings are kept (same `aiTranslate` keys). **Global storage** is keyed by extension ID, so **translation disk cache does not migrate** and will rebuild under the new ID
+- **Internal IDs kept for compatibility**: `aitranslate:` document provider scheme, `<!-- aiTranslate -->` hover marker, configuration namespace `aiTranslate`
+
 ## 0.6.1
 
 - Packaging: exclude `README.zh-CN.md`, `CONTRIBUTING*.md`, and `SECURITY*.md` from the VSIX (root `README.md`, `CHANGELOG.md`, and `LICENSE` still ship)

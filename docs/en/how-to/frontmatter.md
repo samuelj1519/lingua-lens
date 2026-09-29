@@ -55,7 +55,7 @@ Frontmatter batches use cache kind `documentFrontmatterBatch` (distinct prompt v
 ## Step 3: Translate via document preview
 
 1. Open the Markdown file.
-2. Run **AI Translate: Translate Document**.
+2. Run **LinguaLens: Translate Document**.
 3. Watch frontmatter values translate in the preview while `---` lines and key names stay intact.
 
 Detection still applies: if a field value is already mostly in the target language (e.g. target `zh-CN` and Chinese title), the plan may **skip** that segment unless [force translate](./force-translate.md) is enabled.

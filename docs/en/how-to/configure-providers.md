@@ -2,7 +2,7 @@
 
 ## Goal
 
-Point AI Translate at an OpenAI-compatible chat completions API: set `aiTranslate.llm.baseUrl`, `aiTranslate.llm.model`, store an API key, and optionally tune timeouts, concurrency, and `extraBody` for vendor-specific request fields.
+Point LinguaLens at an OpenAI-compatible chat completions API: set `aiTranslate.llm.baseUrl`, `aiTranslate.llm.model`, store an API key, and optionally tune timeouts, concurrency, and `extraBody` for vendor-specific request fields.
 
 ## Prerequisites
 
@@ -12,7 +12,7 @@ Point AI Translate at an OpenAI-compatible chat completions API: set `aiTranslat
 
 ## Step 1: Pick a provider profile
 
-AI Translate speaks the **OpenAI Chat Completions** protocol. The client builds the URL as `{baseUrl}/chat/completions` unless `baseUrl` already ends with `/chat/completions` (`LlmClient.chatUrl`).
+LinguaLens speaks the **OpenAI Chat Completions** protocol. The client builds the URL as `{baseUrl}/chat/completions` unless `baseUrl` already ends with `/chat/completions` (`LlmClient.chatUrl`).
 
 Keys are stored in VS Code Secret Storage **per origin** of `baseUrl` (scheme + host + port). Changing only the path on the same host reuses the same key; changing host requires a new key.
 
@@ -86,7 +86,7 @@ Document batch translation requests JSON responses when `jsonMode` is not `off`.
 
 ## Step 3: Store the API key
 
-1. **AI Translate: Set API Key** — enter the key (password field).
+1. **LinguaLens: Set API Key** — enter the key (password field).
 2. For local servers without auth, some users still set a dummy key if the server ignores `Authorization`; others leave key unset and see `noKey` until configured.
 
 ## Step 4: Optional advanced LLM settings
@@ -102,15 +102,15 @@ Document batch translation requests JSON responses when `jsonMode` is not `off`.
 
 ## Step 5: Verify
 
-1. Run **AI Translate: Test Connection**.
+1. Run **LinguaLens: Test Connection**.
 2. Hover a comment or run **Translate Selection** on a short English phrase with target `zh-CN`.
-3. Open **AI Translate: Show Log** at `debug` if you need request-level detail.
+3. Open **LinguaLens: Show Log** at `debug` if you need request-level detail.
 
 Success criteria: test connection message, hover or selection shows translated text, log shows API calls without repeated auth errors.
 
 ## Step 6: Use the settings panel (optional)
 
-**AI Translate: Open Settings Panel** edits the same keys through a webview with scope toggles (User / Workspace). Extra body templates for DeepSeek and Qwen match the JSON above. API keys are **not** edited in the panel; use **Set API Key**.
+**LinguaLens: Open Settings Panel** edits the same keys through a webview with scope toggles (User / Workspace). Extra body templates for DeepSeek and Qwen match the JSON above. API keys are **not** edited in the panel; use **Set API Key**.
 
 ## Pitfalls
 

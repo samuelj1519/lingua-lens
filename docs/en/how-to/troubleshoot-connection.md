@@ -2,12 +2,12 @@
 
 ## Goal
 
-Diagnose and fix failures from **AI Translate: Test Connection**, hover errors, or `LlmError` messages (auth, network, server, no key, no model).
+Diagnose and fix failures from **LinguaLens: Test Connection**, hover errors, or `LlmError` messages (auth, network, server, no key, no model).
 
 ## Prerequisites
 
 - Know your intended `baseUrl` and `model` ([Configure providers](./configure-providers.md)).
-- Ability to open **AI Translate: Show Log** and set `aiTranslate.log.level` to `debug` temporarily.
+- Ability to open **LinguaLens: Show Log** and set `aiTranslate.log.level` to `debug` temporarily.
 
 ## Step 1: Confirm configuration
 
@@ -28,7 +28,7 @@ Diagnose and fix failures from **AI Translate: Test Connection**, hover errors, 
 
 ## Step 2: Run test connection
 
-**AI Translate: Test Connection** calls `LlmClient.testConnection()` with a minimal completion. Outcomes:
+**LinguaLens: Test Connection** calls `LlmClient.testConnection()` with a minimal completion. Outcomes:
 
 - **Information message** — HTTP 2xx and parseable content.
 - **Error message** — surfaced to UI; see categories below.
@@ -37,7 +37,7 @@ Diagnose and fix failures from **AI Translate: Test Connection**, hover errors, 
 
 ### `API Key is not set` (`noKey`)
 
-- Run **AI Translate: Set API Key**.
+- Run **LinguaLens: Set API Key**.
 - After switching `baseUrl` host, set key again (storage is per origin).
 - **Clear API Key** → current origin or all origins if rotating keys.
 

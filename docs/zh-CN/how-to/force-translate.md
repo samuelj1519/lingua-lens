@@ -35,7 +35,7 @@
 ## 步骤 2：运行文档翻译
 
 1. 打开 `.md` 文件。
-2. 运行 **AI Translate: Translate Document**。
+2. 运行 **LinguaLens: Translate Document**。
 3. `isDocumentAlreadyInTargetLanguage(translatableCount, forceTranslate)` 在 force 为 true 时返回 false，即使所有分段本会被跳过也会打开预览。
 4. 每段计划（`buildDocumentTranslationPlan` + `shouldTranslateDocumentText`）在评估是否批量时每段时尊重 force。
 

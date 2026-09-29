@@ -34,7 +34,7 @@ function baseCfg(overrides?: Partial<TranslateConfig['document']>): TranslateCon
   } as TranslateConfig;
 }
 
-const zhReadme = `# AI Translate (cursor-ai-translate)
+const zhReadme = `# LinguaLens (lingua-lens)
 
 在 Cursor / VS Code 中使用 OpenAI 兼容 LLM 翻译项目中的注释、字符串和文档。
 

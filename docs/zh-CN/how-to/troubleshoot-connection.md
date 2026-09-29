@@ -2,12 +2,12 @@
 
 ## 目标
 
-诊断并修复 **AI Translate: Test Connection**、悬停错误或 `LlmError` 消息（鉴权、网络、服务器、无密钥、无模型）导致的失败。
+诊断并修复 **LinguaLens: Test Connection**、悬停错误或 `LlmError` 消息（鉴权、网络、服务器、无密钥、无模型）导致的失败。
 
 ## 前提
 
 - 知晓预期的 `baseUrl` 与 `model`（[配置提供商](./configure-providers.md)）。
-- 能打开 **AI Translate: Show Log** 并临时将 `aiTranslate.log.level` 设为 `debug`。
+- 能打开 **LinguaLens: Show Log** 并临时将 `aiTranslate.log.level` 设为 `debug`。
 
 ## 步骤 1：确认配置
 
@@ -28,7 +28,7 @@
 
 ## 步骤 2：运行测试连接
 
-**AI Translate: Test Connection** 调用 `LlmClient.testConnection()` 做最小 completion。结果：
+**LinguaLens: Test Connection** 调用 `LlmClient.testConnection()` 做最小 completion。结果：
 
 - **信息消息** — HTTP 2xx 且内容可解析。
 - **错误消息** — 显示在 UI；见下分类。
@@ -37,7 +37,7 @@
 
 ### `API Key is not set`（`noKey`）
 
-- 运行 **AI Translate: Set API Key**。
+- 运行 **LinguaLens: Set API Key**。
 - 切换 `baseUrl` 主机后重新设密钥（按源存储）。
 - **Clear API Key** → 当前源或轮换密钥时清除所有源。
 

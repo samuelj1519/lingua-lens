@@ -19,7 +19,7 @@
   "command.selectionReplace": "選択範囲を訳文で置換",
   "command.setApiKey": "API キーを設定",
   "command.showLog": "ログを表示",
-  "command.showQuickPick": "AI Translate メニュー",
+  "command.showQuickPick": "LinguaLens メニュー",
   "command.suggestVariableNames": "英語の変数名を提案",
   "command.testConnection": "接続をテスト",
   "command.toggle": "有効/無効を切り替え",

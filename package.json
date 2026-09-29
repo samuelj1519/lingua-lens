@@ -1,12 +1,23 @@
 {
-  "name": "cursor-ai-translate",
-  "displayName": "AI Translate",
-  "description": "Translate comments, strings, and documents in your editor with an OpenAI-compatible LLM",
-  "version": "0.6.1",
-  "publisher": "cursor-ai-translate",
+  "name": "lingua-lens",
+  "displayName": "LinguaLens for Visual Studio Code",
+  "description": "LinguaLens — AI code translator for comments, strings, and docs using an OpenAI-compatible LLM",
+  "version": "0.7.0",
+  "publisher": "samuel-j",
+  "keywords": [
+    "ai",
+    "translate",
+    "translator",
+    "translation",
+    "comment",
+    "i18n",
+    "llm",
+    "localization",
+    "markdown"
+  ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/local/cursor-ai-translate"
+    "url": "https://github.com/samuel-j/lingua-lens"
   },
   "license": "MIT",
   "engines": {
@@ -44,167 +55,167 @@
       {
         "command": "aiTranslate.toggle",
         "title": "%command.toggle%",
-        "category": "AI Translate"
+        "category": "LinguaLens"
       },
       {
         "command": "aiTranslate.selectTargetLanguage",
         "title": "%command.selectTargetLanguage%",
-        "category": "AI Translate"
+        "category": "LinguaLens"
       },
       {
         "command": "aiTranslate.setApiKey",
         "title": "%command.setApiKey%",
-        "category": "AI Translate"
+        "category": "LinguaLens"
       },
       {
         "command": "aiTranslate.clearApiKey",
         "title": "%command.clearApiKey%",
-        "category": "AI Translate"
+        "category": "LinguaLens"
       },
       {
         "command": "aiTranslate.testConnection",
         "title": "%command.testConnection%",
-        "category": "AI Translate"
+        "category": "LinguaLens"
       },
       {
         "command": "aiTranslate.translateSelection",
         "title": "%command.translateSelection%",
-        "category": "AI Translate"
+        "category": "LinguaLens"
       },
       {
         "command": "aiTranslate.translateDocument",
         "title": "%command.translateDocument%",
-        "category": "AI Translate"
+        "category": "LinguaLens"
       },
       {
         "command": "aiTranslate.refreshPreview",
         "title": "%command.refreshPreview%",
-        "category": "AI Translate"
+        "category": "LinguaLens"
       },
       {
         "command": "aiTranslate.refreshDocumentTranslation",
         "title": "%command.refreshDocumentTranslation%",
-        "category": "AI Translate"
+        "category": "LinguaLens"
       },
       {
         "command": "aiTranslate.hover.refresh",
         "title": "%command.hoverRefresh%",
-        "category": "AI Translate"
+        "category": "LinguaLens"
       },
       {
         "command": "aiTranslate.showQuickPick",
         "title": "%command.showQuickPick%",
-        "category": "AI Translate"
+        "category": "LinguaLens"
       },
       {
         "command": "aiTranslate.translateSelectionPopup",
         "title": "%command.translateSelectionPopup%",
-        "category": "AI Translate"
+        "category": "LinguaLens"
       },
       {
         "command": "aiTranslate.selection.replace",
         "title": "%command.selectionReplace%",
-        "category": "AI Translate"
+        "category": "LinguaLens"
       },
       {
         "command": "aiTranslate.selection.insertBelow",
         "title": "%command.selectionInsertBelow%",
-        "category": "AI Translate"
+        "category": "LinguaLens"
       },
       {
         "command": "aiTranslate.generateSideFile",
         "title": "%command.generateSideFile%",
-        "category": "AI Translate"
+        "category": "LinguaLens"
       },
       {
         "command": "aiTranslate.clearCache",
         "title": "%command.clearCache%",
-        "category": "AI Translate"
+        "category": "LinguaLens"
       },
       {
         "command": "aiTranslate.disableForWorkspace",
         "title": "%command.disableForWorkspace%",
-        "category": "AI Translate"
+        "category": "LinguaLens"
       },
       {
         "command": "aiTranslate.enableForWorkspace",
         "title": "%command.enableForWorkspace%",
-        "category": "AI Translate"
+        "category": "LinguaLens"
       },
       {
         "command": "aiTranslate.openGlossary",
         "title": "%command.openGlossary%",
-        "category": "AI Translate"
+        "category": "LinguaLens"
       },
       {
         "command": "aiTranslate.showLog",
         "title": "%command.showLog%",
-        "category": "AI Translate"
+        "category": "LinguaLens"
       },
       {
         "command": "aiTranslate.openSettings",
         "title": "%command.openSettings%",
-        "category": "AI Translate"
+        "category": "LinguaLens"
       },
       {
         "command": "aiTranslate.openSettingsPanel",
         "title": "%command.openSettingsPanel%",
-        "category": "AI Translate"
+        "category": "LinguaLens"
       },
       {
         "command": "aiTranslate.acknowledgePrivacy",
         "title": "%command.acknowledgePrivacy%",
-        "category": "AI Translate"
+        "category": "LinguaLens"
       },
       {
         "command": "aiTranslate.hover.copy",
         "title": "%command.hoverCopy%",
-        "category": "AI Translate"
+        "category": "LinguaLens"
       },
       {
         "command": "aiTranslate.hover.insertComment",
         "title": "%command.hoverInsertComment%",
-        "category": "AI Translate"
+        "category": "LinguaLens"
       },
       {
         "command": "aiTranslate.hover.retranslate",
         "title": "%command.hoverRetranslate%",
-        "category": "AI Translate"
+        "category": "LinguaLens"
       },
       {
         "command": "aiTranslate.translateClipboardOrSelection",
         "title": "%command.translateClipboardOrSelection%",
-        "category": "AI Translate"
+        "category": "LinguaLens"
       },
       {
         "command": "aiTranslate.translateReplaceSelection",
         "title": "%command.translateReplaceSelection%",
-        "category": "AI Translate"
+        "category": "LinguaLens"
       },
       {
         "command": "aiTranslate.translateInsertBelow",
         "title": "%command.translateInsertBelow%",
-        "category": "AI Translate"
+        "category": "LinguaLens"
       },
       {
         "command": "aiTranslate.translateGitCommitAtLine",
         "title": "%command.translateGitCommitAtLine%",
-        "category": "AI Translate"
+        "category": "LinguaLens"
       },
       {
         "command": "aiTranslate.translateScmInput",
         "title": "%command.translateScmInput%",
-        "category": "AI Translate"
+        "category": "LinguaLens"
       },
       {
         "command": "aiTranslate.generateLocaleFile",
         "title": "%command.generateLocaleFile%",
-        "category": "AI Translate"
+        "category": "LinguaLens"
       },
       {
         "command": "aiTranslate.suggestVariableNames",
         "title": "%command.suggestVariableNames%",
-        "category": "AI Translate"
+        "category": "LinguaLens"
       }
     ],
     "keybindings": [

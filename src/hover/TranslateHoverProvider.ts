@@ -140,7 +140,7 @@ export class TranslateHoverProvider implements vscode.HoverProvider {
             if (e instanceof LlmError) {
               primary = await this.errorFromLlm(doc, range, e);
             } else {
-              primary = errorHover(doc, pos, await redactForUserFacingText(errMsg), []);
+              primary = errorHover(doc, pos, redactForUserFacingText(errMsg), []);
             }
           }
         }
@@ -211,7 +211,7 @@ export class TranslateHoverProvider implements vscode.HoverProvider {
     if (e.kind === 'reasoningBudget') {
       links.push(reasoningBudgetHoverLinks());
     }
-    const body = await redactForUserFacingText(localizedLlmErrorMessage(e));
+    const body = redactForUserFacingText(localizedLlmErrorMessage(e));
     const md = new vscode.MarkdownString(body + (links.length ? '\n\n' + links.join(' · ') : ''));
     md.isTrusted = {
       enabledCommands: [

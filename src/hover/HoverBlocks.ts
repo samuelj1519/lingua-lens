@@ -173,7 +173,7 @@ export async function buildSupplementalHoverBlocks(
     } catch (e) {
       log.warn(`hover supplemental failed: ${e instanceof Error ? e.message : e}`);
       if (e instanceof LlmError && e.kind === 'noKey') {
-        const msg = await redactForUserFacingText(e.message);
+        const msg = redactForUserFacingText(e.message);
         const md = new vscode.MarkdownString(
           `**${t('hover.sectionPrefix', item.title)}**\n\n${msg}`,
         );

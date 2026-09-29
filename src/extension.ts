@@ -36,7 +36,7 @@ import { maybeShowDeepSeekThinkingHint } from './llm/deepSeekHint';
 import { handleCommandLlmError } from './llm/handleCommandError';
 import { initUiL10n, resetUiL10nCache, t } from './l10n/uiL10n';
 import { EXTENSION_SETTINGS_FILTER } from './constants/extensionId';
-import { bindSecretRedaction, redactForUserFacingText } from './secrets/redactBinding';
+import { redactForUserFacingText } from './secrets/redactBinding';
 import { wrapRedactingLogger } from './util/redactingLogger';
 let parserService: ParserService | undefined;
 let cacheService: CacheService | undefined;
@@ -48,7 +48,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   const baseLogger = new Logger(() => config.get().log.level);
   const stats = new StatsService();
   const apiKeys = new ApiKeyStore(context);
-  bindSecretRedaction(apiKeys);
+  await apiKeys.syncConfiguredFlagsFromStorage();
   const logger = wrapRedactingLogger(baseLogger);
   const llm = new LlmClient(() => config.get(), apiKeys, logger);
   const cfg = config.get();
@@ -166,7 +166,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   reg('linguaLens.testConnection', async () => {
     const r = await llm.testConnection();
     if (r.ok) void vscode.window.showInformationMessage(r.message);
-    else void redactForUserFacingText(r.message).then((m) => vscode.window.showErrorMessage(m));
+    else void vscode.window.showErrorMessage(redactForUserFacingText(r.message));
   });
 
   reg('linguaLens.translateSelection', async () => {

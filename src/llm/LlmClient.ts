@@ -8,7 +8,7 @@ import { logLlmFailure, parseUsageFromApi, type LlmUsageSnapshot } from './reque
 import { RequestSemaphore } from './semaphore';
 import { applySseChunk, type SseCompletionAggregate } from './sseAggregate';
 import { parseSseDataLine } from './sseContent';
-import { redactForUserFacingText } from '../secrets/redactBinding';
+import { redactSecrets } from '../secrets/redact';
 
 export interface ChatMessage {
   role: 'system' | 'user' | 'assistant';
@@ -55,18 +55,20 @@ export class LlmClient {
     return `${c.llm.baseUrl}|${c.llm.model}`;
   }
 
-  private async redactMessage(message: string): Promise<string> {
-    return redactForUserFacingText(message);
+  private redactMessage(message: string, requestKey?: string): string {
+    const known = requestKey ? [requestKey] : [];
+    return redactSecrets(message, known);
   }
 
-  private async llmError(
+  private llmError(
     kind: LlmError['kind'],
     message: string,
     status?: number,
     retryAfterMs?: number,
     meta?: LlmError['meta'],
-  ): Promise<LlmError> {
-    return new LlmError(kind, await this.redactMessage(message), status, retryAfterMs, meta);
+    requestKey?: string,
+  ): LlmError {
+    return new LlmError(kind, this.redactMessage(message, requestKey), status, retryAfterMs, meta);
   }
 
   private failureContext(
@@ -222,24 +224,24 @@ export class LlmClient {
       }
 
       if (res.status === 401 || res.status === 403) {
-        throw await this.llmError('auth', `Invalid API Key or forbidden (HTTP ${res.status})`, res.status);
+        throw this.llmError('auth', `Invalid API Key or forbidden (HTTP ${res.status})`, res.status, undefined, undefined, key);
       }
       if (res.status === 404) {
-        throw await this.llmError('notFound', 'API endpoint or model not found', res.status);
+        throw this.llmError('notFound', 'API endpoint or model not found', res.status, undefined, undefined, key);
       }
       if (res.status === 429) {
         const ra = parseRetryAfter(res.headers.get('Retry-After'));
-        throw await this.llmError('rateLimit', 'Rate limit exceeded', res.status, ra);
+        throw this.llmError('rateLimit', 'Rate limit exceeded', res.status, ra, undefined, key);
       }
       if (res.status >= 500) {
-        throw await this.llmError('server', `Service unavailable (HTTP ${res.status})`, res.status);
+        throw this.llmError('server', `Service unavailable (HTTP ${res.status})`, res.status, undefined, undefined, key);
       }
       if (!res.ok) {
         const text = await res.text();
         if (res.status === 400 && /context|length|token/i.test(text)) {
-          throw await this.llmError('contextLength', text.slice(0, 200), res.status);
+          throw this.llmError('contextLength', text.slice(0, 200), res.status, undefined, undefined, key);
         }
-        throw await this.llmError('badRequest', text.slice(0, 200) || `HTTP ${res.status}`, res.status);
+        throw this.llmError('badRequest', text.slice(0, 200) || `HTTP ${res.status}`, res.status, undefined, undefined, key);
       }
 
       const data = (await res.json()) as {
@@ -277,9 +279,9 @@ export class LlmClient {
       if (req.signal?.aborted) throw new LlmError('cancelled', 'Cancelled');
       if (e instanceof LlmError) throw e;
       if (e instanceof Error && e.name === 'AbortError') {
-        throw await this.llmError('timeout', `Request timed out (${config.llm.timeoutMs}ms)`);
+        throw this.llmError('timeout', `Request timed out (${config.llm.timeoutMs}ms)`, undefined, undefined, undefined, key);
       }
-      throw await this.llmError('network', e instanceof Error ? e.message : 'Network error');
+      throw this.llmError('network', e instanceof Error ? e.message : 'Network error', undefined, undefined, undefined, key);
     }
   }
 

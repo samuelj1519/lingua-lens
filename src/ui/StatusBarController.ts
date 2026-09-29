@@ -40,9 +40,9 @@ export class StatusBarController implements vscode.Disposable {
       this.langItem.hide();
       return;
     }
-    const key = await this.apiKeys.get(cfg.llm.baseUrl);
+    const hasKey = this.apiKeys.isConfigured(cfg.llm.baseUrl);
     const enabled = cfg.enabled;
-    if (!key) {
+    if (!hasKey) {
       this.toggleItem.text = `$(warning) ${t('statusbar.shortLabel')}`;
     } else if (enabled) {
       this.toggleItem.text = `$(globe) ${t('statusbar.shortLabel')}`;

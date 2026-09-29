@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.7
+
+- **API key reads**: “configured” state for the status bar and settings panel uses `globalState` flags per LLM origin, synced on set/clear and reconciled at activation via `SecretStorage.keys()` (no secret values read). `get()` is only used when issuing an LLM request.
+- **Redaction**: removed bulk `getAllStoredValues()`; LLM errors are redacted with the request-scoped key before `LlmError` is thrown. Logs, toasts, and hovers use pattern-only redaction (`Bearer`, `Authorization`, credential assignments) without reading SecretStorage.
+- **Logging**: output-channel logging is synchronous again (no per-line async SecretStorage access).
+
 ## 0.7.6
 
 - **API keys**: stored only in VS Code `SecretStorage`. LinguaLens reads a key only when you set or clear it (commands and settings panel) and when issuing an LLM request (`Authorization` header). Request headers and bodies are not written to logs.

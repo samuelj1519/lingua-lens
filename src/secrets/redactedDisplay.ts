@@ -3,8 +3,8 @@ import { LlmError } from '../llm/errors';
 import { localizedLlmErrorMessage, showReasoningBudgetError } from '../llm/llmErrorUi';
 import { redactForUserFacingText } from './redactBinding';
 
-export async function showRedactedError(message: string): Promise<void> {
-  void vscode.window.showErrorMessage(await redactForUserFacingText(message));
+export function showRedactedError(message: string): void {
+  void vscode.window.showErrorMessage(redactForUserFacingText(message));
 }
 
 export async function handleCommandLlmError(e: unknown): Promise<void> {
@@ -14,5 +14,5 @@ export async function handleCommandLlmError(e: unknown): Promise<void> {
   }
   const raw =
     e instanceof LlmError ? localizedLlmErrorMessage(e) : e instanceof Error ? e.message : String(e);
-  await showRedactedError(raw);
+  showRedactedError(raw);
 }

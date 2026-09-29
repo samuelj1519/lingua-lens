@@ -124,7 +124,7 @@ export class SettingsPanelController {
     const { strings, ...locale } = this.localePayload(raw);
     this.applyPanelTitle(strings);
     const baseUrl = this.config.get().llm.baseUrl;
-    const apiKeyConfigured = Boolean(await this.apiKeys.get(baseUrl));
+    const apiKeyConfigured = this.apiKeys.isConfigured(baseUrl);
     this.panel.webview.postMessage({
       type: 'init',
       strings,
@@ -157,7 +157,7 @@ export class SettingsPanelController {
   private async postState(): Promise<void> {
     if (!this.panel) return;
     const baseUrl = this.config.get().llm.baseUrl;
-    const apiKeyConfigured = Boolean(await this.apiKeys.get(baseUrl));
+    const apiKeyConfigured = this.apiKeys.isConfigured(baseUrl);
     this.panel.webview.postMessage({
       type: 'state',
       values: readPanelValues(this.scope),
@@ -217,7 +217,7 @@ export class SettingsPanelController {
           const modelSuffix = res.model ? ` · ${res.model}` : '';
           this.panel.webview.postMessage({ type: 'testResult', ok: true, message: line + modelSuffix });
         } else {
-          const err = await redactForUserFacingText(res.message);
+          const err = redactForUserFacingText(res.message);
           this.panel.webview.postMessage({
             type: 'testResult',
             ok: false,

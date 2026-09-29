@@ -11,13 +11,13 @@ export function localizedLlmErrorMessage(e: LlmError): string {
 
 export async function showReasoningBudgetError(e: LlmError): Promise<void> {
   if (e.kind !== 'reasoningBudget') {
-    void vscode.window.showErrorMessage(await redactForUserFacingText(localizedLlmErrorMessage(e)));
+    void vscode.window.showErrorMessage(redactForUserFacingText(localizedLlmErrorMessage(e)));
     return;
   }
   const applyLabel = t('llm.error.action.applyThinkingOff');
   const settingsLabel = t('llm.error.action.openExtraBodySettings');
   const choice = await vscode.window.showErrorMessage(
-    await redactForUserFacingText(localizedLlmErrorMessage(e)),
+    redactForUserFacingText(localizedLlmErrorMessage(e)),
     applyLabel,
     settingsLabel,
   );

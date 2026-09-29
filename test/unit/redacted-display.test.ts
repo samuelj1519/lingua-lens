@@ -8,32 +8,23 @@ vi.mock('vscode', () => ({
   window: { showErrorMessage },
 }));
 
-import { bindSecretRedaction } from '../../src/secrets/redactBinding';
 import { showRedactedError } from '../../src/secrets/redactedDisplay';
-
-const SECRET = 'leaked-secret-value-99';
-
-class MockApiKeyStore {
-  async getAllStoredValues(): Promise<string[]> {
-    return [SECRET];
-  }
-}
 
 describe('showRedactedError', () => {
   beforeEach(() => {
     showErrorMessage.mockClear();
-    bindSecretRedaction(new MockApiKeyStore() as never);
   });
 
   afterEach(() => {
     vi.clearAllMocks();
   });
 
-  it('redacts known secrets before showing error toast', async () => {
-    await showRedactedError(`Failed: ${SECRET}`);
+  it('redacts Bearer tokens without reading SecretStorage', () => {
+    const token = 'leaked-bearer-token-value-99';
+    showRedactedError(`Failed: Bearer ${token}`);
     expect(showErrorMessage).toHaveBeenCalledOnce();
     const shown = String(showErrorMessage.mock.calls[0][0]);
-    expect(shown).not.toContain(SECRET);
+    expect(shown).not.toContain(token);
     expect(shown).toContain('***');
   });
 });

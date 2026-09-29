@@ -81,7 +81,7 @@ export class SelectionHoverProvider implements vscode.HoverProvider {
       return this.build(doc, editor.selection, unit, result.text, cfg, false);
     } catch (e) {
       if (e instanceof LlmError) {
-        return new vscode.Hover(await redactForUserFacingText(localizedLlmErrorMessage(e)), editor.selection);
+        return new vscode.Hover(redactForUserFacingText(localizedLlmErrorMessage(e)), editor.selection);
       }
       return undefined;
     }

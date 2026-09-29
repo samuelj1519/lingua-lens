@@ -4,6 +4,11 @@ const ORIGINS_KEY = 'linguaLens.apiKeyOrigins';
 const CONFIGURED_ORIGINS_KEY = 'linguaLens.apiKeyConfiguredOrigins';
 const KEY_PREFIX = 'linguaLens.apiKey:';
 
+/** VS Code 1.97+; optional on older runtimes (see `engines.vscode`). */
+type SecretStorageWithOptionalKeys = vscode.SecretStorage & {
+  keys?: () => Thenable<string[]>;
+};
+
 function originOf(baseUrl: string): string {
   try {
     const u = new URL(baseUrl);
@@ -34,17 +39,32 @@ export class ApiKeyStore {
   }
 
   /**
-   * Reconcile configured-origin flags from SecretStorage key names (no secret values read).
-   * Call once at activation for legacy installs.
+   * Reconcile configured-origin flags at activation.
+   * Uses `SecretStorage.keys()` when available (VS Code 1.97+); otherwise a one-time `get()` for `currentBaseUrl` only.
    */
-  async syncConfiguredFlagsFromStorage(): Promise<void> {
-    const allKeys = await this.context.secrets.keys();
-    const origins: string[] = [];
-    for (const k of allKeys) {
-      if (k.startsWith(KEY_PREFIX)) origins.push(k.slice(KEY_PREFIX.length));
+  async syncConfiguredFlagsFromStorage(currentBaseUrl?: string): Promise<void> {
+    try {
+      const secrets = this.context.secrets as SecretStorageWithOptionalKeys;
+      if (typeof secrets.keys === 'function') {
+        const allKeys = await secrets.keys();
+        const origins: string[] = [];
+        for (const k of allKeys) {
+          if (k.startsWith(KEY_PREFIX)) origins.push(k.slice(KEY_PREFIX.length));
+        }
+        await this.context.globalState.update(CONFIGURED_ORIGINS_KEY, origins);
+        await this.context.globalState.update(ORIGINS_KEY, origins);
+        return;
+      }
+
+      if (this.configuredOrigins().length > 0) return;
+
+      if (!currentBaseUrl) return;
+      const origin = originOf(currentBaseUrl);
+      const value = await this.context.secrets.get(this.storageKey(origin));
+      await this.setConfigured(origin, Boolean(value?.trim()));
+    } catch {
+      /* Do not block extension activation on migration failures. */
     }
-    await this.context.globalState.update(CONFIGURED_ORIGINS_KEY, origins);
-    await this.context.globalState.update(ORIGINS_KEY, origins);
   }
 
   private async rememberOrigin(origin: string): Promise<void> {

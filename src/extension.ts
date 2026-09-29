@@ -48,7 +48,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   const baseLogger = new Logger(() => config.get().log.level);
   const stats = new StatsService();
   const apiKeys = new ApiKeyStore(context);
-  await apiKeys.syncConfiguredFlagsFromStorage();
+  await apiKeys.syncConfiguredFlagsFromStorage(config.get().llm.baseUrl);
   const logger = wrapRedactingLogger(baseLogger);
   const llm = new LlmClient(() => config.get(), apiKeys, logger);
   const cfg = config.get();

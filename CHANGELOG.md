@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.8
+
+- **SecretStorage compatibility**: `syncConfiguredFlagsFromStorage` uses `secrets.keys()` only when the runtime provides it (VS Code 1.97+). On older editors (`engines.vscode` remains `^1.85.0`), activation runs a one-time fallback: if no configured-origin flags exist yet, a single `get()` for the current `llm.baseUrl` sets the flag without retaining the value. Migration errors are swallowed so activation continues.
+- **Tooling**: pin `@types/vscode` to `1.85.0` so new VS Code APIs are not assumed at compile time.
+
 ## 0.7.7
 
 - **API key reads**: “configured” state for the status bar and settings panel uses `globalState` flags per LLM origin, synced on set/clear and reconciled at activation via `SecretStorage.keys()` (no secret values read). `get()` is only used when issuing an LLM request.

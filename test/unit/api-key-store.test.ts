@@ -16,13 +16,18 @@ vi.mock('vscode', () => {
 
 import { ApiKeyStore } from '../../src/secrets/ApiKeyStore';
 
-function mockContext(secrets: {
-  keys: () => Promise<string[]>;
-  get: (k: string) => Promise<string | undefined>;
-  store: (k: string, v: string) => Promise<void>;
-  delete: (k: string) => Promise<void>;
-}) {
-  const globalState = new Map<string, unknown>();
+const CONFIGURED_ORIGINS_KEY = 'linguaLens.apiKeyConfiguredOrigins';
+
+function mockContext(
+  secrets: {
+    keys?: () => Promise<string[]>;
+    get: (k: string) => Promise<string | undefined>;
+    store: (k: string, v: string) => Promise<void>;
+    delete: (k: string) => Promise<void>;
+  },
+  initialGlobal: Record<string, unknown> = {},
+) {
+  const globalState = new Map<string, unknown>(Object.entries(initialGlobal));
   return {
     secrets,
     globalState: {
@@ -79,11 +84,41 @@ describe('ApiKeyStore', () => {
     expect(store.isConfigured('https://other.example/v1')).toBe(false);
   });
 
-  it('syncConfiguredFlagsFromStorage uses keys() not get()', async () => {
+  it('syncConfiguredFlagsFromStorage uses keys() not get() when available', async () => {
     keysSpy.mockResolvedValue([storageKey]);
-    await store.syncConfiguredFlagsFromStorage();
+    await store.syncConfiguredFlagsFromStorage(baseUrl);
     expect(store.isConfigured(baseUrl)).toBe(true);
     expect(getSpy).not.toHaveBeenCalled();
+  });
+
+  it('without keys(), migrates current baseUrl with a single get()', async () => {
+    const ctx = mockContext({
+      get: getSpy,
+      store: vi.fn(),
+      delete: vi.fn(),
+    });
+    store = new ApiKeyStore(ctx);
+    getSpy.mockResolvedValue(secret);
+    await store.syncConfiguredFlagsFromStorage(baseUrl);
+    expect(getSpy).toHaveBeenCalledOnce();
+    expect(getSpy).toHaveBeenCalledWith(storageKey);
+    expect(store.isConfigured(baseUrl)).toBe(true);
+  });
+
+  it('without keys(), skips get() when configured flags already exist', async () => {
+    const ctx = mockContext(
+      { get: getSpy, store: vi.fn(), delete: vi.fn() },
+      { [CONFIGURED_ORIGINS_KEY]: [origin] },
+    );
+    store = new ApiKeyStore(ctx);
+    await store.syncConfiguredFlagsFromStorage(baseUrl);
+    expect(getSpy).not.toHaveBeenCalled();
+    expect(store.isConfigured(baseUrl)).toBe(true);
+  });
+
+  it('does not throw when keys() rejects', async () => {
+    keysSpy.mockRejectedValue(new Error('keys unsupported'));
+    await expect(store.syncConfiguredFlagsFromStorage(baseUrl)).resolves.toBeUndefined();
   });
 
   it('get() is only used when fetching key value for requests', async () => {

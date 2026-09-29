@@ -157,6 +157,5 @@
   "hover.error.showLog": "Show log",
   "naming.pickStyleTitle": "Choose a naming style to insert",
   "naming.promptDescription": "Describe the feature (any language)",
-  "statusbar.shortLabel": "Tr",
-  "msg.settingsMigrated": "Migrated {0} legacy aiTranslate settings to LinguaLens."
+  "statusbar.shortLabel": "Tr"
 }

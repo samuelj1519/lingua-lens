@@ -32,18 +32,12 @@ import { countConfigurationProperties } from './settingsPanel/countSettings';
 import { applyTargetLanguageCursorUiBootstrap } from './l10n/targetLanguageBootstrap';
 import { initUiL10n, resetUiL10nCache, t } from './l10n/uiL10n';
 import { EXTENSION_SETTINGS_FILTER } from './constants/extensionId';
-import { migrateLegacySettings } from './migration/settingsMigration';
-
 let parserService: ParserService | undefined;
 let cacheService: CacheService | undefined;
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
   const config = new ConfigService();
   initUiL10n(context.extensionPath, () => config.getRawTargetLanguage());
-  const migratedCount = await migrateLegacySettings(context);
-  if (migratedCount > 0) {
-    void vscode.window.setStatusBarMessage(t('msg.settingsMigrated', String(migratedCount)), 5000);
-  }
   await applyTargetLanguageCursorUiBootstrap(context);
   const logger = new Logger(() => config.get().log.level);
   const stats = new StatsService();
@@ -119,12 +113,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   );
 
   const reg = (id: string, fn: (...args: never[]) => unknown) => {
-    const handler = fn as (...args: unknown[]) => unknown;
-    context.subscriptions.push(vscode.commands.registerCommand(id, handler));
-    if (id.startsWith('linguaLens.')) {
-      const legacyId = `aiTranslate.${id.slice('linguaLens.'.length)}`;
-      context.subscriptions.push(vscode.commands.registerCommand(legacyId, handler));
-    }
+    context.subscriptions.push(
+      vscode.commands.registerCommand(id, fn as (...args: unknown[]) => unknown),
+    );
   };
 
   reg('linguaLens.toggle', async () => {

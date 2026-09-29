@@ -107,13 +107,6 @@ LinguaLens（扩展 ID：`samuel-j.lingua-lens`）提供悬停翻译、选区与
 - [文档首页](docs/README.md)
 - [教程](docs/zh-CN/tutorials/index.md) · [操作指南](docs/zh-CN/how-to/index.md) · [参考](docs/zh-CN/reference/index.md) · [说明](docs/zh-CN/explanation/index.md)
 
-## 从 AI Translate（cursor-ai-translate）升级
-
-1. 在扩展视图中卸载旧扩展 **`cursor-ai-translate.cursor-ai-translate`**。
-2. 安装 **`lingua-lens-0.7.0.vsix`**（或执行 `npm run package` 生成的当前构建）。
-3. 重载窗口。首次激活时会将残留的 **`aiTranslate.*` 设置** 自动迁移到 **`linguaLens.*`** 并删除旧键。
-4. 磁盘翻译缓存按扩展 ID 存放在 globalStorage 中，**不会随扩展迁移**；需重新积累缓存。SecretStorage 中的 API Key 按 origin 存储，一般仍可继续使用。
-
 ## 开发
 
 ```bash

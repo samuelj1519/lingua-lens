@@ -68,7 +68,6 @@ function generate(locale, nlsFile, outFile) {
   const lines = [...intro, '| Command ID | Title | Keybinding | Surfaces |', '| --- | --- | --- | --- |'];
 
   for (const cmd of commands) {
-    if (cmd.command.startsWith('aiTranslate.')) continue;
     const title = resolveNls(cmd.title, nls);
     const id = cmd.command;
     const kb = keybinding(id, keybindings);

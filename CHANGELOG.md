@@ -2,11 +2,7 @@
 
 ## 0.7.0
 
-- **Rebrand** to **LinguaLens** (`lingua-lens`): display name **LinguaLens for Visual Studio Code**; publisher `samuel-j`; extension ID **`samuel-j.lingua-lens`**
-- **Settings & commands**: all configuration keys are now **`linguaLens.*`**; command IDs, context/menu groups, and default keybindings use **`linguaLens.*`**. Document preview URI scheme is **`lingualens:`** (was `aitranslate:`)
-- **Automatic settings migration** on first activation: copies explicit `aiTranslate.*` values from global / workspace / workspace-folder scopes into `linguaLens.*` when the new key is unset, then **removes** the legacy key. One-time flag in `globalState` (`linguaLens.settingsMigration.v1`); re-runs if legacy keys reappear. Status bar message shows count (localized via `msg.settingsMigrated`)
-- **Deprecated command aliases**: hidden `aiTranslate.*` commands remain registered (not in the palette) and forward to `linguaLens.*` for custom keybindings—**planned removal in a future release**
-- **Upgrade from cursor-ai-translate**: uninstall **`cursor-ai-translate.cursor-ai-translate`**, install **`lingua-lens-0.7.0.vsix`**. Settings migrate automatically if still under `aiTranslate.*`. **Disk cache** does not migrate (globalStorage is per extension ID)
+- Renamed from **cursor-ai-translate** / **AI Translate** to **LinguaLens** (`lingua-lens`, **`samuel-j.lingua-lens`**); settings, commands, and preview scheme use **`linguaLens.*`** / **`lingualens:`**
 
 ## 0.6.1
 

@@ -107,13 +107,6 @@ All commands, CodeLens, and context menus: [Commands reference](docs/en/referenc
 - [Documentation home](docs/README.md)
 - [Tutorials](docs/en/tutorials/index.md) · [How-to](docs/en/how-to/index.md) · [Reference](docs/en/reference/index.md) · [Explanation](docs/en/explanation/index.md)
 
-## Upgrading from AI Translate (cursor-ai-translate)
-
-1. Uninstall the old extension **`cursor-ai-translate.cursor-ai-translate`** from the Extensions view.
-2. Install **`lingua-lens-0.7.0.vsix`** (or the current build from `npm run package`).
-3. Reload the window. LinguaLens **migrates** any remaining **`aiTranslate.*` settings** into **`linguaLens.*`** on first activation (then removes legacy keys).
-4. Disk translation cache is stored per extension ID in global storage—it **does not carry over**; expect cache misses until new entries are written. API keys in SecretStorage are per API origin and remain available.
-
 ## Development
 
 ```bash

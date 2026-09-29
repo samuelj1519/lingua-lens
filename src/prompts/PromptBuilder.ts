@@ -36,6 +36,7 @@ Rules:
 - One JSON entry per input id; never merge or split ids.
 - Output ONLY the translated text for each fragment; no explanations.
 - Preserve Markdown syntax exactly in each fragment: **bold**, *italic*, \`code\`, links, list markers, blockquote markers.
+- For list/table/blockquote fragments: keep the same number of items/rows and the same link URLs; translate text only.
 - Do not add or remove heading # characters unless they appear in the source fragment.
 - Never translate URLs, code spans, or placeholder tokens ⟦Pn⟧.
 - Valid JSON only.

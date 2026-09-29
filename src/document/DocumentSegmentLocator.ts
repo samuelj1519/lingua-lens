@@ -33,10 +33,13 @@ export function locateSegmentAtOffset(
     if (offset < seg.range.start || offset >= seg.range.end) continue;
     if (seg.kind === 'preserved') return null;
 
-    if (seg.kind === 'table' && seg.table) {
-      const cell = findTableCellAtOffset(source, seg, offset);
-      if (cell) return cell;
-      continue;
+    if (seg.kind === 'table' || seg.kind === 'list' || seg.kind === 'blockquote') {
+      return {
+        segment: seg,
+        range: seg.range,
+        text: seg.sourceText,
+        placeholders: seg.placeholders,
+      };
     }
 
     return {
@@ -49,25 +52,3 @@ export function locateSegmentAtOffset(
   return null;
 }
 
-/** Table hover: translate the single cell under the cursor (same text as document batch items). */
-function findTableCellAtOffset(
-  _source: string,
-  seg: Segment,
-  offset: number,
-): LocatedDocumentSegment | null {
-  if (!seg.table) return null;
-  for (const row of seg.table.cells) {
-    for (const cell of row) {
-      if (!cell.range) continue;
-      if (offset >= cell.range.start && offset < cell.range.end) {
-        return {
-          segment: seg,
-          range: cell.range,
-          text: cell.text,
-          placeholders: cell.placeholders,
-        };
-      }
-    }
-  }
-  return null;
-}

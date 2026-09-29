@@ -6,6 +6,7 @@ import type { Root, Content, PhrasingContent } from 'mdast';
 import type { Segment } from '../types';
 import { sha256HexPrefix } from '../util/hash';
 import { protect } from '../parsing/placeholders';
+import { splitListIntoLineItems } from './listFallback';
 
 export class MarkdownSegmenter {
   private readonly processor = unified().use(remarkParse).use(remarkGfm).use(remarkFrontmatter, ['yaml', 'toml']);
@@ -39,18 +40,16 @@ export class MarkdownSegmenter {
         });
         return;
       }
-      if (node.type === 'listItem' || node.type === 'blockquote') {
-        const raw = source.slice(start, end).trim();
-        const p = protect(raw);
-        segments.push({
-          id: `s${id++}`,
-          kind: 'paragraph',
-          range: { start, end },
-          sourceText: p.text,
-          placeholders: p.placeholders,
-          hash: sha256HexPrefix(p.text, 16),
-          linePrefix,
-        });
+      if (node.type === 'list') {
+        pushContainer(segments, `s${id++}`, 'list', start, end, source);
+        return;
+      }
+      if (node.type === 'blockquote') {
+        pushContainer(segments, `s${id++}`, 'blockquote', start, end, source);
+        return;
+      }
+      if (node.type === 'table') {
+        pushContainer(segments, `s${id++}`, 'table', start, end, source);
         return;
       }
       if (node.type === 'paragraph') {
@@ -66,11 +65,6 @@ export class MarkdownSegmenter {
         });
         return;
       }
-      if (node.type === 'table') {
-        segments.push(tableSegment(node, source, id));
-        id++;
-        return;
-      }
       if ('children' in node && Array.isArray(node.children)) {
         for (const child of node.children as Content[]) {
           visit(child, linePrefix);
@@ -83,6 +77,32 @@ export class MarkdownSegmenter {
     }
     return segments;
   }
+}
+
+function pushContainer(
+  segments: Segment[],
+  segId: string,
+  containerKind: 'list' | 'table' | 'blockquote',
+  start: number,
+  end: number,
+  source: string,
+): void {
+  const raw = source.slice(start, end);
+  const p = protect(raw);
+  const seg: Segment = {
+    id: segId,
+    kind: containerKind === 'list' ? 'list' : containerKind === 'table' ? 'table' : 'blockquote',
+    range: { start, end },
+    sourceText: p.text,
+    placeholders: p.placeholders,
+    hash: sha256HexPrefix(raw, 16),
+    linePrefix: '',
+    containerKind,
+  };
+  if (containerKind === 'list') {
+    seg.listFallbackItems = splitListIntoLineItems(segId, raw);
+  }
+  segments.push(seg);
 }
 
 function preserved(id: string, start: number, end: number, text: string): Segment {
@@ -113,50 +133,4 @@ function inlineToText(children: PhrasingContent[], _source: string): string {
       return '';
     })
     .join('');
-}
-
-function tableSegment(node: import('mdast').Table, source: string, id: number): Segment {
-  const start = node.position?.start.offset ?? 0;
-  const end = node.position?.end.offset ?? source.length;
-  const cells: {
-    id: string;
-    text: string;
-    placeholders: import('../types').Placeholder[];
-    range: import('../types').OffsetRange;
-  }[][] = [];
-  let r = 0;
-  for (const row of node.children) {
-    const rowCells: {
-      id: string;
-      text: string;
-      placeholders: import('../types').Placeholder[];
-      range: import('../types').OffsetRange;
-    }[] = [];
-    let c = 0;
-    for (const cell of row.children) {
-      const text = inlineToText(cell.children, source);
-      const p = protect(text);
-      const cs = cell.position?.start.offset ?? start;
-      const ce = cell.position?.end.offset ?? end;
-      rowCells.push({
-        id: `s${id}.r${r}.c${c}`,
-        text: p.text,
-        placeholders: p.placeholders,
-        range: { start: cs, end: ce },
-      });
-      c++;
-    }
-    cells.push(rowCells);
-    r++;
-  }
-  return {
-    id: `s${id}`,
-    kind: 'table',
-    range: { start, end },
-    sourceText: source.slice(start, end),
-    placeholders: [],
-    hash: sha256HexPrefix(source.slice(start, end), 16),
-    linePrefix: '',
-    table: { align: (node.align ?? []).join(','), cells },
-  };
 }

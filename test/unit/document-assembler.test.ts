@@ -25,13 +25,7 @@ function mockSession(source: string, translations: Record<string, string>): DocS
   const results = new Map<string, { status: 'done' | 'pending' | 'failed'; text?: string }>();
   for (const s of segments) {
     if (s.kind === 'preserved') continue;
-    if (s.table) {
-      for (const row of s.table.cells) {
-        for (const c of row) results.set(c.id, { status: 'done', text: translations[c.id] ?? c.text });
-      }
-    } else {
-      results.set(s.id, { status: 'done', text: translations[s.id] ?? s.sourceText });
-    }
+    results.set(s.id, { status: 'done', text: translations[s.id] ?? s.sourceText });
   }
   return {
     sourceUri: { toString: () => 'file:///t.md' } as never,

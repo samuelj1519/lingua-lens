@@ -35,7 +35,29 @@ export function assembleDocument(
   if (cursor < source.length) {
     parts.push(source.slice(cursor));
   }
-  return parts.join('');
+  return finalizeTrailingNewlines(source, parts.join(''));
+}
+
+function trailingNewlineCount(s: string): number {
+  const m = s.match(/\n+$/);
+  return m ? m[0].length : 0;
+}
+
+function finalizeTrailingNewlines(source: string, out: string): string {
+  const want = trailingNewlineCount(source);
+  const headerEnd = out.indexOf('\n\n');
+  const hasPreviewHeader = out.startsWith('> AI 翻译预览');
+  const bodyStart = hasPreviewHeader && headerEnd >= 0 ? headerEnd + 2 : 0;
+  const header = out.slice(0, bodyStart);
+  let body = out.slice(bodyStart).replace(/\n+$/, '');
+  if (want > 0) body += '\n'.repeat(want);
+  return header + body;
+}
+
+function gapBeforeTranslation(originalSlice: string): string {
+  if (originalSlice.endsWith('\n\n')) return '';
+  if (originalSlice.endsWith('\n')) return '\n';
+  return '\n\n';
 }
 
 function translationBlockForSegment(
@@ -45,73 +67,44 @@ function translationBlockForSegment(
 ): string {
   if (style === 'append' && seg.kind === 'preserved') return '';
 
-  if (seg.table) {
-    return renderTableTranslation(seg, session);
-  }
+  const original = session.sourceText.slice(seg.range.start, seg.range.end);
+  const gap = gapBeforeTranslation(original);
 
   const st = session.results.get(seg.id);
   if (!st || st.status === 'pending') {
-    return style === 'interleaved' ? '\n\n> *(翻译中…)*\n' : '';
+    return style === 'interleaved' ? `${gap}> *(翻译中…)*` : '';
   }
   if (st.status === 'failed') {
-    return `\n\n> ⚠️ 翻译失败：${st.error ?? '未知错误'}（保留原文）\n`;
+    return `${gap}> ⚠️ 翻译失败：${st.error ?? '未知错误'}（保留原文）`;
   }
   const restored = restore(st.text ?? '', seg.placeholders);
-  const text = restored.ok ? restored.text : (st.text ?? '');
-  if (!text.trim()) return '';
+  const text = (restored.ok ? restored.text : (st.text ?? '')).trimEnd();
+  if (!text) return '';
 
   if (seg.kind === 'heading' && seg.headingDepth) {
     const hashes = '#'.repeat(seg.headingDepth);
     const clean = text.replace(/^#+\s*/, '').trim();
-    return `\n\n${hashes} ${clean}\n`;
+    return `${gap}${hashes} ${clean}`;
   }
 
-  return `\n\n${text}\n`;
-}
-
-function renderTableTranslation(seg: Segment, session: DocSession): string {
-  if (!seg.table) return '';
-  const lines: string[] = ['\n'];
-  for (const row of seg.table.cells) {
-    const cells: string[] = [];
-    for (const cell of row) {
-      const st = session.results.get(cell.id);
-      if (st?.status === 'done' && st.text) {
-        const r = restore(st.text, cell.placeholders);
-        cells.push((r.ok ? r.text : st.text).replace(/\|/g, '\\|'));
-      } else if (st?.status === 'failed') {
-        cells.push(`⚠️${cell.text.slice(0, 20)}`);
-      } else {
-        cells.push(cell.text.replace(/\|/g, '\\|'));
-      }
-    }
-    lines.push(`| ${cells.join(' | ')} |`);
+  if (seg.containerKind) {
+    return `${gap}${text}`;
   }
-  return lines.join('\n') + '\n';
+
+  return `${gap}${text}`;
 }
 
 /** Replace translatable ranges in source with translated text (structure-aware). */
 export function assembleTranslatedOnly(source: string, session: DocSession): string {
   const replacements: Array<{ start: number; end: number; text: string }> = [];
 
+  const trimReplacement = (text: string): string => {
+    if (source.endsWith('\n')) return text;
+    return text.replace(/\n+$/, '');
+  };
+
   for (const seg of session.segments) {
     if (seg.kind === 'preserved') continue;
-    if (seg.table && seg.table) {
-      for (const row of seg.table.cells) {
-        for (const cell of row) {
-          if (!cell.range) continue;
-          const st = session.results.get(cell.id);
-          if (st?.status !== 'done' || !st.text) continue;
-          const r = restore(st.text, cell.placeholders);
-          replacements.push({
-            start: cell.range.start,
-            end: cell.range.end,
-            text: r.ok ? r.text : st.text,
-          });
-        }
-      }
-      continue;
-    }
     const st = session.results.get(seg.id);
     if (st?.status !== 'done' || !st.text) continue;
     const r = restore(st.text, seg.placeholders);
@@ -126,7 +119,7 @@ export function assembleTranslatedOnly(source: string, session: DocSession): str
         text: hashes + text.replace(/^#+\s*/, '').trim(),
       });
     } else {
-      replacements.push({ start: seg.range.start, end: seg.range.end, text });
+      replacements.push({ start: seg.range.start, end: seg.range.end, text: trimReplacement(text) });
     }
   }
 
@@ -135,5 +128,5 @@ export function assembleTranslatedOnly(source: string, session: DocSession): str
   for (const rep of replacements) {
     out = out.slice(0, rep.start) + rep.text + out.slice(rep.end);
   }
-  return out;
+  return finalizeTrailingNewlines(source, out);
 }

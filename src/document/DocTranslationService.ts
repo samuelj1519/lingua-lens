@@ -9,6 +9,7 @@ import { PlainTextSegmenter } from './PlainTextSegmenter';
 import type { PreviewContentProvider } from './PreviewContentProvider';
 import { SideFileWriter } from './SideFileWriter';
 import { canTranslateWholeDocument } from './documentEligibility';
+import { validateAndFallbackContainers } from './containerPostProcess';
 
 export interface DocSession {
   sourceUri: vscode.Uri;
@@ -115,15 +116,6 @@ export class DocTranslationService {
     const results = new Map<string, { status: 'pending' | 'done' | 'failed'; text?: string; error?: string }>();
     const translatable = segments.filter((s) => s.kind !== 'preserved');
     for (const s of translatable) results.set(s.id, { status: 'pending' });
-    if (segments.some((s) => s.table)) {
-      for (const s of segments) {
-        if (s.table) {
-          for (const row of s.table.cells) {
-            for (const cell of row) results.set(cell.id, { status: 'pending' });
-          }
-        }
-      }
-    }
     const session: DocSession = {
       sourceUri: doc.uri,
       previewUri,
@@ -146,15 +138,7 @@ export class DocTranslationService {
     const items: { id: string; text: string; placeholders: import('../types').Placeholder[] }[] = [];
     for (const seg of session.segments) {
       if (seg.kind === 'preserved') continue;
-      if (seg.table) {
-        for (const row of seg.table.cells) {
-          for (const cell of row) {
-            items.push({ id: cell.id, text: cell.text, placeholders: cell.placeholders });
-          }
-        }
-      } else {
-        items.push({ id: seg.id, text: seg.sourceText, placeholders: seg.placeholders });
-      }
+      items.push({ id: seg.id, text: seg.sourceText, placeholders: seg.placeholders });
     }
 
     const cfg = this.config.get(session.sourceUri);
@@ -200,6 +184,9 @@ export class DocTranslationService {
           session.doneCount = [...session.results.values()].filter((v) => v.status === 'done').length;
           this.preview.notify(session.previewUri);
         }
+        await validateAndFallbackContainers(session, _source, this.translation, session.target);
+        session.doneCount = [...session.results.values()].filter((v) => v.status === 'done').length;
+        this.preview.notify(session.previewUri);
       },
     );
     if (waitComplete) {

@@ -66,17 +66,23 @@ export interface DocumentSnapshot {
 
 export interface Segment {
   id: string;
-  kind: 'heading' | 'paragraph' | 'table' | 'preserved';
+  kind: 'heading' | 'paragraph' | 'table' | 'list' | 'blockquote' | 'preserved';
   range: OffsetRange;
   sourceText: string;
   placeholders: Placeholder[];
   hash: string;
   linePrefix: string;
   headingDepth?: number;
-  table?: {
-    align: string;
-    cells: { id: string; text: string; placeholders: Placeholder[]; range?: OffsetRange }[][];
-  };
+  /** Whole-block markdown (lists/tables/blockquotes) sent to the model. */
+  containerKind?: 'list' | 'table' | 'blockquote';
+  /** Per-line fallback when whole-block validation fails (lists only). */
+  listFallbackItems?: {
+    id: string;
+    lineIndex: number;
+    prefix: string;
+    text: string;
+    placeholders: Placeholder[];
+  }[];
 }
 
 export interface GlossaryTerm {

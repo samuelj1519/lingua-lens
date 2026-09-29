@@ -1,0 +1,21 @@
+{
+  "command.toggle": "AI Translate: Toggle Enabled",
+  "command.selectTargetLanguage": "AI Translate: Select Target Language",
+  "command.setApiKey": "AI Translate: Set API Key",
+  "command.clearApiKey": "AI Translate: Clear API Key",
+  "command.testConnection": "AI Translate: Test Connection",
+  "command.translateSelection": "AI Translate: Translate Selection",
+  "command.translateDocument": "AI Translate: Translate Document (Bilingual Preview)",
+  "command.refreshPreview": "AI Translate: Refresh Translation",
+  "command.generateSideFile": "AI Translate: Generate Translation File",
+  "command.clearCache": "AI Translate: Clear Cache",
+  "command.disableForWorkspace": "AI Translate: Disable for Workspace",
+  "command.enableForWorkspace": "AI Translate: Enable for Workspace",
+  "command.openGlossary": "AI Translate: Open Glossary",
+  "command.showLog": "AI Translate: Show Log",
+  "command.openSettings": "AI Translate: Open Settings",
+  "command.acknowledgePrivacy": "AI Translate: Acknowledge Privacy",
+  "command.hoverCopy": "Copy Translation",
+  "command.hoverInsertComment": "Insert as Comment",
+  "command.hoverRetranslate": "Retranslate"
+}

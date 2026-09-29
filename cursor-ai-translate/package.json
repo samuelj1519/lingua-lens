@@ -1,0 +1,174 @@
+{
+  "name": "cursor-ai-translate",
+  "displayName": "AI Translate",
+  "description": "使用 LLM 翻译项目中的注释、字符串和文档",
+  "version": "0.1.0",
+  "publisher": "cursor-ai-translate",
+  "repository": { "type": "git", "url": "https://github.com/local/cursor-ai-translate" },
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Other", "Programming Languages"],
+  "main": "./dist/extension.js",
+  "activationEvents": ["onStartupFinished"],
+  "extensionKind": ["ui", "workspace"],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": "limited",
+      "description": "受限模式下不读取工作区术语表",
+      "restrictedConfigurations": ["aiTranslate.glossary.path", "aiTranslate.detection.skipPatterns"]
+    },
+    "virtualWorkspaces": {
+      "supported": "limited",
+      "description": "虚拟工作区中仅支持悬停和选区翻译"
+    }
+  },
+  "contributes": {
+    "commands": [
+      { "command": "aiTranslate.toggle", "title": "%command.toggle%", "category": "AI Translate" },
+      { "command": "aiTranslate.selectTargetLanguage", "title": "%command.selectTargetLanguage%", "category": "AI Translate" },
+      { "command": "aiTranslate.setApiKey", "title": "%command.setApiKey%", "category": "AI Translate" },
+      { "command": "aiTranslate.clearApiKey", "title": "%command.clearApiKey%", "category": "AI Translate" },
+      { "command": "aiTranslate.testConnection", "title": "%command.testConnection%", "category": "AI Translate" },
+      { "command": "aiTranslate.translateSelection", "title": "%command.translateSelection%", "category": "AI Translate" },
+      { "command": "aiTranslate.translateDocument", "title": "%command.translateDocument%", "category": "AI Translate", "icon": "$(globe)" },
+      { "command": "aiTranslate.refreshPreview", "title": "%command.refreshPreview%", "category": "AI Translate", "icon": "$(refresh)" },
+      { "command": "aiTranslate.generateSideFile", "title": "%command.generateSideFile%", "category": "AI Translate" },
+      { "command": "aiTranslate.clearCache", "title": "%command.clearCache%", "category": "AI Translate" },
+      { "command": "aiTranslate.disableForWorkspace", "title": "%command.disableForWorkspace%", "category": "AI Translate" },
+      { "command": "aiTranslate.enableForWorkspace", "title": "%command.enableForWorkspace%", "category": "AI Translate" },
+      { "command": "aiTranslate.openGlossary", "title": "%command.openGlossary%", "category": "AI Translate" },
+      { "command": "aiTranslate.showLog", "title": "%command.showLog%", "category": "AI Translate" },
+      { "command": "aiTranslate.openSettings", "title": "%command.openSettings%", "category": "AI Translate" },
+      { "command": "aiTranslate.acknowledgePrivacy", "title": "%command.acknowledgePrivacy%", "category": "AI Translate" },
+      { "command": "aiTranslate.hover.copy", "title": "%command.hoverCopy%", "category": "AI Translate" },
+      { "command": "aiTranslate.hover.insertComment", "title": "%command.hoverInsertComment%", "category": "AI Translate" },
+      { "command": "aiTranslate.hover.retranslate", "title": "%command.hoverRetranslate%", "category": "AI Translate" }
+    ],
+    "keybindings": [
+      {
+        "command": "aiTranslate.translateSelection",
+        "key": "ctrl+alt+shift+t",
+        "mac": "cmd+alt+shift+t",
+        "when": "editorTextFocus && editorHasSelection"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        { "command": "aiTranslate.acknowledgePrivacy", "when": "false" },
+        { "command": "aiTranslate.hover.copy", "when": "false" },
+        { "command": "aiTranslate.hover.insertComment", "when": "false" },
+        { "command": "aiTranslate.hover.retranslate", "when": "false" },
+        { "command": "aiTranslate.refreshPreview", "when": "resourceScheme == aitranslate" },
+        { "command": "aiTranslate.translateSelection", "when": "editorHasSelection" }
+      ],
+      "editor/context": [
+        { "command": "aiTranslate.translateSelection", "when": "editorHasSelection", "group": "navigation@90" }
+      ],
+      "editor/title": [
+        {
+          "command": "aiTranslate.translateDocument",
+          "when": "resourceScheme != aitranslate && (resourceLangId == markdown || resourceLangId == plaintext)",
+          "group": "navigation@90"
+        },
+        { "command": "aiTranslate.refreshPreview", "when": "resourceScheme == aitranslate", "group": "navigation" },
+        {
+          "command": "aiTranslate.generateSideFile",
+          "when": "resourceScheme != aitranslate && (resourceLangId == markdown || resourceLangId == plaintext)",
+          "group": "1_aiTranslate"
+        }
+      ],
+      "explorer/context": [
+        { "command": "aiTranslate.translateDocument", "when": "resourceExtname =~ /\\.(md|markdown|txt)$/", "group": "7_aiTranslate" },
+        { "command": "aiTranslate.generateSideFile", "when": "resourceExtname =~ /\\.(md|markdown|txt)$/", "group": "7_aiTranslate" }
+      ]
+    },
+    "configuration": {
+      "title": "AI Translate",
+      "properties": {
+        "aiTranslate.enabled": { "type": "boolean", "default": true, "scope": "resource", "description": "启用 AI Translate" },
+        "aiTranslate.targetLanguage": {
+          "type": "string",
+          "default": "zh-CN",
+          "enum": ["zh-CN", "zh-TW", "en", "ja", "ko", "fr", "de", "es", "ru"],
+          "scope": "resource"
+        },
+        "aiTranslate.hover.enabled": { "type": "boolean", "default": true, "scope": "resource" },
+        "aiTranslate.hover.extraDelayMs": { "type": "number", "default": 700, "minimum": 0, "maximum": 5000, "scope": "resource" },
+        "aiTranslate.hover.comments": { "type": "boolean", "default": true, "scope": "resource" },
+        "aiTranslate.hover.strings": { "type": "boolean", "default": true, "scope": "resource" },
+        "aiTranslate.hover.maxChars": { "type": "number", "default": 4000, "minimum": 100, "scope": "resource" },
+        "aiTranslate.hover.showOriginal": { "type": "boolean", "default": false, "scope": "resource" },
+        "aiTranslate.detection.minLength": { "type": "number", "default": 3, "minimum": 1, "scope": "resource" },
+        "aiTranslate.detection.targetRatio": { "type": "number", "default": 0.6, "minimum": 0, "maximum": 1, "scope": "resource" },
+        "aiTranslate.detection.reliableMinLength": { "type": "number", "default": 20, "minimum": 1, "scope": "resource" },
+        "aiTranslate.detection.strictChineseVariant": { "type": "boolean", "default": false, "scope": "resource" },
+        "aiTranslate.detection.skipPatterns": { "type": "array", "items": { "type": "string" }, "default": [], "scope": "resource" },
+        "aiTranslate.llm.baseUrl": { "type": "string", "default": "https://api.openai.com/v1", "scope": "application", "format": "uri" },
+        "aiTranslate.llm.model": { "type": "string", "default": "", "scope": "application" },
+        "aiTranslate.llm.temperature": { "type": "number", "default": 0.2, "minimum": 0, "maximum": 2, "scope": "application" },
+        "aiTranslate.llm.timeoutMs": { "type": "number", "default": 30000, "minimum": 1000, "scope": "application" },
+        "aiTranslate.llm.maxConcurrency": { "type": "number", "default": 4, "minimum": 1, "maximum": 16, "scope": "application" },
+        "aiTranslate.llm.maxTokens": { "type": "number", "default": 4096, "minimum": 64, "scope": "application" },
+        "aiTranslate.llm.maxRetries": { "type": "number", "default": 3, "minimum": 0, "maximum": 10, "scope": "application" },
+        "aiTranslate.llm.systemPrompt": { "type": "string", "default": "", "editPresentation": "multilineText", "scope": "application" },
+        "aiTranslate.llm.extraHeaders": { "type": "object", "default": {}, "additionalProperties": { "type": "string" }, "scope": "application" },
+        "aiTranslate.llm.jsonMode": { "type": "string", "enum": ["auto", "on", "off"], "default": "auto", "scope": "application" },
+        "aiTranslate.document.batchSize": { "type": "number", "default": 15, "minimum": 1, "maximum": 50, "scope": "resource" },
+        "aiTranslate.document.maxBatchChars": { "type": "number", "default": 6000, "minimum": 500, "scope": "resource" },
+        "aiTranslate.document.sideFileNamePattern": { "type": "string", "default": "${fileBasenameNoExtension}.${lang}${fileExtname}", "scope": "resource" },
+        "aiTranslate.document.sideFileContent": { "type": "string", "enum": ["translated", "bilingual"], "default": "translated", "scope": "resource" },
+        "aiTranslate.document.autoRefresh": { "type": "boolean", "default": false, "scope": "resource" },
+        "aiTranslate.cache.enabled": { "type": "boolean", "default": true, "scope": "application" },
+        "aiTranslate.cache.memoryEntries": { "type": "number", "default": 2000, "minimum": 0, "scope": "application" },
+        "aiTranslate.cache.maxDiskMB": { "type": "number", "default": 50, "minimum": 0, "scope": "application" },
+        "aiTranslate.privacy.exclude": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": ["**/.env", "**/.env.*", "**/*.pem", "**/*.key", "**/*.p12", "**/id_rsa*", "**/secrets/**", "**/.git/**", "**/node_modules/**"],
+          "scope": "resource"
+        },
+        "aiTranslate.privacy.allowedSchemes": { "type": "array", "items": { "type": "string" }, "default": ["file", "untitled", "vscode-remote"], "scope": "application" },
+        "aiTranslate.privacy.blockSecrets": { "type": "boolean", "default": true, "scope": "application" },
+        "aiTranslate.glossary.path": { "type": "string", "default": ".translate-glossary.json", "scope": "resource" },
+        "aiTranslate.glossary.maxTerms": { "type": "number", "default": 50, "minimum": 0, "scope": "resource" },
+        "aiTranslate.selection.output": { "type": "string", "enum": ["auto", "notification", "document"], "default": "auto", "scope": "resource" },
+        "aiTranslate.parser.maxFileSizeKB": { "type": "number", "default": 1024, "minimum": 16, "scope": "application" },
+        "aiTranslate.statusBar.enabled": { "type": "boolean", "default": true, "scope": "application" }
+      }
+    },
+    "jsonValidation": [
+      { "fileMatch": ".translate-glossary.json", "url": "./schemas/translate-glossary.schema.json" }
+    ]
+  },
+  "scripts": {
+    "build": "node esbuild.mjs && node scripts/copy-wasm.mjs",
+    "watch": "node esbuild.mjs --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "tsc --noEmit",
+    "package": "npm run build && vsce package --no-dependencies",
+    "smoke:tree-sitter": "node scripts/smoke-tree-sitter.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/test-cli": "^0.0.6",
+    "@vscode/test-electron": "^2.4.0",
+    "@vscode/vsce": "^2.26.0",
+    "esbuild": "^0.21.5",
+    "typescript": "^5.5.0",
+    "vitest": "^2.0.0"
+  },
+  "dependencies": {
+    "picomatch": "^4.0.2",
+    "remark-frontmatter": "^5.0.0",
+    "remark-gfm": "^4.0.0",
+    "remark-parse": "^11.0.0",
+    "tinyld": "^1.3.4",
+    "unified": "^11.0.5",
+    "tree-sitter-wasms": "^0.1.12",
+    "web-tree-sitter": "^0.22.6"
+  }
+}

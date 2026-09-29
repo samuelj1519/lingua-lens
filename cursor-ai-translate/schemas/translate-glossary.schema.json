@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AI Translate glossary",
+  "type": "object",
+  "required": ["version", "terms"],
+  "properties": {
+    "version": { "const": 1 },
+    "terms": {
+      "type": "array",
+      "maxItems": 2000,
+      "items": {
+        "type": "object",
+        "required": ["source"],
+        "properties": {
+          "source": { "type": "string", "minLength": 1 },
+          "target": {
+            "oneOf": [
+              { "type": "string" },
+              { "type": "object", "additionalProperties": { "type": "string" } }
+            ]
+          },
+          "doNotTranslate": { "type": "boolean", "default": false },
+          "caseSensitive": { "type": "boolean", "default": false },
+          "note": { "type": "string" }
+        }
+      }
+    }
+  }
+}

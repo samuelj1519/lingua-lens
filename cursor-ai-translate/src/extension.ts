@@ -1,0 +1,275 @@
+import * as vscode from 'vscode';
+import * as path from 'path';
+import { CacheService } from './cache/CacheService';
+import { ConfigService } from './config/ConfigService';
+import { DocTranslationService } from './document/DocTranslationService';
+import { PreviewContentProvider } from './document/PreviewContentProvider';
+import { TranslateHoverProvider } from './hover/TranslateHoverProvider';
+import { HoverActionRegistry } from './hover/HoverActionRegistry';
+import { GlossaryService } from './glossary/GlossaryService';
+import { LlmClient } from './llm/LlmClient';
+import { CombinedExtractor } from './parsing/CombinedExtractor';
+import { ParserService } from './parsing/ParserService';
+import { getSpec } from './parsing/languages/specs';
+import { PrivacyGuard } from './privacy/PrivacyGuard';
+import { ApiKeyStore } from './secrets/ApiKeyStore';
+import { StatsService } from './stats/StatsService';
+import { TranslationService } from './translation/TranslationService';
+import { StatusBarController } from './ui/StatusBarController';
+import { Logger } from './util/logger';
+
+let parserService: ParserService | undefined;
+let cacheService: CacheService | undefined;
+
+export async function activate(context: vscode.ExtensionContext): Promise<void> {
+  const logger = new Logger();
+  const config = new ConfigService();
+  const stats = new StatsService();
+  const apiKeys = new ApiKeyStore(context);
+  const llm = new LlmClient(() => config.get(), apiKeys);
+  const cfg = config.get();
+  cacheService = new CacheService(context, cfg.cache.memoryEntries, cfg.cache.maxDiskMB);
+  await cacheService.initialize();
+
+  const glossary = new GlossaryService(config, logger);
+  const translation = new TranslationService((uri) => config.get(uri), cacheService, llm, glossary, stats);
+  const guard = new PrivacyGuard(config, context);
+  const wasmDir = path.join(context.extensionPath, 'dist', 'wasm');
+  parserService = new ParserService(wasmDir, cfg.parser.maxFileSizeKB);
+  const extractor = new CombinedExtractor(parserService);
+  const hoverRegistry = new HoverActionRegistry();
+  const preview = new PreviewContentProvider();
+  const docService = new DocTranslationService(config, guard, translation, preview);
+
+  const statusBar = new StatusBarController(config, stats, apiKeys);
+  context.subscriptions.push(
+    logger,
+    config,
+    glossary,
+    statusBar,
+    vscode.workspace.registerTextDocumentContentProvider('aitranslate', preview),
+    vscode.languages.registerHoverProvider({ scheme: '*', language: '*' }, new TranslateHoverProvider(config, guard, extractor, translation, stats, hoverRegistry)),
+    vscode.workspace.onDidChangeTextDocument((e) => {
+      parserService?.applyChanges(e.document.uri.toString(), e.contentChanges, e.document.version);
+    }),
+    vscode.workspace.onDidCloseTextDocument((d) => {
+      parserService?.release(d.uri.toString());
+      if (d.uri.scheme === 'aitranslate') docService.onClosePreview(d.uri);
+    }),
+  );
+
+  const reg = (id: string, fn: (...args: never[]) => unknown) => {
+    context.subscriptions.push(vscode.commands.registerCommand(id, fn as (...args: unknown[]) => unknown));
+  };
+
+  reg('aiTranslate.toggle', async () => {
+    const c = config.get();
+    await config.setEnabled(!c.enabled);
+    await statusBar.refresh();
+  });
+
+  reg('aiTranslate.selectTargetLanguage', () => statusBar.pickLanguage());
+
+  reg('aiTranslate.setApiKey', async () => {
+    const c = config.get();
+    const origin = new URL(c.llm.baseUrl).origin;
+    const key = await vscode.window.showInputBox({
+      prompt: `为 ${origin} 设置 API Key`,
+      password: true,
+      ignoreFocusOut: true,
+    });
+    if (key?.trim()) {
+      await apiKeys.set(c.llm.baseUrl, key);
+      translation.resetPause();
+      await statusBar.refresh();
+    }
+  });
+
+  reg('aiTranslate.clearApiKey', async () => {
+    const pick = await vscode.window.showQuickPick(['清除当前 origin', '清除全部'], { title: '清除 API Key' });
+    if (!pick) return;
+    const confirm = await vscode.window.showWarningMessage('确认清除 API Key？', { modal: true }, '确认');
+    if (confirm !== '确认') return;
+    if (pick === '清除全部') await apiKeys.clearAll();
+    else await apiKeys.clear(config.get().llm.baseUrl);
+    await statusBar.refresh();
+  });
+
+  reg('aiTranslate.testConnection', async () => {
+    const r = await llm.testConnection();
+    if (r.ok) void vscode.window.showInformationMessage(r.message);
+    else void vscode.window.showErrorMessage(r.message);
+  });
+
+  reg('aiTranslate.translateSelection', async () => {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor || editor.selection.isEmpty) return;
+    const doc = editor.document;
+    const block = guard.check(doc);
+    if (block === 'excluded') {
+      void vscode.window.showWarningMessage('该文件已被排除');
+      return;
+    }
+    if (!(await guard.ensureAcknowledged(true))) return;
+    const text = doc.getText(editor.selection);
+    if (guard.containsSecret(text)) {
+      void vscode.window.showWarningMessage('疑似密钥，未发送');
+      return;
+    }
+    const c = config.get(doc.uri);
+    const unit = {
+      kind: 'string' as const,
+      range: { start: doc.offsetAt(editor.selection.start), end: doc.offsetAt(editor.selection.end) },
+      rawText: text,
+      text,
+      placeholders: [],
+      languageId: doc.languageId,
+      source: 'selection' as const,
+    };
+    try {
+      const result = await translation.translate(unit, c.targetLanguage, { kind: 'selection', uri: doc.uri });
+      const out = c.selection.output === 'auto' ? (result.text.length > 300 ? 'document' : 'notification') : c.selection.output;
+      if (out === 'notification') {
+        const action = await vscode.window.showInformationMessage(result.text.slice(0, 500), '复制', '替换选区');
+        if (action === '复制') await vscode.env.clipboard.writeText(result.text);
+        if (action === '替换选区') {
+          await editor.edit((eb) => eb.replace(editor.selection, result.text));
+        }
+      } else {
+        const virt = await vscode.workspace.openTextDocument({
+          language: 'markdown',
+          content: result.text,
+        });
+        await vscode.window.showTextDocument(virt, { viewColumn: vscode.ViewColumn.Beside, preview: true });
+      }
+    } catch (e) {
+      void vscode.window.showErrorMessage(e instanceof Error ? e.message : String(e));
+    }
+  });
+
+  reg('aiTranslate.translateDocument', () => {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor) return;
+    return docService.openPreview(editor.document);
+  });
+
+  reg('aiTranslate.refreshPreview', () => {
+    const editor = vscode.window.activeTextEditor;
+    if (editor?.document.uri.scheme === 'aitranslate') {
+      return docService.refresh(editor.document.uri);
+    }
+  });
+
+  reg('aiTranslate.generateSideFile', () => {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor) return;
+    return docService.generateSideFile(editor.document);
+  });
+
+  reg('aiTranslate.clearCache', async () => {
+    const ok = await vscode.window.showWarningMessage('清除所有翻译缓存？', { modal: true }, '清除');
+    if (ok === '清除') {
+      await cacheService?.clear();
+      void vscode.window.showInformationMessage('缓存已清除');
+    }
+  });
+
+  reg('aiTranslate.disableForWorkspace', async () => {
+    const folder = vscode.workspace.workspaceFolders?.[0]?.uri;
+    await config.setEnabled(false, folder);
+    await statusBar.refresh();
+  });
+
+  reg('aiTranslate.enableForWorkspace', async () => {
+    const folder = vscode.workspace.workspaceFolders?.[0]?.uri;
+    const cfgWs = vscode.workspace.getConfiguration('aiTranslate', folder);
+    await cfgWs.update('enabled', undefined, vscode.ConfigurationTarget.WorkspaceFolder);
+    await statusBar.refresh();
+  });
+
+  reg('aiTranslate.openGlossary', async () => {
+    const folder = vscode.workspace.workspaceFolders?.[0]?.uri;
+    if (!folder) return;
+    const rel = config.get(folder).glossary.path;
+    const uri = vscode.Uri.joinPath(folder, rel);
+    try {
+      await vscode.workspace.fs.stat(uri);
+    } catch {
+      const create = await vscode.window.showInformationMessage('术语表不存在，是否创建？', '创建');
+      if (create === '创建') {
+        const template = JSON.stringify({ version: 1, terms: [] }, null, 2);
+        await vscode.workspace.fs.writeFile(uri, Buffer.from(template, 'utf8'));
+      } else return;
+    }
+    await vscode.window.showTextDocument(uri);
+  });
+
+  reg('aiTranslate.showLog', () => logger.show());
+  reg('aiTranslate.openSettings', () => vscode.commands.executeCommand('workbench.action.openSettings', 'aiTranslate'));
+
+  reg('aiTranslate.acknowledgePrivacy', async () => {
+    await guard.acknowledgeOrigin();
+    void vscode.window.showInformationMessage('已确认隐私提示');
+  });
+
+  reg('aiTranslate.hover.copy', async (...args: unknown[]) => {
+    const id = args[0] as string;
+    const action = hoverRegistry.get(id);
+    if (action) await vscode.env.clipboard.writeText(action.translation);
+  });
+
+  reg('aiTranslate.hover.insertComment', async (...args: unknown[]) => {
+    const id = args[0] as string;
+    const action = hoverRegistry.get(id);
+    if (!action) return;
+    const editor = vscode.window.visibleTextEditors.find((e) => e.document.uri.toString() === action.uri);
+    if (!editor) {
+      void vscode.window.showWarningMessage('原文位置已变化');
+      return;
+    }
+    const spec = getSpec(action.languageId);
+    const prefix = spec?.lineCommentPrefixForInsert ?? '//';
+    const line = editor.document.positionAt(action.range.start).line;
+    const indent = editor.document.lineAt(line).text.match(/^\s*/)?.[0] ?? '';
+    const lines = action.translation.split('\n').map((l) => indent + prefix + ' ' + l);
+    await editor.edit((eb) => {
+      const pos = new vscode.Position(line, 0);
+      eb.insert(pos, lines.join('\n') + '\n');
+    });
+  });
+
+  reg('aiTranslate.hover.retranslate', async (...args: unknown[]) => {
+    const id = args[0] as string;
+    const action = hoverRegistry.get(id);
+    if (!action) return;
+    try {
+      await translation.translate(action.unit, config.get().targetLanguage, {
+        kind: 'hover',
+        bypassCache: true,
+        uri: vscode.Uri.parse(action.uri),
+      });
+      void vscode.window.showInformationMessage('已重新翻译，再次悬停查看');
+    } catch (e) {
+      void vscode.window.showErrorMessage(e instanceof Error ? e.message : String(e));
+    }
+  });
+
+  config.onDidChange(() => {
+    const c = config.get();
+    cacheService?.configure(c.cache.enabled, c.cache.memoryEntries, c.cache.maxDiskMB);
+    parserService = new ParserService(wasmDir, c.parser.maxFileSizeKB);
+  });
+
+  apiKeys.onDidChange(() => {
+    translation.resetPause();
+    void statusBar.refresh();
+  });
+
+  void glossary.ensureLoaded();
+  logger.info(`AI Translate 已激活 (VS Code ${vscode.version})`);
+}
+
+export async function deactivate(): Promise<void> {
+  await cacheService?.flush();
+  parserService?.dispose();
+}

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.3
+
+- 打包：VSIX 不再包含 `dist/**/*.map`（本地构建仍生成 sourcemap）、`contributes/` 源文件与 `out/` 测试产物；设置面板统计项数改为读取已合并的 `package.json`
+- 测试：扩展 `vsix-contents` 校验上述排除项及必需运行时文件
+
 ## 0.5.2
 
 - 改进：**设置面板**顶部语言下拉与 `aiTranslate.targetLanguage` 双向同步（与 User/Workspace 作用域一致）；合并原「目标语言」重复控件；自定义目标语言时面板界面回落英文、下拉显示「自定义：…」

@@ -30,6 +30,15 @@ const BUNDLE_L10N = [
   'l10n/bundle.l10n.pt-br.json',
 ];
 
+const REQUIRED_RUNTIME = [
+  'package.json',
+  'dist/extension.js',
+  'dist/settings-panel-webview.js',
+  'dist/wasm/tree-sitter.wasm',
+  'schemas/translate-glossary.schema.json',
+  'resources/icons/translate-document.svg',
+];
+
 function listPackagePaths(): string[] {
   const out = execSync('npx @vscode/vsce ls', {
     cwd: root,
@@ -42,8 +51,8 @@ function listPackagePaths(): string[] {
     .filter(Boolean);
 }
 
-describe('VSIX packaging (i18n layout)', () => {
-  it('includes root package.nls and l10n bundles; excludes i18n/scripts/src/test and split nls', () => {
+describe('VSIX packaging', () => {
+  it('includes nls/l10n/runtime assets; excludes dev sources, maps, contributes, out', () => {
     const paths = listPackagePaths();
 
     for (const rel of PACKAGE_NLS_ROOT) {
@@ -52,14 +61,21 @@ describe('VSIX packaging (i18n layout)', () => {
     for (const rel of BUNDLE_L10N) {
       expect(paths).toContain(rel);
     }
+    for (const rel of REQUIRED_RUNTIME) {
+      expect(paths).toContain(rel);
+    }
 
     for (const p of paths) {
       expect(p.startsWith('i18n/')).toBe(false);
       expect(p.startsWith('scripts/')).toBe(false);
       expect(p.startsWith('src/')).toBe(false);
       expect(p.startsWith('test/')).toBe(false);
+      expect(p.startsWith('docs/')).toBe(false);
+      expect(p.startsWith('contributes/')).toBe(false);
+      expect(p.startsWith('out/')).toBe(false);
       expect(p.startsWith('package.nls.commands.')).toBe(false);
       expect(p.startsWith('package.nls.config.')).toBe(false);
+      expect(p.endsWith('.map')).toBe(false);
     }
   });
 });

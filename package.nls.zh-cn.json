@@ -12,6 +12,7 @@
   "command.hoverRetranslate": "重新翻译",
   "command.openGlossary": "打开术语表",
   "command.openSettings": "打开设置",
+  "command.openSettingsPanel": "打开设置面板",
   "command.refreshDocumentTranslation": "刷新全文翻译",
   "command.refreshPreview": "刷新翻译",
   "command.selectTargetLanguage": "选择目标语言",

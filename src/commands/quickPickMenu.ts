@@ -17,6 +17,7 @@ export async function showAiTranslateQuickPick(
     { label: '$(book) 翻译全文（对照预览）', description: 'document' },
     { label: '$(new-file) 生成译文文件', description: 'sidefile' },
     { label: '$(settings-gear) 打开设置', description: 'settings' },
+    { label: '$(layout) 设置面板', description: 'settingsPanel' },
     { label: '$(key) 设置 API Key', description: 'apikey' },
   ];
   const pick = await vscode.window.showQuickPick(items, { title: 'AI Translate' });
@@ -40,6 +41,9 @@ export async function showAiTranslateQuickPick(
     }
     case 'settings':
       await vscode.commands.executeCommand('workbench.action.openSettings', EXTENSION_SETTINGS_FILTER);
+      break;
+    case 'settingsPanel':
+      await vscode.commands.executeCommand('aiTranslate.openSettingsPanel');
       break;
     case 'apikey':
       await vscode.commands.executeCommand('aiTranslate.setApiKey');

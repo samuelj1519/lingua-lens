@@ -30,5 +30,6 @@
   "command.translateReplaceSelection": "Traduire et remplacer la sélection",
   "command.translateScmInput": "Traduire le message de commit SCM",
   "command.translateSelection": "Traduire la sélection",
-  "command.translateSelectionPopup": "Traduire la sélection (fenêtre)"
+  "command.translateSelectionPopup": "Traduire la sélection (fenêtre)",
+  "command.openSettingsPanel": "Ouvrir le panneau des paramètres"
 }

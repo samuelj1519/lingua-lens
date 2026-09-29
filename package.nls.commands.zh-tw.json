@@ -30,5 +30,6 @@
   "command.translateReplaceSelection": "翻譯並替換選區",
   "command.translateScmInput": "翻譯 SCM 提交說明",
   "command.translateSelection": "翻譯選中內容",
-  "command.translateSelectionPopup": "翻譯選區（彈窗）"
+  "command.translateSelectionPopup": "翻譯選區（彈窗）",
+  "command.openSettingsPanel": "開啟設定面板"
 }

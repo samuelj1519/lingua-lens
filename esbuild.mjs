@@ -5,22 +5,38 @@ const watch = process.argv.includes('--watch');
 
 mkdirSync('dist', { recursive: true });
 
-const ctx = await esbuild.context({
-  entryPoints: ['src/extension.ts'],
+const shared = {
   bundle: true,
+  sourcemap: true,
+  logLevel: 'info',
+};
+
+const ctx = await esbuild.context({
+  ...shared,
+  entryPoints: ['src/extension.ts'],
   outfile: 'dist/extension.js',
   platform: 'node',
   format: 'cjs',
   external: ['vscode'],
-  sourcemap: true,
   target: 'node18',
-  logLevel: 'info',
+});
+
+const webviewCtx = await esbuild.context({
+  ...shared,
+  entryPoints: ['src/settingsPanel/webview/main.ts'],
+  outfile: 'dist/settings-panel-webview.js',
+  platform: 'browser',
+  format: 'iife',
+  target: 'es2020',
 });
 
 if (watch) {
   await ctx.watch();
+  await webviewCtx.watch();
   console.log('watching...');
 } else {
   await ctx.rebuild();
+  await webviewCtx.rebuild();
   await ctx.dispose();
+  await webviewCtx.dispose();
 }

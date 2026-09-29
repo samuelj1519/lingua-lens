@@ -30,5 +30,6 @@
   "command.translateReplaceSelection": "번역 후 선택 영역 바꾸기",
   "command.translateScmInput": "SCM 커밋 메시지 번역",
   "command.translateSelection": "선택 영역 번역",
-  "command.translateSelectionPopup": "선택 영역 번역(팝업)"
+  "command.translateSelectionPopup": "선택 영역 번역(팝업)",
+  "command.openSettingsPanel": "설정 패널 열기"
 }

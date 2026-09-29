@@ -39,7 +39,15 @@
   "panel.cache.enabled": "캐시 사용",
   "panel.cache.memoryEntries": "메모리 항목(LRU)",
   "panel.cache.maxDiskMB": "디스크 캐시 상한(MB)",
-  "panel.openNativeSettings": "VS Code 설정에서 열기",
+  "panel.openNativeSettings": "View all {0} settings in VS Code",
   "panel.override.workspace": "워크스페이스 재정의 적용 중",
-  "document.progress.message": "{0} 번역 중: {1}/{2} 세그먼트"
+  "document.progress.message": "{0} 번역 중: {1}/{2} 세그먼트",
+  "panel.section.target": "Target & detection",
+  "panel.field.stream": "Stream interactive requests (SSE)",
+  "panel.field.extraBody": "Extra request body (JSON)",
+  "panel.hover.extraDelayMs": "Hover delay (ms)",
+  "panel.cache.stats": "Cache usage",
+  "panel.cache.clear": "Clear cache",
+  "panel.cache.clearConfirm": "Clear all cached translations?",
+  "panel.cache.clearYes": "Clear"
 }

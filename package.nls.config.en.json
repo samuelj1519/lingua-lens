@@ -28,7 +28,7 @@
   "config.selection.output.enum.document": "Always open a new document",
   "config.privacy.exclude.markdownDescription": "Glob patterns for files that AI Translate will not read or translate (e.g. secrets). Works with [#aiTranslate.privacy.blockSecrets#](settings://aiTranslate.privacy.blockSecrets).",
   "config.statusBar.enabled.markdownDescription": "Show the **译** status bar entry that opens the AI Translate quick menu.",
-  "config.llm.baseUrl.markdownDescription": "OpenAI-compatible API base URL (must include `/v1`). API keys are stored per origin via **Set API Key**, not in settings.",
+  "config.llm.baseUrl.markdownDescription": "OpenAI-compatible API base URL (must include `/v1`). API keys are stored per origin via **Set API Key**, not in settings. Quick access: [Settings panel](command:aiTranslate.openSettingsPanel).",
   "config.llm.model.markdownDescription": "Chat model id sent in API requests (e.g. `gpt-4o-mini`, `deepseek-chat`). Required for translation.",
   "config.llm.stream.markdownDescription": "Use SSE streaming for interactive requests (hover, selection). Document batch translation stays non-streaming. See also [#aiTranslate.llm.extraBody#](settings://aiTranslate.llm.extraBody).",
   "config.llm.extraBody.markdownDescription": "Extra JSON merged into the chat/completions request body. Examples: DeepSeek / Doubao `{\"thinking\":{\"type\":\"disabled\"}}`; Qwen `{\"enable_thinking\":false}`.",

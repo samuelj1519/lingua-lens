@@ -30,5 +30,6 @@
   "command.translateReplaceSelection": "Übersetzen und Auswahl ersetzen",
   "command.translateScmInput": "SCM-Commit-Nachricht übersetzen",
   "command.translateSelection": "Auswahl übersetzen",
-  "command.translateSelectionPopup": "Auswahl übersetzen (Popup)"
+  "command.translateSelectionPopup": "Auswahl übersetzen (Popup)",
+  "command.openSettingsPanel": "Einstellungsbereich öffnen"
 }

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.0
+
+- 新增：内置 **package.nls** 多语言（zh-tw、ja、ko、fr、de、es、ru、pt-br 等），设置说明/命令/分组/enum 全覆盖；运行时 `bundle.l10n.*` + `vscode.l10n`
+- 新增：**设置面板** Webview（`aiTranslate.openSettingsPanel`）— 常用模型/悬停/全文/缓存项，User/Workspace 作用域与覆盖提示，API Key 仅状态+命令、extraBody 模板与 JSON 校验、测试连接（错误脱敏）、清空缓存确认；底部链接原生设置页全部项
+- 改进：状态栏 QuickPick 增加「设置面板」；原生 `llm.baseUrl` 说明含 `command:aiTranslate.openSettingsPanel` 链接
+
 ## 0.4.6
 
 - 修复：全文翻译（预览/侧文件）在批量路径**未调用语言检测**，导致已是简体中文的文档仍逐段请求模型并交错重复原文；现与悬停共用 `detection.*` 规则，跳过无需翻译的段落

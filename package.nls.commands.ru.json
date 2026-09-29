@@ -30,5 +30,6 @@
   "command.translateReplaceSelection": "Перевести и заменить выделение",
   "command.translateScmInput": "Перевести сообщение коммита SCM",
   "command.translateSelection": "Перевести выделение",
-  "command.translateSelectionPopup": "Перевести выделение (всплывающее окно)"
+  "command.translateSelectionPopup": "Перевести выделение (всплывающее окно)",
+  "command.openSettingsPanel": "Открыть панель настроек"
 }

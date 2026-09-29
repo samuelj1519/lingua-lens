@@ -6,6 +6,19 @@ import { CONFIG_KEYS_USED_IN_CODE } from '../../src/config/keysUsedInCode';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '../..');
 
+const PACKAGE_NLS_LOCALES = [
+  'package.nls.json',
+  'package.nls.zh-cn.json',
+  'package.nls.zh-tw.json',
+  'package.nls.ja.json',
+  'package.nls.ko.json',
+  'package.nls.fr.json',
+  'package.nls.de.json',
+  'package.nls.es.json',
+  'package.nls.ru.json',
+  'package.nls.pt-br.json',
+];
+
 function loadJson<T>(rel: string): T {
   return JSON.parse(readFileSync(join(root, rel), 'utf8')) as T;
 }
@@ -39,8 +52,10 @@ function resolveNlsRef(value: string, nls: Record<string, string>): string {
 describe('package configuration contributes', () => {
   const sections = loadJson<ConfigSection[]>('contributes/configuration.json');
   const pkg = loadJson<{ contributes: { configuration: ConfigSection[] }; version: string }>('package.json');
-  const nlsEn = loadJson<Record<string, string>>('package.nls.json');
-  const nlsZh = loadJson<Record<string, string>>('package.nls.zh-cn.json');
+  const nlsByLocale = Object.fromEntries(
+    PACKAGE_NLS_LOCALES.map((f) => [f, loadJson<Record<string, string>>(f)]),
+  );
+  const nlsEn = nlsByLocale['package.nls.json'];
 
   it('package.json configuration matches contributes/configuration.json', () => {
     expect(pkg.contributes.configuration).toEqual(sections);
@@ -53,33 +68,41 @@ describe('package configuration contributes', () => {
     }
   });
 
-  it('every declared property belongs to a section and has en/zh markdownDescription', () => {
-    const sectionTitles = new Set<string>();
+  it('every declared property has markdownDescription in all package.nls locales', () => {
     for (const section of sections) {
       expect(section.title).toMatch(/^%config\.section\./);
       const titleKey = section.title.slice(1, -1);
-      expect(nlsEn[titleKey], `en section title ${titleKey}`).toBeTruthy();
-      expect(nlsZh[titleKey], `zh section title ${titleKey}`).toBeTruthy();
-      sectionTitles.add(titleKey);
+      for (const file of PACKAGE_NLS_LOCALES) {
+        expect(nlsByLocale[file][titleKey], `${file} ${titleKey}`).toBeTruthy();
+      }
 
       for (const [fullKey, schema] of Object.entries(section.properties)) {
         const prop = schema as { markdownDescription?: string; enumDescriptions?: string[] };
         expect(prop.markdownDescription, fullKey).toBeTruthy();
         const descKey = nlsKeyForProperty(fullKey);
         resolveNlsRef(prop.markdownDescription!, nlsEn);
-        expect(nlsEn[descKey], `en ${descKey}`).toBeTruthy();
-        expect(nlsZh[descKey], `zh ${descKey}`).toBeTruthy();
+        for (const file of PACKAGE_NLS_LOCALES) {
+          expect(nlsByLocale[file][descKey], `${file} ${descKey}`).toBeTruthy();
+        }
 
         if (prop.enumDescriptions) {
           for (const ed of prop.enumDescriptions) {
             resolveNlsRef(ed, nlsEn);
             const enumKey = ed.slice(1, -1);
-            expect(nlsZh[enumKey], `zh enum ${enumKey}`).toBeTruthy();
+            for (const file of PACKAGE_NLS_LOCALES) {
+              expect(nlsByLocale[file][enumKey], `${file} enum ${enumKey}`).toBeTruthy();
+            }
           }
         }
       }
     }
-    expect(sectionTitles.size).toBe(sections.length);
+  });
+
+  it('all package.nls locales share the same keys as English', () => {
+    const enKeys = Object.keys(nlsEn).sort();
+    for (const file of PACKAGE_NLS_LOCALES.slice(1)) {
+      expect(Object.keys(nlsByLocale[file]).sort()).toEqual(enKeys);
+    }
   });
 
   it('no duplicate configuration keys across sections', () => {

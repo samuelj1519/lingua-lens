@@ -39,7 +39,15 @@
   "panel.cache.enabled": "Включить кэш",
   "panel.cache.memoryEntries": "Записи в памяти (LRU)",
   "panel.cache.maxDiskMB": "Макс. кэш на диске (МБ)",
-  "panel.openNativeSettings": "Открыть в настройках VS Code",
+  "panel.openNativeSettings": "View all {0} settings in VS Code",
   "panel.override.workspace": "Переопределения рабочей области активны",
-  "document.progress.message": "Перевод {0}: {1}/{2} сегментов"
+  "document.progress.message": "Перевод {0}: {1}/{2} сегментов",
+  "panel.section.target": "Target & detection",
+  "panel.field.stream": "Stream interactive requests (SSE)",
+  "panel.field.extraBody": "Extra request body (JSON)",
+  "panel.hover.extraDelayMs": "Hover delay (ms)",
+  "panel.cache.stats": "Cache usage",
+  "panel.cache.clear": "Clear cache",
+  "panel.cache.clearConfirm": "Clear all cached translations?",
+  "panel.cache.clearYes": "Clear"
 }

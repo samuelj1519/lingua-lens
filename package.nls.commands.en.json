@@ -30,5 +30,6 @@
   "command.translateReplaceSelection": "Translate and Replace Selection",
   "command.translateScmInput": "Translate SCM Commit Message",
   "command.translateSelection": "Translate Selection",
-  "command.translateSelectionPopup": "Translate Selection (Popup)"
+  "command.translateSelectionPopup": "Translate Selection (Popup)",
+  "command.openSettingsPanel": "Open Settings Panel"
 }

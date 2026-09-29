@@ -27,6 +27,8 @@ import { translateGitCommitAtLine, translateScmInput } from './commands/gitTrans
 import { generateLocaleFile } from './locale/LocaleFileGenerator';
 import { suggestVariableNames } from './commands/variableNaming';
 import { refreshHoverTranslation } from './commands/refreshHover';
+import { SettingsPanelController } from './settingsPanel/SettingsPanelController';
+import { countConfigurationProperties } from './settingsPanel/countSettings';
 
 let parserService: ParserService | undefined;
 let cacheService: CacheService | undefined;
@@ -65,6 +67,14 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   const hoverRegistry = new HoverActionRegistry();
   const preview = new PreviewContentProvider();
   const docService = new DocTranslationService(config, guard, translation, preview);
+  const settingsPanel = new SettingsPanelController(
+    context,
+    config,
+    cacheService,
+    apiKeys,
+    llm,
+    countConfigurationProperties(context.extensionPath),
+  );
 
   const statusBar = new StatusBarController(config, stats, apiKeys);
   preview.setPreviewStyle(config.get().document.previewStyle);
@@ -248,6 +258,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       '@ext:cursor-ai-translate.cursor-ai-translate',
     ),
   );
+
+  reg('aiTranslate.openSettingsPanel', () => settingsPanel.reveal());
 
   reg('aiTranslate.translateClipboardOrSelection', () =>
     translateClipboardOrSelection(config, guard, translation),

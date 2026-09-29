@@ -215,14 +215,19 @@ export class LlmClient {
     }
   }
 
-  async testConnection(): Promise<{ ok: boolean; message: string }> {
+  async testConnection(): Promise<{ ok: boolean; message: string; latencyMs?: number; model?: string }> {
     try {
       const res = await this.chat({
         messages: [{ role: 'user', content: 'Reply with OK only.' }],
         maxTokens: 5,
         priority: 'interactive',
       });
-      return { ok: true, message: `连接成功 (${res.latencyMs}ms)，模型 ${res.model}` };
+      return {
+        ok: true,
+        message: `连接成功 (${res.latencyMs}ms)，模型 ${res.model}`,
+        latencyMs: res.latencyMs,
+        model: res.model,
+      };
     } catch (e) {
       return { ok: false, message: e instanceof LlmError ? e.message : String(e) };
     }

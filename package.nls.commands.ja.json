@@ -30,5 +30,6 @@
   "command.translateReplaceSelection": "翻訳して選択範囲を置換",
   "command.translateScmInput": "SCM コミットメッセージを翻訳",
   "command.translateSelection": "選択範囲を翻訳",
-  "command.translateSelectionPopup": "選択範囲を翻訳（ポップアップ）"
+  "command.translateSelectionPopup": "選択範囲を翻訳（ポップアップ）",
+  "command.openSettingsPanel": "設定パネルを開く"
 }

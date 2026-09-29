@@ -24,5 +24,9 @@
   "command.translateGitCommitAtLine": "Translate Git Commit Message at Line",
   "command.translateScmInput": "Translate SCM Commit Message",
   "command.generateLocaleFile": "Generate Locale Translation File",
-  "command.suggestVariableNames": "Suggest English Variable Names"
+  "command.suggestVariableNames": "Suggest English Variable Names",
+  "command.showQuickPick": "AI Translate Menu",
+  "command.translateSelectionPopup": "Translate Selection (Popup)",
+  "command.selectionReplace": "Replace Selection with Translation",
+  "command.selectionInsertBelow": "Insert Translation Below"
 }

@@ -24,5 +24,9 @@
   "command.translateGitCommitAtLine": "翻译当前行 Git 提交说明",
   "command.translateScmInput": "翻译 SCM 提交说明",
   "command.generateLocaleFile": "生成语言包译文文件",
-  "command.suggestVariableNames": "根据描述建议英文变量名"
+  "command.suggestVariableNames": "根据描述建议英文变量名",
+  "command.showQuickPick": "AI Translate 菜单",
+  "command.translateSelectionPopup": "翻译选区（弹窗）",
+  "command.selectionReplace": "用译文替换选区",
+  "command.selectionInsertBelow": "在下方插入译文"
 }

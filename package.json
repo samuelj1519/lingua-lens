@@ -2,7 +2,7 @@
   "name": "cursor-ai-translate",
   "displayName": "AI Translate",
   "description": "使用 LLM 翻译项目中的注释、字符串和文档",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "publisher": "cursor-ai-translate",
   "repository": { "type": "git", "url": "https://github.com/local/cursor-ai-translate" },
   "license": "MIT",
@@ -32,24 +32,12 @@
       { "command": "aiTranslate.clearApiKey", "title": "%command.clearApiKey%", "category": "AI Translate" },
       { "command": "aiTranslate.testConnection", "title": "%command.testConnection%", "category": "AI Translate" },
       { "command": "aiTranslate.translateSelection", "title": "%command.translateSelection%", "category": "AI Translate" },
-      {
-        "command": "aiTranslate.translateDocument",
-        "title": "%command.translateDocument%",
-        "category": "AI Translate",
-        "icon": {
-          "light": "resources/icons/translate-document.svg",
-          "dark": "resources/icons/translate-document.svg"
-        }
-      },
-      {
-        "command": "aiTranslate.refreshPreview",
-        "title": "%command.refreshPreview%",
-        "category": "AI Translate",
-        "icon": {
-          "light": "resources/icons/refresh-translation.svg",
-          "dark": "resources/icons/refresh-translation.svg"
-        }
-      },
+      { "command": "aiTranslate.translateDocument", "title": "%command.translateDocument%", "category": "AI Translate" },
+      { "command": "aiTranslate.refreshPreview", "title": "%command.refreshPreview%", "category": "AI Translate" },
+      { "command": "aiTranslate.showQuickPick", "title": "%command.showQuickPick%", "category": "AI Translate" },
+      { "command": "aiTranslate.translateSelectionPopup", "title": "%command.translateSelectionPopup%", "category": "AI Translate" },
+      { "command": "aiTranslate.selection.replace", "title": "%command.selectionReplace%", "category": "AI Translate" },
+      { "command": "aiTranslate.selection.insertBelow", "title": "%command.selectionInsertBelow%", "category": "AI Translate" },
       { "command": "aiTranslate.generateSideFile", "title": "%command.generateSideFile%", "category": "AI Translate" },
       { "command": "aiTranslate.clearCache", "title": "%command.clearCache%", "category": "AI Translate" },
       { "command": "aiTranslate.disableForWorkspace", "title": "%command.disableForWorkspace%", "category": "AI Translate" },
@@ -92,6 +80,18 @@
         "key": "ctrl+alt+shift+b",
         "mac": "cmd+alt+shift+b",
         "when": "editorTextFocus && editorHasSelection"
+      },
+      {
+        "command": "aiTranslate.translateDocument",
+        "key": "ctrl+alt+shift+d",
+        "mac": "cmd+alt+shift+d",
+        "when": "editorTextFocus && resourceLangId =~ /(markdown|plaintext)/"
+      },
+      {
+        "command": "aiTranslate.translateSelectionPopup",
+        "key": "ctrl+alt+shift+p",
+        "mac": "cmd+alt+shift+p",
+        "when": "editorTextFocus && editorHasSelection"
       }
     ],
     "menus": {
@@ -104,14 +104,24 @@
         { "command": "aiTranslate.translateSelection", "when": "editorHasSelection" }
       ],
       "editor/context": [
-        { "command": "aiTranslate.translateSelection", "when": "editorHasSelection", "group": "navigation@90" }
+        { "command": "aiTranslate.translateSelection", "when": "editorHasSelection", "group": "navigation@90" },
+        {
+          "command": "aiTranslate.translateDocument",
+          "when": "resourceScheme != aitranslate && (resourceLangId == markdown || resourceLangId == plaintext)",
+          "group": "navigation@89"
+        },
+        {
+          "command": "aiTranslate.generateSideFile",
+          "when": "resourceScheme != aitranslate && (resourceLangId == markdown || resourceLangId == plaintext)",
+          "group": "navigation@88"
+        }
       ],
       "editor/title": [
         {
           "command": "aiTranslate.translateDocument",
           "when": "resourceScheme != aitranslate && (resourceLangId == markdown || resourceLangId == plaintext)",
           "group": "navigation@1",
-          "icon": "$(book)"
+          "icon": "$(globe)"
         },
         {
           "command": "aiTranslate.refreshPreview",
@@ -168,6 +178,18 @@
           "scope": "resource",
           "description": "悬停时翻译其他提供器显示的外语符号文档（独立块，遵守延迟）"
         },
+        "aiTranslate.hover.gitCommitMessage": {
+          "type": "boolean",
+          "default": true,
+          "scope": "resource",
+          "description": "在行尾 Git 内联 blame 区域悬停时追加翻译后的提交说明（独立块）"
+        },
+        "aiTranslate.hover.selection": {
+          "type": "boolean",
+          "default": true,
+          "scope": "resource",
+          "description": "选中文本时悬停显示译文（复制/替换/插入下方）"
+        },
         "aiTranslate.hover.maxChars": { "type": "number", "default": 4000, "minimum": 100, "scope": "resource" },
         "aiTranslate.hover.showOriginal": { "type": "boolean", "default": false, "scope": "resource" },
         "aiTranslate.detection.minLength": { "type": "number", "default": 3, "minimum": 1, "scope": "resource" },
@@ -184,9 +206,34 @@
         "aiTranslate.llm.maxRetries": { "type": "number", "default": 3, "minimum": 0, "maximum": 10, "scope": "application" },
         "aiTranslate.llm.systemPrompt": { "type": "string", "default": "", "editPresentation": "multilineText", "scope": "application" },
         "aiTranslate.llm.extraHeaders": { "type": "object", "default": {}, "additionalProperties": { "type": "string" }, "scope": "application" },
+        "aiTranslate.llm.extraBody": {
+          "type": "object",
+          "default": {},
+          "scope": "application",
+          "markdownDescription": "合并进 chat/completions 请求体的额外 JSON。示例：DeepSeek/Doubao `{\"thinking\":{\"type\":\"disabled\"}}`；Qwen `{\"enable_thinking\":false}`"
+        },
+        "aiTranslate.llm.stream": {
+          "type": "boolean",
+          "default": false,
+          "scope": "application",
+          "description": "悬停/选区等交互请求使用 SSE 流式（可降低首字延迟；文档批量仍为非流式）"
+        },
         "aiTranslate.llm.jsonMode": { "type": "string", "enum": ["auto", "on", "off"], "default": "auto", "scope": "application" },
-        "aiTranslate.document.batchSize": { "type": "number", "default": 15, "minimum": 1, "maximum": 50, "scope": "resource" },
-        "aiTranslate.document.maxBatchChars": { "type": "number", "default": 6000, "minimum": 500, "scope": "resource" },
+        "aiTranslate.document.batchSize": { "type": "number", "default": 8, "minimum": 1, "maximum": 50, "scope": "resource" },
+        "aiTranslate.document.maxBatchChars": { "type": "number", "default": 4000, "minimum": 500, "scope": "resource" },
+        "aiTranslate.document.previewStyle": {
+          "type": "string",
+          "enum": ["interleaved", "append"],
+          "default": "interleaved",
+          "scope": "resource",
+          "description": "双语预览：interleaved=原文块后紧跟译文块；append=旧版在段末追加"
+        },
+        "aiTranslate.document.codeLens": {
+          "type": "boolean",
+          "default": true,
+          "scope": "resource",
+          "description": "在 Markdown/纯文本顶部显示「翻译全文」CodeLens"
+        },
         "aiTranslate.document.sideFileNamePattern": { "type": "string", "default": "${fileBasenameNoExtension}.${lang}${fileExtname}", "scope": "resource" },
         "aiTranslate.document.sideFileContent": { "type": "string", "enum": ["translated", "bilingual"], "default": "translated", "scope": "resource" },
         "aiTranslate.document.autoRefresh": { "type": "boolean", "default": false, "scope": "resource" },

@@ -9,13 +9,13 @@
 - **悬停翻译**：代码、配置与文档（见下）；**诊断/符号文档**以独立块并列显示（`aiTranslate.hover.diagnostics` / `symbolDocs`，无法改写内置 Hover）
 - **配置文件悬停**：代码文件中针对注释与字符串（tree-sitter + 正则回退）；**配置文件**在 YAML / TOML / **JSON / JSONC / JSON5** / INI / `.cfg` / `.conf` / `.properties` / **XML**（注释、属性值、元素文本、字段名）及其它 `key=value` / `key: value` 文件上行为一致：可悬停翻译注释、字符串值与键名（`aiTranslate.hover.configKeys`）。JSON 键名在 tree-sitter 标为字符串时会自动提升为键名翻译。`.env` 仍由隐私排除规则屏蔽。Markdown / 纯文本段落悬停与「翻译文档」分段一致。共享延迟、检测、缓存与隐私守卫
 - **诊断日志**：设置 `aiTranslate.log.level` 为 `debug` 可查看悬停流水线（守卫、提取、检测、缓存）
-- **选区翻译**：`Ctrl+Alt+Shift+T`；**翻译并替换** `Ctrl+Alt+Shift+R`；**译后插入下方** `Ctrl+Alt+Shift+B`
+- **选区翻译**：`Ctrl+Alt+Shift+T`；悬停选区译文（可关）；灯泡 Code Action；弹窗 `Ctrl+Alt+Shift+P`
 - **终端/剪贴板**：`Ctrl+Alt+Shift+Y` 翻译终端选区或剪贴板（读后恢复剪贴板）
 - **Git**：翻译当前行提交说明、翻译 SCM 输入框（可替换为英文提交信息）
 - **语言包**：`generateLocaleFile` 对 JSON/YAML/properties 增量生成 `*.zh-CN.json` 等
 - **Notebook / 模板**：Markdown 单元格段落悬停；HTML/Vue/JSX 的 UI 属性与文本节点
 - **命名助手**：根据中文描述建议 camelCase / snake_case / PascalCase 标识符
-- **文档双语预览**：虚拟文档 `aitranslate:`，原文在上、译文在下
+- **文档双语预览**：虚拟文档 `aitranslate:`，默认**交错**（原文块 + 译文块）；顶部 CodeLens / `Ctrl+Alt+Shift+D` / 状态栏 `译` 菜单；配置文件不支持整篇翻译
 - **生成译文文件**：如 `README.zh-CN.md`，覆盖前确认
 - **状态栏**：开关与目标语言 QuickPick
 - **缓存**：内存 LRU + 磁盘分片 JSONL

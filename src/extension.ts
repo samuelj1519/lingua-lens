@@ -4,6 +4,11 @@ import { ConfigService } from './config/ConfigService';
 import { DocTranslationService } from './document/DocTranslationService';
 import { PreviewContentProvider } from './document/PreviewContentProvider';
 import { createHoverProvider } from './hover/TranslateHoverProvider';
+import { createSelectionHoverProvider } from './hover/SelectionHoverProvider';
+import { registerDocumentCodeLens } from './document/DocumentCodeLensProvider';
+import { showAiTranslateQuickPick } from './commands/quickPickMenu';
+import { SelectionTranslateCodeActionProvider } from './commands/selectionCodeAction';
+import { translateSelectionPopup } from './commands/selectionPopup';
 import { HoverActionRegistry } from './hover/HoverActionRegistry';
 import { GlossaryService } from './glossary/GlossaryService';
 import { LlmClient } from './llm/LlmClient';
@@ -61,6 +66,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   const docService = new DocTranslationService(config, guard, translation, preview);
 
   const statusBar = new StatusBarController(config, stats, apiKeys);
+  preview.setPreviewStyle(config.get().document.previewStyle);
   context.subscriptions.push(
     logger,
     config,
@@ -68,6 +74,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     statusBar,
     vscode.workspace.registerTextDocumentContentProvider('aitranslate', preview),
     createHoverProvider(config, guard, extractor, translation, stats, hoverRegistry, logger),
+    createSelectionHoverProvider(config, guard, translation, hoverRegistry),
+    registerDocumentCodeLens(config),
+    vscode.languages.registerCodeActionsProvider('*', new SelectionTranslateCodeActionProvider(config), {
+      providedCodeActionKinds: [vscode.CodeActionKind.RefactorRewrite],
+    }),
     vscode.workspace.onDidChangeTextDocument((e) => {
       parserService?.applyChanges(e.document.uri.toString(), e.contentChanges, e.document.version);
     }),
@@ -236,6 +247,33 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
   reg('aiTranslate.translateInsertBelow', () => translateInsertBelow(config, guard, translation));
 
+  reg('aiTranslate.showQuickPick', () => showAiTranslateQuickPick(config, docService));
+  reg('aiTranslate.translateSelectionPopup', () => translateSelectionPopup(config, guard, translation));
+
+  reg('aiTranslate.selection.replace', async (...args: unknown[]) => {
+    const id = args[0] as string;
+    const action = hoverRegistry.get(id);
+    if (!action) return;
+    const editor = vscode.window.visibleTextEditors.find((e) => e.document.uri.toString() === action.uri);
+    if (!editor) return;
+    const start = editor.document.positionAt(action.range.start);
+    const end = editor.document.positionAt(action.range.end);
+    await editor.edit((eb) => eb.replace(new vscode.Range(start, end), action.translation));
+  });
+
+  reg('aiTranslate.selection.insertBelow', async (...args: unknown[]) => {
+    const id = args[0] as string;
+    const action = hoverRegistry.get(id);
+    if (!action) return;
+    const editor = vscode.window.visibleTextEditors.find((e) => e.document.uri.toString() === action.uri);
+    if (!editor) return;
+    const end = editor.document.positionAt(action.range.end);
+    const line = editor.document.lineAt(end.line);
+    const insertLine = end.character >= line.text.length ? end.line + 1 : end.line + 1;
+    const indent = editor.document.lineAt(Math.min(insertLine, editor.document.lineCount - 1)).text.match(/^\s*/)?.[0] ?? '';
+    await editor.edit((eb) => eb.insert(new vscode.Position(insertLine, 0), indent + action.translation + '\n'));
+  });
+
   reg('aiTranslate.translateGitCommitAtLine', () =>
     translateGitCommitAtLine(config, guard, translation),
   );
@@ -299,6 +337,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     logger.setLevelProvider(() => c.log.level);
     cacheService?.configure(c.cache.enabled, c.cache.memoryEntries, c.cache.maxDiskMB);
     parserService?.setMaxFileSizeKB(c.parser.maxFileSizeKB);
+    preview.setPreviewStyle(c.document.previewStyle);
   });
 
   apiKeys.onDidChange(() => {

@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.1
+
+- 新增：行尾 Git blame 区域悬停翻译提交说明（`aiTranslate.hover.gitCommitMessage`）
+- 新增：`aiTranslate.llm.extraBody`（合并进请求体，文档含 DeepSeek/Qwen 关闭思考示例）与 `aiTranslate.llm.stream`（交互请求可选 SSE）
+- 修复：**整篇文档翻译**按块顺序交错输出，不再用偏移插入导致英文残片与 Markdown 损坏；强化分段（列表/引用/粗斜体）与批量提示
+- 新增：Markdown 顶部 CodeLens、状态栏 `译` 打开 QuickPick、右键菜单与 `Ctrl+Alt+Shift+D` 全文翻译
+- 新增：选区悬停翻译、Code Action、弹窗快捷键；配置文件禁止整篇翻译
+- 改进：翻译文档命令图标改为 `$(globe)`；移除命令贡献里无效的 `icon` 字段
+
 ## 0.4.0
 
 - 新增：Jupyter **Markdown 单元格**段落悬停（`vscode-notebook-cell` + `hover.documents`）

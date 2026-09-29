@@ -27,7 +27,7 @@ export class StatusBarController implements vscode.Disposable {
     private readonly apiKeys: ApiKeyStore,
   ) {
     this.toggleItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-    this.toggleItem.command = 'aiTranslate.toggle';
+    this.toggleItem.command = 'aiTranslate.showQuickPick';
     this.langItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 99);
     this.langItem.command = 'aiTranslate.selectTargetLanguage';
     this.stats.onDidChange(() => this.scheduleRefresh());

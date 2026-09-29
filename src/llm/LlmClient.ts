@@ -127,10 +127,12 @@ export class LlmClient {
       headers.Authorization = `Bearer ${key}`;
     }
 
+    const useStream = config.llm.stream && req.priority === 'interactive' && !json;
     const body: Record<string, unknown> = {
       model: config.llm.model,
       messages: req.messages,
-      stream: false,
+      ...config.llm.extraBody,
+      stream: useStream,
     };
     if (useTemperature) body.temperature = config.llm.temperature;
     if (req.maxTokens) body.max_tokens = req.maxTokens;
@@ -150,6 +152,14 @@ export class LlmClient {
         signal: controller.signal,
       });
       clearTimeout(timeout);
+
+      if (useStream && res.ok && res.body) {
+        const content = await readSseContent(res.body, controller.signal);
+        return {
+          content,
+          model: config.llm.model,
+        };
+      }
 
       if (res.status === 401 || res.status === 403) {
         throw new LlmError('auth', `API Key 无效或无权限 (HTTP ${res.status})`, res.status);
@@ -214,4 +224,34 @@ export class LlmClient {
       return { ok: false, message: e instanceof LlmError ? e.message : String(e) };
     }
   }
+}
+
+async function readSseContent(body: ReadableStream<Uint8Array>, signal: AbortSignal): Promise<string> {
+  const reader = body.getReader();
+  const decoder = new TextDecoder();
+  let buf = '';
+  let content = '';
+  while (true) {
+    if (signal.aborted) throw new LlmError('cancelled', '已取消');
+    const { done, value } = await reader.read();
+    if (done) break;
+    buf += decoder.decode(value, { stream: true });
+    const lines = buf.split('\n');
+    buf = lines.pop() ?? '';
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed.startsWith('data:')) continue;
+      const data = trimmed.slice(5).trim();
+      if (data === '[DONE]') continue;
+      try {
+        const json = JSON.parse(data) as { choices?: { delta?: { content?: string } }[] };
+        const delta = json.choices?.[0]?.delta?.content;
+        if (delta) content += delta;
+      } catch {
+        /* ignore partial */
+      }
+    }
+  }
+  if (!content) throw new LlmError('invalidResponse', '流式响应为空');
+  return content;
 }

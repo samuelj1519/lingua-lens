@@ -12,6 +12,8 @@ export interface TranslateConfig {
     configKeys: boolean;
     diagnostics: boolean;
     symbolDocs: boolean;
+    gitCommitMessage: boolean;
+    selection: boolean;
     maxChars: number;
     showOriginal: boolean;
   };
@@ -32,6 +34,8 @@ export interface TranslateConfig {
     maxRetries: number;
     systemPrompt: string;
     extraHeaders: Record<string, string>;
+    extraBody: Record<string, unknown>;
+    stream: boolean;
     jsonMode: 'auto' | 'on' | 'off';
   };
   document: {
@@ -40,6 +44,8 @@ export interface TranslateConfig {
     sideFileNamePattern: string;
     sideFileContent: 'translated' | 'bilingual';
     autoRefresh: boolean;
+    previewStyle: 'interleaved' | 'append';
+    codeLens: boolean;
   };
   cache: {
     enabled: boolean;

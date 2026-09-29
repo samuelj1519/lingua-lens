@@ -10,6 +10,11 @@ import { cancellableDelay } from '../util/delay';
 import type { AppLogger } from '../util/logger';
 import { diagnosticHoverRange, diagnosticsAt, formatDiagnosticMessages } from './DiagnosticHover';
 import { extractSymbolDocumentation } from './SymbolDocHover';
+import {
+  fetchCommitMessageForBlame,
+  isGitBlameHoverPosition,
+  shouldTranslateCommitMessage,
+} from './GitCommitHover';
 
 export interface HoverBlockResult {
   markdown: vscode.MarkdownString;
@@ -44,6 +49,27 @@ export async function buildSupplementalHoverBlocks(
     range: vscode.Range;
     cached?: { text: string; fromCache: true; placeholderOk: boolean };
   }> = [];
+
+  if (cfg.hover.gitCommitMessage && isGitBlameHoverPosition(doc, pos)) {
+    const line = pos.line + 1;
+    const msg = await fetchCommitMessageForBlame(doc, line);
+    if (msg && shouldTranslateCommitMessage(msg, cfg)) {
+      const unit = plainUnit(doc, 'diagnostic', msg);
+      const range = new vscode.Range(pos.line, 0, pos.line, doc.lineAt(pos.line).text.length);
+      const cached = await translation.peekCache(unit, cfg.targetLanguage, doc.uri);
+      if (cached) {
+        pending.push({
+          title: 'Git 提交说明',
+          unit,
+          range,
+          cached: { text: cached.text, fromCache: true, placeholderOk: cached.placeholderOk },
+        });
+      } else {
+        needsDelay = true;
+        pending.push({ title: 'Git 提交说明', unit, range });
+      }
+    }
+  }
 
   if (cfg.hover.diagnostics) {
     const diags = diagnosticsAt(doc.uri, pos);

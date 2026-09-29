@@ -30,9 +30,15 @@ Rules:
 6. If the text is already in {{targetLangName}}, return it unchanged.
 {{customSystemPrompt}}`;
 
-const SYSTEM_BATCH = `You are a professional technical translator. Translate fragments into {{targetLangName}}.
+const SYSTEM_BATCH = `You are a professional technical translator. Translate document fragments into {{targetLangName}}.
 Return JSON: {"items":[{"id":"...","translation":"..."}]}
-Rules: one entry per input id, preserve placeholders ⟦Pn⟧, valid JSON only.
+Rules:
+- One JSON entry per input id; never merge or split ids.
+- Output ONLY the translated text for each fragment; no explanations.
+- Preserve Markdown syntax exactly in each fragment: **bold**, *italic*, \`code\`, links, list markers, blockquote markers.
+- Do not add or remove heading # characters unless they appear in the source fragment.
+- Never translate URLs, code spans, or placeholder tokens ⟦Pn⟧.
+- Valid JSON only.
 {{customSystemPrompt}}`;
 
 export class PromptBuilder {

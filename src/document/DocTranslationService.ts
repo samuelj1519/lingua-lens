@@ -8,6 +8,7 @@ import { MarkdownSegmenter } from './MarkdownSegmenter';
 import { PlainTextSegmenter } from './PlainTextSegmenter';
 import type { PreviewContentProvider } from './PreviewContentProvider';
 import { SideFileWriter } from './SideFileWriter';
+import { canTranslateWholeDocument } from './documentEligibility';
 
 export interface DocSession {
   sourceUri: vscode.Uri;
@@ -48,6 +49,10 @@ export class DocTranslationService {
   }
 
   async openPreview(doc: vscode.TextDocument): Promise<void> {
+    if (!canTranslateWholeDocument(doc)) {
+      void vscode.window.showWarningMessage('整篇翻译仅支持 Markdown / 纯文本；配置文件请使用悬停翻译。');
+      return;
+    }
     const block = this.guard.check(doc);
     if (block === 'excluded') {
       void vscode.window.showWarningMessage('该文件已被排除');

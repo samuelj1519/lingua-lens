@@ -39,6 +39,20 @@ export class MarkdownSegmenter {
         });
         return;
       }
+      if (node.type === 'listItem' || node.type === 'blockquote') {
+        const raw = source.slice(start, end).trim();
+        const p = protect(raw);
+        segments.push({
+          id: `s${id++}`,
+          kind: 'paragraph',
+          range: { start, end },
+          sourceText: p.text,
+          placeholders: p.placeholders,
+          hash: sha256HexPrefix(p.text, 16),
+          linePrefix,
+        });
+        return;
+      }
       if (node.type === 'paragraph') {
         const p = protect(inlineToText(node.children, source));
         segments.push({
@@ -89,6 +103,13 @@ function inlineToText(children: PhrasingContent[], _source: string): string {
       if (c.type === 'text') return c.value;
       if (c.type === 'inlineCode') return '`' + c.value + '`';
       if (c.type === 'link') return `[${inlineToText(c.children, _source)}](${c.url})`;
+      if (c.type === 'strong') return `**${inlineToText(c.children, _source)}**`;
+      if (c.type === 'emphasis') return `*${inlineToText(c.children, _source)}*`;
+      if (c.type === 'delete') return `~~${inlineToText(c.children, _source)}~~`;
+      if (c.type === 'break') return '\n';
+      if ('children' in c && Array.isArray(c.children)) {
+        return inlineToText(c.children as PhrasingContent[], _source);
+      }
       return '';
     })
     .join('');

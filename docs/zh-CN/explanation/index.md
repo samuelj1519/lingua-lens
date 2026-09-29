@@ -5,3 +5,4 @@
 - [分段、批处理与进度](segmentation.md)
 - [缓存与 cache key](caching.md)
 - [设置面板安全（CSP）](settings-panel-security.md)
+- [架构决策记录](decisions.md)

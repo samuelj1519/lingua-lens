@@ -2,13 +2,20 @@
 
 English | [简体中文](README.zh-CN.md)
 
-**Translate comments, strings, and docs inside VS Code and Cursor with your own OpenAI-compatible LLM—without sending API keys to settings files.**
+**Translate comments, strings, and docs inside VS Code and Cursor with your own OpenAI-compatible LLM—API keys stay in VS Code SecretStorage, not in settings files.**
 
-LinguaLens works in **Visual Studio Code** and compatible editors (**Cursor**, **Windsurf**, **VSCodium**, etc.)—the marketplace display name follows Microsoft branding: **LinguaLens for Visual Studio Code**.
+LinguaLens works in **Visual Studio Code** and compatible editors (**Cursor**, **Windsurf**, **VSCodium**, etc.). Marketplace name: **LinguaLens for Visual Studio Code** (`samuel-j.lingua-lens`).
 
-LinguaLens (`samuel-j.lingua-lens`) adds hover translation, selection and clipboard workflows, whole-document bilingual preview, config-file hovers, Git helpers, a glossary, LRU + disk cache, and a settings webview. Keys are stored in **SecretStorage** per API origin; only text you hover or explicitly translate is sent to your configured endpoint.
+Hover translation, selection and clipboard workflows, whole-document bilingual preview, config-file hovers, Git helpers, a glossary, LRU + disk cache, and a settings webview. Only text you hover or explicitly translate is sent to the LLM endpoint you configure.
 
-<!-- TODO: screenshot — hover translation on a code comment and Markdown document preview -->
+## Quick start
+
+1. **Install** LinguaLens from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/) or [Open VSX](https://open-vsx.org/), or install a `.vsix` from [GitHub Releases](https://github.com/samuelj1519/lingua-lens/releases).
+2. Run **LinguaLens: Set API Key** (Command Palette). The key is stored per API origin in **SecretStorage**.
+3. Set **`linguaLens.llm.baseUrl`** and **`linguaLens.llm.model`** in Settings (or use **LinguaLens: Open Settings Panel**).
+4. Run **LinguaLens: Test Connection**, then hover a comment or run **Translate document (preview)** on a Markdown file.
+
+Tutorial: [Getting started](https://github.com/samuelj1519/lingua-lens/blob/main/docs/en/tutorials/getting-started.md).
 
 ## Why use it
 
@@ -17,17 +24,8 @@ LinguaLens (`samuel-j.lingua-lens`) adds hover translation, selection and clipbo
 | **Hover translation** | Tree-sitter (with regex fallback) extracts comments, strings, Markdown paragraphs, config values/keys, template UI text, and more. Optional blocks for diagnostics, symbol docs, Git commit messages, and active selections. |
 | **Document preview** | `lingualens:` virtual document with interleaved or append layout; progress per translatable segment; side files such as `README.zh-CN.md`. |
 | **Editor workflows** | Keybindings for selection, clipboard/terminal, replace/insert, and popup translation. CodeLens on Markdown for translate / refresh / side file. |
-| **Operations** | Per-origin API keys, connection test, cache clear, workspace disable, privacy acknowledgement, secret blocking, and exclude globs. |
+| **Operations** | Per-origin API keys, connection test, cache clear, workspace disable, privacy acknowledgement, and exclude globs for sensitive paths. |
 | **i18n** | Runtime UI follows `linguaLens.targetLanguage` (`l10n/bundle`); built-in settings labels follow the editor UI language (`package.nls`). |
-
-## Quick start
-
-1. Install the `.vsix` (`npm run package` in this repo) or launch from **F5** after `npm install && npm run build`.
-2. Set `linguaLens.llm.baseUrl` and `linguaLens.llm.model` in settings (see table below).
-3. Run **LinguaLens: Set API Key** and **LinguaLens: Test Connection**.
-4. Hover a comment or run **Translate document (preview)** on a `.md` file.
-
-Step-by-step tutorial: [Getting started](docs/en/tutorials/getting-started.md).
 
 ## Provider setup (OpenAI-compatible)
 
@@ -53,7 +51,7 @@ Example `settings.json` (User):
 }
 ```
 
-Details and pitfalls: [Configure providers](docs/en/how-to/configure-providers.md), [Extra body / thinking](docs/en/how-to/extra-body-thinking.md).
+Details: [Configure providers](https://github.com/samuelj1519/lingua-lens/blob/main/docs/en/how-to/configure-providers.md) · [Extra body / thinking](https://github.com/samuelj1519/lingua-lens/blob/main/docs/en/how-to/extra-body-thinking.md).
 
 ## Key settings
 
@@ -68,7 +66,7 @@ Details and pitfalls: [Configure providers](docs/en/how-to/configure-providers.m
 | `linguaLens.document.forceTranslate` | `false` | Skip language detection for whole documents. |
 | `linguaLens.cache.enabled` | `true` | Memory LRU + disk JSONL under global storage. |
 
-Full list (52 keys, seven UI sections): [Settings reference](docs/en/reference/settings.md) (auto-generated).
+Full list: [Settings reference](https://github.com/samuelj1519/lingua-lens/blob/main/docs/en/reference/settings.md) (auto-generated in repo).
 
 ## Commands (palette)
 
@@ -81,31 +79,32 @@ Full list (52 keys, seven UI sections): [Settings reference](docs/en/reference/s
 | `linguaLens.openSettingsPanel` | — | QuickPick / palette. |
 | `linguaLens.clearCache` | — | Palette / status bar tooltip link. |
 
-All commands, CodeLens, and context menus: [Commands reference](docs/en/reference/commands.md).
+All commands: [Commands reference](https://github.com/samuelj1519/lingua-lens/blob/main/docs/en/reference/commands.md).
 
 ## FAQ
 
 **Hover shows nothing** — Check `linguaLens.enabled`, file exclude globs, privacy acknowledgement, and whether detection skipped the fragment (already in target language). Enable `linguaLens.log.level`: `debug` and open **LinguaLens: Show Log**.
 
-**401 / connection errors** — Confirm `baseUrl` includes `/v1` if your vendor requires it, model id is set, and the key matches that origin. See [Troubleshoot connection](docs/en/how-to/troubleshoot-connection.md).
+**401 / connection errors** — Confirm `baseUrl` includes `/v1` if your vendor requires it, model id is set, and the key matches that origin. See [Troubleshoot connection](https://github.com/samuelj1519/lingua-lens/blob/main/docs/en/how-to/troubleshoot-connection.md).
 
 **Document already in Chinese but still translating** — Turn off `linguaLens.document.forceTranslate`. Detection uses the same rules as hover unless forced.
 
-**Stale translation after changing model** — Cache keys include `model`, `baseUrl`, and `extraBody` hash; use **Refresh** on hover or **Clear cache** if needed. See [Caching](docs/en/explanation/caching.md).
+**Stale translation after changing model** — Cache keys include `model`, `baseUrl`, and `extraBody` hash; use **Refresh** on hover or **Clear cache** if needed.
 
 ## Privacy and security
 
-- Text under the cursor, in selections, or in document segments you translate is sent to `linguaLens.llm.baseUrl`.
-- API keys never appear in `settings.json` or settings panel HTML ([CSP](docs/en/explanation/settings-panel-security.md)).
-- `.env`, keys, and custom exclude globs are not read for translation.
-- Disk cache lives under the extension global storage path (`cache/v2`).
+- **What is sent:** Text under the cursor, in selections, or in document segments you explicitly translate is sent to **`linguaLens.llm.baseUrl`** (your LLM provider). Nothing is sent to LinguaLens publishers or third-party analytics.
+- **API keys:** Stored only in VS Code **SecretStorage** (per API origin). They are not written to `settings.json`, workspace files, or the settings panel webview.
+- **Telemetry:** LinguaLens does **not** collect usage telemetry.
+- **Sensitive files:** Default exclude globs skip `.env`, key files, `node_modules`, `.git`, and similar paths.
+- **Local cache:** Translation cache is stored under the extension’s global storage on your machine.
 
-[SECURITY.md](SECURITY.md) · [Contributing](CONTRIBUTING.md)
+[Security policy](https://github.com/samuelj1519/lingua-lens/blob/main/SECURITY.md) · [Contributing](https://github.com/samuelj1519/lingua-lens/blob/main/CONTRIBUTING.md)
 
-## Documentation map
+## Documentation
 
-- [Documentation home](docs/README.md)
-- [Tutorials](docs/en/tutorials/index.md) · [How-to](docs/en/how-to/index.md) · [Reference](docs/en/reference/index.md) · [Explanation](docs/en/explanation/index.md)
+- [Documentation home](https://github.com/samuelj1519/lingua-lens/tree/main/docs)
+- [Tutorials](https://github.com/samuelj1519/lingua-lens/tree/main/docs/en/tutorials) · [How-to](https://github.com/samuelj1519/lingua-lens/tree/main/docs/en/how-to) · [Reference](https://github.com/samuelj1519/lingua-lens/tree/main/docs/en/reference) · [Explanation](https://github.com/samuelj1519/lingua-lens/tree/main/docs/en/explanation)
 
 ## Development
 
@@ -115,8 +114,6 @@ npm run build
 npm test
 npm run package
 ```
-
-`pretest` runs `merge-config`, `merge-nls`, and `generate-docs`.
 
 ## License
 

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.9
+
+- **Marketplace metadata**: public GitHub repo URLs (`samuelj1519/lingua-lens`), `bugs` and `homepage`, PNG icon, gallery banner, expanded keywords; README quick start and privacy section for store listing; standard MIT license line.
+- **Legacy SecretStorage**: per-origin configured/absent-probe flags when `keys()` is unavailable; re-sync when `linguaLens.llm.baseUrl` changes so switching origins shows the correct key status without reading unrelated origins.
+
 ## 0.7.8
 
 - **SecretStorage compatibility**: `syncConfiguredFlagsFromStorage` uses `secrets.keys()` only when the runtime provides it (VS Code 1.97+). On older editors (`engines.vscode` remains `^1.85.0`), activation runs a one-time fallback: if no configured-origin flags exist yet, a single `get()` for the current `llm.baseUrl` sets the flag without retaining the value. Migration errors are swallowed so activation continues.

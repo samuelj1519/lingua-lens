@@ -47,6 +47,7 @@ const REQUIRED_RUNTIME = [
   'dist/wasm/tree-sitter.wasm',
   'schemas/translate-glossary.schema.json',
   'resources/icons/translate-document.svg',
+  'resources/icon.png',
 ];
 
 function listPackagePaths(): string[] {

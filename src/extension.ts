@@ -377,12 +377,16 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     await refreshHoverTranslation(id, config, translation, hoverRegistry);
   });
 
-  config.onDidChange(() => {
+  config.onDidChange((e) => {
     const c = config.get();
     baseLogger.setLevelProvider(() => c.log.level);
     cacheService?.configure(c.cache.enabled, c.cache.memoryEntries, c.cache.maxDiskMB);
     parserService?.setMaxFileSizeKB(c.parser.maxFileSizeKB);
     preview.setPreviewStyle(c.document.previewStyle);
+    if (e.affectsConfiguration('linguaLens.llm.baseUrl')) {
+      void apiKeys.syncConfiguredFlagsFromStorage(c.llm.baseUrl);
+      void statusBar.refresh();
+    }
   });
 
   apiKeys.onDidChange(() => {

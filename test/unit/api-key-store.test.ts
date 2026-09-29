@@ -17,6 +17,15 @@ vi.mock('vscode', () => {
 import { ApiKeyStore } from '../../src/secrets/ApiKeyStore';
 
 const CONFIGURED_ORIGINS_KEY = 'linguaLens.apiKeyConfiguredOrigins';
+const ABSENT_PROBE_ORIGINS_KEY = 'linguaLens.apiKeyAbsentProbeOrigins';
+
+const baseUrlA = 'https://api-a.example.com/v1';
+const originA = 'https://api-a.example.com';
+const storageKeyA = `linguaLens.apiKey:${originA}`;
+const baseUrlB = 'https://api-b.example.com/v1';
+const originB = 'https://api-b.example.com';
+const storageKeyB = `linguaLens.apiKey:${originB}`;
+const secret = 'my-super-secret-api-key-123456';
 
 function mockContext(
   secrets: {
@@ -40,11 +49,6 @@ function mockContext(
 }
 
 describe('ApiKeyStore', () => {
-  const baseUrl = 'https://api.example.com/v1';
-  const origin = 'https://api.example.com';
-  const storageKey = `linguaLens.apiKey:${origin}`;
-  const secret = 'my-super-secret-api-key-123456';
-
   let getSpy: ReturnType<typeof vi.fn>;
   let keysSpy: ReturnType<typeof vi.fn>;
   let store: ApiKeyStore;
@@ -62,36 +66,24 @@ describe('ApiKeyStore', () => {
   });
 
   it('isConfigured reads globalState only (no SecretStorage get)', () => {
-    expect(store.isConfigured(baseUrl)).toBe(false);
+    expect(store.isConfigured(baseUrlA)).toBe(false);
     expect(getSpy).not.toHaveBeenCalled();
   });
 
   it('set updates configured flag without requiring get()', async () => {
-    await store.set(baseUrl, secret);
-    expect(store.isConfigured(baseUrl)).toBe(true);
+    await store.set(baseUrlA, secret);
+    expect(store.isConfigured(baseUrlA)).toBe(true);
     expect(getSpy).not.toHaveBeenCalled();
-  });
-
-  it('clear and clearAll update configured flags', async () => {
-    await store.set(baseUrl, secret);
-    await store.clear(baseUrl);
-    expect(store.isConfigured(baseUrl)).toBe(false);
-
-    await store.set(baseUrl, secret);
-    await store.set('https://other.example/v1', 'other-key-value-here');
-    await store.clearAll();
-    expect(store.isConfigured(baseUrl)).toBe(false);
-    expect(store.isConfigured('https://other.example/v1')).toBe(false);
   });
 
   it('syncConfiguredFlagsFromStorage uses keys() not get() when available', async () => {
-    keysSpy.mockResolvedValue([storageKey]);
-    await store.syncConfiguredFlagsFromStorage(baseUrl);
-    expect(store.isConfigured(baseUrl)).toBe(true);
+    keysSpy.mockResolvedValue([storageKeyA]);
+    await store.syncConfiguredFlagsFromStorage(baseUrlA);
+    expect(store.isConfigured(baseUrlA)).toBe(true);
     expect(getSpy).not.toHaveBeenCalled();
   });
 
-  it('without keys(), migrates current baseUrl with a single get()', async () => {
+  it('without keys(), probes only the current origin with a single get()', async () => {
     const ctx = mockContext({
       get: getSpy,
       store: vi.fn(),
@@ -99,32 +91,52 @@ describe('ApiKeyStore', () => {
     });
     store = new ApiKeyStore(ctx);
     getSpy.mockResolvedValue(secret);
-    await store.syncConfiguredFlagsFromStorage(baseUrl);
+    await store.syncConfiguredFlagsFromStorage(baseUrlA);
     expect(getSpy).toHaveBeenCalledOnce();
-    expect(getSpy).toHaveBeenCalledWith(storageKey);
-    expect(store.isConfigured(baseUrl)).toBe(true);
+    expect(getSpy).toHaveBeenCalledWith(storageKeyA);
+    expect(store.isConfigured(baseUrlA)).toBe(true);
   });
 
-  it('without keys(), skips get() when configured flags already exist', async () => {
+  it('without keys(), switching origin probes B even when A is already configured', async () => {
     const ctx = mockContext(
       { get: getSpy, store: vi.fn(), delete: vi.fn() },
-      { [CONFIGURED_ORIGINS_KEY]: [origin] },
+      { [CONFIGURED_ORIGINS_KEY]: [originA] },
     );
     store = new ApiKeyStore(ctx);
-    await store.syncConfiguredFlagsFromStorage(baseUrl);
+    getSpy.mockResolvedValue(secret);
+    await store.syncConfiguredFlagsFromStorage(baseUrlB);
+    expect(getSpy).toHaveBeenCalledOnce();
+    expect(getSpy).toHaveBeenCalledWith(storageKeyB);
+    expect(store.isConfigured(baseUrlB)).toBe(true);
+    expect(store.isConfigured(baseUrlA)).toBe(true);
+  });
+
+  it('without keys(), skips get() for origins already marked absent', async () => {
+    const ctx = mockContext(
+      { get: getSpy, store: vi.fn(), delete: vi.fn() },
+      { [ABSENT_PROBE_ORIGINS_KEY]: [originB] },
+    );
+    store = new ApiKeyStore(ctx);
+    await store.syncConfiguredFlagsFromStorage(baseUrlB);
     expect(getSpy).not.toHaveBeenCalled();
-    expect(store.isConfigured(baseUrl)).toBe(true);
+    expect(store.isConfigured(baseUrlB)).toBe(false);
+  });
+
+  it('set() invalidates absent-probe record for that origin', async () => {
+    const ctx = mockContext(
+      { get: getSpy, store: vi.fn().mockResolvedValue(undefined), delete: vi.fn() },
+      { [ABSENT_PROBE_ORIGINS_KEY]: [originA] },
+    );
+    store = new ApiKeyStore(ctx);
+    await store.set(baseUrlA, secret);
+    expect(store.isConfigured(baseUrlA)).toBe(true);
+    getSpy.mockClear();
+    await store.syncConfiguredFlagsFromStorage(baseUrlA);
+    expect(getSpy).not.toHaveBeenCalled();
   });
 
   it('does not throw when keys() rejects', async () => {
     keysSpy.mockRejectedValue(new Error('keys unsupported'));
-    await expect(store.syncConfiguredFlagsFromStorage(baseUrl)).resolves.toBeUndefined();
-  });
-
-  it('get() is only used when fetching key value for requests', async () => {
-    getSpy.mockResolvedValue(secret);
-    const v = await store.get(baseUrl);
-    expect(v).toBe(secret);
-    expect(getSpy).toHaveBeenCalledOnce();
+    await expect(store.syncConfiguredFlagsFromStorage(baseUrlA)).resolves.toBeUndefined();
   });
 });

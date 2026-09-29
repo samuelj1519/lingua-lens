@@ -1,23 +1,51 @@
 {
   "name": "lingua-lens",
   "displayName": "LinguaLens for Visual Studio Code",
-  "description": "LinguaLens — AI code translator for comments, strings, and docs using an OpenAI-compatible LLM",
-  "version": "0.7.8",
+  "description": "Translate comments, strings, and docs in the editor with your own OpenAI-compatible LLM.",
+  "version": "0.7.9",
   "publisher": "samuel-j",
+  "homepage": "https://github.com/samuelj1519/lingua-lens#readme",
+  "bugs": {
+    "url": "https://github.com/samuelj1519/lingua-lens/issues"
+  },
+  "icon": "resources/icon.png",
+  "galleryBanner": {
+    "color": "#1e3a5f",
+    "theme": "dark"
+  },
   "keywords": [
     "ai",
     "translate",
     "translator",
     "translation",
     "comment",
+    "string",
+    "documentation",
+    "markdown",
     "i18n",
-    "llm",
     "localization",
-    "markdown"
+    "llm",
+    "openai",
+    "deepseek",
+    "hover",
+    "bilingual",
+    "glossary",
+    "code",
+    "developer",
+    "productivity",
+    "multilingual",
+    "language",
+    "cursor",
+    "copilot",
+    "chatgpt",
+    "api",
+    "secretstorage",
+    "tree-sitter",
+    "preview"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/samuel-j/lingua-lens"
+    "url": "https://github.com/samuelj1519/lingua-lens.git"
   },
   "license": "MIT",
   "engines": {

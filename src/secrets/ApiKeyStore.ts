@@ -2,6 +2,8 @@ import * as vscode from 'vscode';
 
 const ORIGINS_KEY = 'linguaLens.apiKeyOrigins';
 const CONFIGURED_ORIGINS_KEY = 'linguaLens.apiKeyConfiguredOrigins';
+/** Origins probed on legacy VS Code without `keys()` where SecretStorage had no key (avoids repeat `get()`). */
+const ABSENT_PROBE_ORIGINS_KEY = 'linguaLens.apiKeyAbsentProbeOrigins';
 const KEY_PREFIX = 'linguaLens.apiKey:';
 
 /** VS Code 1.97+; optional on older runtimes (see `engines.vscode`). */
@@ -32,6 +34,10 @@ export class ApiKeyStore {
     return this.context.globalState.get<string[]>(CONFIGURED_ORIGINS_KEY, []);
   }
 
+  private absentProbeOrigins(): string[] {
+    return this.context.globalState.get<string[]>(ABSENT_PROBE_ORIGINS_KEY, []);
+  }
+
   /** Whether an API key is configured for this base URL (reads globalState only). */
   isConfigured(baseUrl: string): boolean {
     const origin = originOf(baseUrl);
@@ -39,8 +45,8 @@ export class ApiKeyStore {
   }
 
   /**
-   * Reconcile configured-origin flags at activation.
-   * Uses `SecretStorage.keys()` when available (VS Code 1.97+); otherwise a one-time `get()` for `currentBaseUrl` only.
+   * Reconcile configured-origin flags at activation or when `llm.baseUrl` changes.
+   * Uses `SecretStorage.keys()` when available (VS Code 1.97+); otherwise probes the current origin once.
    */
   async syncConfiguredFlagsFromStorage(currentBaseUrl?: string): Promise<void> {
     try {
@@ -53,18 +59,38 @@ export class ApiKeyStore {
         }
         await this.context.globalState.update(CONFIGURED_ORIGINS_KEY, origins);
         await this.context.globalState.update(ORIGINS_KEY, origins);
+        await this.context.globalState.update(ABSENT_PROBE_ORIGINS_KEY, []);
         return;
       }
 
-      if (this.configuredOrigins().length > 0) return;
-
       if (!currentBaseUrl) return;
       const origin = originOf(currentBaseUrl);
+      if (this.configuredOrigins().includes(origin)) return;
+      if (this.absentProbeOrigins().includes(origin)) return;
+
       const value = await this.context.secrets.get(this.storageKey(origin));
-      await this.setConfigured(origin, Boolean(value?.trim()));
+      const hasKey = Boolean(value?.trim());
+      await this.setConfigured(origin, hasKey);
+      if (!hasKey) await this.addAbsentProbe(origin);
+      else await this.removeAbsentProbe(origin);
     } catch {
       /* Do not block extension activation on migration failures. */
     }
+  }
+
+  private async addAbsentProbe(origin: string): Promise<void> {
+    const list = this.absentProbeOrigins();
+    if (list.includes(origin)) return;
+    await this.context.globalState.update(ABSENT_PROBE_ORIGINS_KEY, [...list, origin]);
+  }
+
+  private async removeAbsentProbe(origin: string): Promise<void> {
+    const list = this.absentProbeOrigins();
+    if (!list.includes(origin)) return;
+    await this.context.globalState.update(
+      ABSENT_PROBE_ORIGINS_KEY,
+      list.filter((o) => o !== origin),
+    );
   }
 
   private async rememberOrigin(origin: string): Promise<void> {
@@ -104,6 +130,7 @@ export class ApiKeyStore {
     const trimmed = key.trim();
     if (!trimmed) return;
     await this.context.secrets.store(this.storageKey(origin), trimmed);
+    await this.removeAbsentProbe(origin);
     await this.setConfigured(origin, true);
     await this.rememberOrigin(origin);
     this.emitter.fire(origin);
@@ -113,6 +140,7 @@ export class ApiKeyStore {
     const origin = originOf(baseUrl);
     await this.context.secrets.delete(this.storageKey(origin));
     await this.setConfigured(origin, false);
+    await this.addAbsentProbe(origin);
     this.emitter.fire(origin);
   }
 
@@ -124,5 +152,6 @@ export class ApiKeyStore {
     }
     await this.context.globalState.update(ORIGINS_KEY, []);
     await this.context.globalState.update(CONFIGURED_ORIGINS_KEY, []);
+    await this.context.globalState.update(ABSENT_PROBE_ORIGINS_KEY, []);
   }
 }

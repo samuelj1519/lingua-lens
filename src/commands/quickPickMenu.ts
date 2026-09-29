@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import type { ConfigService } from '../config/ConfigService';
 import type { DocTranslationService } from '../document/DocTranslationService';
+import { EXTENSION_SETTINGS_FILTER } from '../constants/extensionId';
 
 export async function showAiTranslateQuickPick(
   config: ConfigService,
@@ -38,7 +39,7 @@ export async function showAiTranslateQuickPick(
       break;
     }
     case 'settings':
-      await vscode.commands.executeCommand('aiTranslate.openSettings');
+      await vscode.commands.executeCommand('workbench.action.openSettings', EXTENSION_SETTINGS_FILTER);
       break;
     case 'apikey':
       await vscode.commands.executeCommand('aiTranslate.setApiKey');

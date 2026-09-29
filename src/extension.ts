@@ -242,7 +242,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   });
 
   reg('aiTranslate.showLog', () => logger.show());
-  reg('aiTranslate.openSettings', () => vscode.commands.executeCommand('workbench.action.openSettings', 'aiTranslate'));
+  reg('aiTranslate.openSettings', () =>
+    vscode.commands.executeCommand(
+      'workbench.action.openSettings',
+      '@ext:cursor-ai-translate.cursor-ai-translate',
+    ),
+  );
 
   reg('aiTranslate.translateClipboardOrSelection', () =>
     translateClipboardOrSelection(config, guard, translation),

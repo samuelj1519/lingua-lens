@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.5
+
+- 改进：设置页 `contributes.configuration` 改为**分组数组**，左侧子目录为：常规、模型与 API、悬停翻译、全文翻译与预览、Markdown 与文档、缓存、高级与调试
+- 改进：各配置项 `order` 排序、`markdownDescription` 中英文说明、`enumDescriptions`、数值 min/max、高级项 `tags: ["advanced"]`；相关项以 `#aiTranslate.xxx#` 互相链接
+- 改进：状态栏 QuickPick「打开设置」使用 `@ext:cursor-ai-translate.cursor-ai-translate` 过滤；`aiTranslate.openSettings` 命令同步
+- 新增：配置源文件 `contributes/configuration.json` + 单元测试校验声明键与代码使用键、中英文 nls 完整性
+- 文档：README 增加按分组的配置表
+
 ## 0.4.4
 
 - 新增：Markdown / `.mdc` / `SKILL.md` 等文件顶部 **YAML/TOML frontmatter** 自然语言字段翻译（默认白名单 `description`、`title`、`summary`、`subtitle`、`excerpt`、`about`）

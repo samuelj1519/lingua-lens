@@ -32,13 +32,30 @@
 
 命令面板执行 **AI Translate: 设置 API Key**（`aiTranslate.setApiKey`）。Key 与 `aiTranslate.llm.baseUrl` 的 origin 绑定。
 
-常用设置（用户级）：
+在设置中搜索 **AI Translate**，左侧可按分组浏览；状态栏 **译** → **打开设置** 会带上 `@ext:` 过滤仅显示本扩展项。
+
+### 配置分组（`aiTranslate.*`）
+
+| 分组 | 主要键 |
+| --- | --- |
+| **常规** | `enabled`, `targetLanguage`, `detection.*`, `selection.output`, `privacy.exclude`, `statusBar.enabled` |
+| **模型与 API** | `llm.baseUrl`, `llm.model`, `llm.stream`, `llm.extraBody`, `llm.systemPrompt`, `llm.timeoutMs`, `llm.maxConcurrency`, `glossary.path`, `glossary.maxTerms` |
+| **悬停翻译** | `hover.enabled`, `hover.extraDelayMs`, `hover.comments`, `hover.strings`, `hover.documents`, `hover.configKeys`, `hover.diagnostics`, `hover.symbolDocs`, `hover.gitCommitMessage`, `hover.selection` |
+| **全文翻译与预览** | `document.previewStyle`, `document.codeLens`, `document.batchSize`, `document.maxBatchChars`, `document.sideFileNamePattern`, `document.sideFileContent` |
+| **Markdown 与文档** | `markdown.frontmatterFields` |
+| **缓存** | `cache.enabled`, `cache.memoryEntries`, `cache.maxDiskMB` |
+| **高级与调试** | `privacy.blockSecrets`, `privacy.allowedSchemes`, `parser.maxFileSizeKB`, `log.level` |
+
+常用项（用户级）：
 
 - `aiTranslate.llm.baseUrl`（默认 `https://api.openai.com/v1`）
 - `aiTranslate.llm.model`
 - `aiTranslate.targetLanguage`（默认 `zh-CN`）
-- `aiTranslate.hover.documents`（默认 `true`，Markdown/纯文本段落悬停）
-- `aiTranslate.hover.configKeys`（默认 `true`，配置字段名悬停）
+- `aiTranslate.llm.extraBody`（如 DeepSeek `{"thinking":{"type":"disabled"}}`）
+- `aiTranslate.hover.documents`（默认 `true`）
+- `aiTranslate.markdown.frontmatterFields`（默认翻译 `description` 等 frontmatter 字段）
+
+配置贡献源文件：`contributes/configuration.json`（构建时合并进 `package.json`）。
 
 ## 命令
 

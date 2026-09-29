@@ -66,7 +66,7 @@ When enabled, document hover over relevant Git contexts can show commit message 
 ## Step 5: Verify
 
 - Command produces Markdown preview with translated subject/body.
-- Secrets in commit messages are blocked when `privacy.blockSecrets` matches patterns (`msg.secretNotSent`).
+- Do not put live API keys in commit messages; use path excludes for sensitive files.
 - **Test Connection** still valid; translation uses `kind: 'selection'` cache keys.
 
 ## Provider examples (same as elsewhere)

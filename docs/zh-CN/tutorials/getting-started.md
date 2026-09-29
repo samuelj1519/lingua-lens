@@ -57,7 +57,7 @@ OpenAI 示例：
 
 ## 确认隐私（首次使用）
 
-在文本发送到 LLM 之前，**PrivacyGuard** 可能要求您确认内容会离开本机。排除路径（默认含 `.env`、`node_modules`、`.git`、密钥等）会阻止翻译。启用 `linguaLens.privacy.blockSecrets`（默认）时，启发式密钥检测可跳过悬停与选区。若需重置确认状态，运行 **LinguaLens: Acknowledge Privacy**。
+在文本发送到 LLM 之前，**PrivacyGuard** 可能要求您确认内容会离开本机。排除路径（默认含 `.env`、`node_modules`、`.git`、密钥等）会阻止翻译。API 密钥仅保存在 VS Code SecretStorage 中，不会从正文扫描猜测。若需重置确认状态，运行 **LinguaLens: Acknowledge Privacy**。
 
 ## 第一次悬停翻译
 

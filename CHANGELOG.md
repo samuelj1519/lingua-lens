@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.6
+
+- **API keys**: stored only in VS Code `SecretStorage`. LinguaLens reads a key only when you set or clear it (commands and settings panel) and when issuing an LLM request (`Authorization` header). Request headers and bodies are not written to logs.
+- **Safe output**: toasts, hovers, the output channel, connection-test results, and LLM error text run through redaction so stored key values (including URL-encoded forms), `Bearer`/`Authorization` values, and common `key=value` patterns are not shown.
+- **No content secret scanning**: comments, selections, and documents are translated without heuristic “looks like a key” checks; there is no `linguaLens.privacy.blockSecrets` setting. Use `linguaLens.privacy.exclude` for sensitive paths (`.env`, keys, etc.).
+
 ## 0.7.2
 
 - **Document preview URI**: `DocTranslationService.previewUriFor` now uses the `lingualens:` scheme (via `PREVIEW_SCHEME`), matching the registered `TextDocumentContentProvider` — fixes “Unable to resolve resource” when opening Translate document preview

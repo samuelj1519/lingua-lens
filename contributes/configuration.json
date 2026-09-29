@@ -467,19 +467,12 @@
     "title": "%config.section.advanced.title%",
     "order": 7,
     "properties": {
-      "linguaLens.privacy.blockSecrets": {
-        "type": "boolean",
-        "default": true,
-        "scope": "application",
-        "order": 1,
-        "markdownDescription": "%config.privacy.blockSecrets.markdownDescription%"
-      },
       "linguaLens.privacy.allowedSchemes": {
         "type": "array",
         "items": { "type": "string" },
         "default": ["file", "untitled", "vscode-remote", "vscode-notebook-cell"],
         "scope": "application",
-        "order": 2,
+        "order": 1,
         "tags": ["advanced"],
         "markdownDescription": "%config.privacy.allowedSchemes.markdownDescription%"
       },

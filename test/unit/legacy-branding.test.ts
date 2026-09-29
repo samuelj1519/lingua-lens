@@ -16,7 +16,15 @@ const SCAN_ROOTS = [
   { dir: 'l10n', exts: ['.json'] },
 ];
 
-const SCAN_FILES = ['package.json', 'README.md', 'README.zh-CN.md'];
+const SCAN_FILES = [
+  'package.json',
+  'README.md',
+  'README.zh-CN.md',
+  'CONTRIBUTING.md',
+  'CONTRIBUTING.zh-CN.md',
+  'SECURITY.md',
+  'SECURITY.zh-CN.md',
+];
 
 const SELF_TEST = path.normalize(fileURLToPath(new URL('./legacy-branding.test.ts', import.meta.url)));
 
@@ -38,10 +46,9 @@ function collectPaths(): string[] {
     if (fs.existsSync(p)) files.push(p);
   }
   for (const name of fs.readdirSync(root)) {
-    if (name.startsWith('package.nls.') && name.endsWith('.json')) {
+    if ((name === 'package.nls.json' || name.startsWith('package.nls.')) && name.endsWith('.json')) {
       files.push(path.join(root, name));
     }
-    if (name === 'package.nls.json') files.push(path.join(root, name));
   }
   for (const { dir, exts } of SCAN_ROOTS) {
     files.push(...walk(path.join(root, dir), exts));

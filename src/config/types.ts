@@ -56,7 +56,6 @@ export interface TranslateConfig {
   privacy: {
     exclude: string[];
     allowedSchemes: string[];
-    blockSecrets: boolean;
   };
   glossary: {
     path: string;

@@ -57,7 +57,7 @@ Supported built-in targets: `zh-CN`, `zh-TW`, `en`, `ja`, `ko`, `fr`, `de`, `es`
 
 ## Acknowledge privacy (first use)
 
-Before text is sent to your LLM, **PrivacyGuard** may ask you to acknowledge that content leaves your machine. Excluded paths (default includes `.env`, `node_modules`, `.git`, keys) block translation. With `linguaLens.privacy.blockSecrets` enabled (default), heuristic secret detection can skip hover and selection. Run **LinguaLens: Acknowledge Privacy** if you need to reset acknowledgment state.
+Before text is sent to your LLM, **PrivacyGuard** may ask you to acknowledge that content leaves your machine. Excluded paths (default includes `.env`, `node_modules`, `.git`, keys) block translation. API keys are stored only in VS Code SecretStorage—not scanned from document text. Run **LinguaLens: Acknowledge Privacy** if you need to reset acknowledgment state.
 
 ## Your first hover translation
 

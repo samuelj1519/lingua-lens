@@ -19,7 +19,7 @@ function baseCfg(overrides?: Partial<TranslateConfig['document']>): TranslateCon
       strictChineseVariant: false,
       skipPatterns: [],
     },
-    privacy: { blockSecrets: true, exclude: [], allowedSchemes: ['file'] },
+    privacy: { exclude: [], allowedSchemes: ['file'] },
     document: {
       batchSize: 8,
       maxBatchChars: 4000,

@@ -32,10 +32,6 @@ export async function translateClipboardOrSelection(
   }
 
   if (!(await guard.ensureAcknowledged(true))) return;
-  if (guard.containsSecret(text)) {
-    void vscode.window.showWarningMessage(t('msg.secretNotSent'));
-    return;
-  }
 
   const cfg = config.get();
   const target = resolveSelectionTargetLanguage(text, cfg);

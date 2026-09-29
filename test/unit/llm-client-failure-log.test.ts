@@ -45,7 +45,7 @@ const cfg = (): TranslateConfig => ({
     codeLens: true,
   },
   cache: { enabled: true, memoryEntries: 100, maxDiskMB: 1 },
-  privacy: { exclude: [], allowedSchemes: ['file'], blockSecrets: true },
+  privacy: { exclude: [], allowedSchemes: ['file'] },
   glossary: { path: '.translate-glossary.json', maxTerms: 50 },
   selection: { output: 'auto' },
   parser: { maxFileSizeKB: 1024 },

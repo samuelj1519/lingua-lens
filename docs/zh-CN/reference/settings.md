@@ -81,7 +81,7 @@
 - **Type:** array of string
 - **Default:** `["**/.env","**/.env.*","**/*.pem","**/*.key","**/*.p12","**/id_rsa*","**/secrets/**","**/.git/**","**/node_modules/**"]`
 - **Scope:** `resource`
-- **Description:** 永不读取/翻译的文件 glob（如密钥）。与 `linguaLens.*` cross-link 配合使用。
+- **Description:** 永不读取/翻译的文件 glob（如 `.env`、密钥、`node_modules` 等）。
 
 ### `statusBar.enabled`
 
@@ -378,13 +378,6 @@
 
 ## 高级与调试
 
-### `privacy.blockSecrets`
-
-- **Type:** boolean
-- **Default:** `true`
-- **Scope:** `application`
-- **Description:** 内容疑似 API Key、令牌或私钥时跳过翻译。
-
 ### `privacy.allowedSchemes`
 
 - **Type:** array of string (advanced)
@@ -415,4 +408,4 @@
 
 ---
 
-_Total settings: 52_
+_Total settings: 51_

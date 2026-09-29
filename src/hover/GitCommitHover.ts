@@ -28,7 +28,6 @@ export function shouldTranslateCommitMessage(msg: string, cfg: TranslateConfig):
     reliableMinLength: cfg.detection.reliableMinLength,
     strictChineseVariant: cfg.detection.strictChineseVariant,
     userSkipPatterns: cfg.detection.skipPatterns.map((p) => new RegExp(p)),
-    blockSecrets: cfg.privacy.blockSecrets,
   });
   if (det.action === 'translate') return true;
   if (det.detected === 'en' || det.detected === 'other') return true;

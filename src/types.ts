@@ -51,7 +51,6 @@ export type SkipReason =
   | 'number'
   | 'hexOrUuid'
   | 'regexLike'
-  | 'secret'
   | 'noLetters'
   | 'targetRatio'
   | 'sameFamily'

@@ -4,6 +4,7 @@ import type { ConfigService } from '../config/ConfigService';
 import { decide } from '../detection/LanguageDetector';
 import { LlmError } from '../llm/errors';
 import { localizedLlmErrorMessage, reasoningBudgetHoverLinks } from '../llm/llmErrorUi';
+import { redactForUserFacingText } from '../secrets/redactBinding';
 import type { CombinedExtractor } from '../parsing/CombinedExtractor';
 import type { PrivacyGuard } from '../privacy/PrivacyGuard';
 import type { StatsService } from '../stats/StatsService';
@@ -95,11 +96,6 @@ export class TranslateHoverProvider implements vscode.HoverProvider {
       skipPrimary = true;
     }
 
-    if (!skipPrimary && this.guard.containsSecret(unit.text)) {
-      primary = errorHover(doc, pos, t('msg.secretNotSent'), []);
-      skipPrimary = true;
-    }
-
     const detOpts = {
       target: cfg.targetLanguage,
       minLength: cfg.detection.minLength,
@@ -107,7 +103,6 @@ export class TranslateHoverProvider implements vscode.HoverProvider {
       reliableMinLength: cfg.detection.reliableMinLength,
       strictChineseVariant: cfg.detection.strictChineseVariant,
       userSkipPatterns: cfg.detection.skipPatterns.map((p) => new RegExp(p)),
-      blockSecrets: cfg.privacy.blockSecrets,
     };
     if (!skipPrimary && !primary) {
     const decision = decide(unit.text, detOpts);
@@ -140,11 +135,12 @@ export class TranslateHoverProvider implements vscode.HoverProvider {
             this.log.debug(`hover: API ok in ${Date.now() - t0}ms`);
             primary = this.buildHover(doc, range, unit, result.text, cfg, false, result.placeholderOk);
           } catch (e) {
-            this.log.warn(`hover: API failed in ${Date.now() - t0}ms: ${e instanceof Error ? e.message : e}`);
+            const errMsg = e instanceof Error ? e.message : String(e);
+            this.log.warn(`hover: API failed in ${Date.now() - t0}ms: ${errMsg}`);
             if (e instanceof LlmError) {
-              primary = this.errorFromLlm(doc, range, e);
+              primary = await this.errorFromLlm(doc, range, e);
             } else {
-              primary = errorHover(doc, pos, String(e), []);
+              primary = errorHover(doc, pos, await redactForUserFacingText(errMsg), []);
             }
           }
         }
@@ -204,7 +200,7 @@ export class TranslateHoverProvider implements vscode.HoverProvider {
     return new vscode.Hover(md, range);
   }
 
-  private errorFromLlm(_doc: vscode.TextDocument, range: vscode.Range, e: LlmError): vscode.Hover {
+  private async errorFromLlm(_doc: vscode.TextDocument, range: vscode.Range, e: LlmError): Promise<vscode.Hover> {
     const links: string[] = [];
     if (e.kind === 'noKey' || e.kind === 'auth') {
       links.push(`[${t('hover.error.setApiKey')}](command:linguaLens.setApiKey)`);
@@ -215,9 +211,8 @@ export class TranslateHoverProvider implements vscode.HoverProvider {
     if (e.kind === 'reasoningBudget') {
       links.push(reasoningBudgetHoverLinks());
     }
-    const md = new vscode.MarkdownString(
-      localizedLlmErrorMessage(e) + (links.length ? '\n\n' + links.join(' · ') : ''),
-    );
+    const body = await redactForUserFacingText(localizedLlmErrorMessage(e));
+    const md = new vscode.MarkdownString(body + (links.length ? '\n\n' + links.join(' · ') : ''));
     md.isTrusted = {
       enabledCommands: [
         'linguaLens.setApiKey',

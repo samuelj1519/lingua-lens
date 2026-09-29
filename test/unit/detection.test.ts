@@ -10,7 +10,6 @@ const baseOpts = {
   reliableMinLength: 20,
   strictChineseVariant: false,
   userSkipPatterns: [] as RegExp[],
-  blockSecrets: true,
 };
 
 describe('LanguageDetector', () => {
@@ -26,6 +25,11 @@ describe('LanguageDetector', () => {
 
   it('translates English for zh-CN', () => {
     expect(decide('Fetch the user profile', baseOpts).action).toBe('translate');
+  });
+
+  it('still translates text that looks like an API key string', () => {
+    const sk = 'sk-proj-' + 'x'.repeat(24);
+    expect(decide(`use token ${sk} here`, baseOpts).action).toBe('translate');
   });
 
   it('skips too short', () => {

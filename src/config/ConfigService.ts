@@ -111,7 +111,6 @@ export class ConfigService implements vscode.Disposable {
       privacy: {
         exclude: [...excludeSet],
         allowedSchemes: cfg.get<string[]>('privacy.allowedSchemes', ['file', 'untitled', 'vscode-remote']),
-        blockSecrets: cfg.get<boolean>('privacy.blockSecrets', true),
       },
       glossary: {
         path: cfg.get<string>('glossary.path', '.translate-glossary.json'),

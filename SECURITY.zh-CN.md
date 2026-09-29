@@ -13,7 +13,7 @@ LinguaLens 仅将您悬停、选中或主动翻译的文本（注释、字符串
 ## 密钥
 
 - API Key 存放在 VS Code **SecretStorage** 中，按 API origin 区分。
-- `linguaLens.privacy.blockSecrets` 会尝试阻止明显的密钥被发送。
+- API 密钥仅保存在 VS Code SecretStorage 中，不会写入日志。请勿在源码中放置真实凭据，对敏感路径使用 `linguaLens.privacy.exclude`。
 - `.env` 与排除 glob 中的文件不会被翻译。
 
 ## 设置面板

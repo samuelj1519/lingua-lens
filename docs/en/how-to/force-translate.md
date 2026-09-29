@@ -93,7 +93,7 @@ Force translate does not bypass privacy or secrets. Example stack:
 
 ## Selection and hover contrast
 
-Force translate never disables `PrivacyGuard` or secret blocking. If a commit message or comment contains a token pattern, translation still aborts with `msg.secretNotSent`. For hover on code comments that detection skips because they are already English while your target is `en`, the issue is not force translate — lower `detection.minLength` or add a skip pattern exception instead.
+Force translate never disables `PrivacyGuard` path excludes or privacy acknowledgment. For hover on code comments that detection skips because they are already English while your target is `en`, the issue is not force translate — lower `detection.minLength` or add a skip pattern exception instead.
 
 ## Related documentation
 

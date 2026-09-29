@@ -36,7 +36,7 @@ sequenceDiagram
 | `CacheService` | SHA-256 键、LRU 内存、分片 JSONL 磁盘 |
 | `TranslationService` | 缓存、进行中去重、提示词、失败暂停 |
 | `GlossaryService` | 工作区 JSON 术语表 → 提示词术语 |
-| `PrivacyGuard` | 路径排除、确认、密钥启发式 |
+| `PrivacyGuard` | 路径排除、隐私确认 |
 | `ParserService` | tree-sitter WASM 语法，用于悬停提取 |
 | `CombinedExtractor` | 注释、字符串、配置键、诊断信息等 |
 | `DocTranslationService` | 分段、计划、批量翻译、预览会话 |

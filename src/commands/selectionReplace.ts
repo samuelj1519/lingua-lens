@@ -73,10 +73,6 @@ async function runSelectionTransform(
   if (!(await guard.ensureAcknowledged(true))) return;
 
   const text = doc.getText(editor.selection);
-  if (guard.containsSecret(text)) {
-    void vscode.window.showWarningMessage(t('msg.secretNotSent'));
-    return;
-  }
 
   const unit = {
     kind: 'string' as const,

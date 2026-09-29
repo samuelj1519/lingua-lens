@@ -56,4 +56,15 @@ export class ApiKeyStore {
     }
     await this.context.globalState.update(ORIGINS_KEY, []);
   }
+
+  /** Stored API key values — only for log/UI redaction (fetched from SecretStorage when needed). */
+  async getAllStoredValues(): Promise<string[]> {
+    const list = this.context.globalState.get<string[]>(ORIGINS_KEY, []);
+    const out: string[] = [];
+    for (const origin of list) {
+      const value = await this.context.secrets.get(this.storageKey(origin));
+      if (value?.trim()) out.push(value.trim());
+    }
+    return out;
+  }
 }

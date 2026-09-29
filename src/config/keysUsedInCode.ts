@@ -44,7 +44,6 @@ export const CONFIG_KEYS_USED_IN_CODE: string[] = [
   'cache.maxDiskMB',
   'privacy.exclude',
   'privacy.allowedSchemes',
-  'privacy.blockSecrets',
   'glossary.path',
   'glossary.maxTerms',
   'selection.output',

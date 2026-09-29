@@ -93,7 +93,7 @@
 
 ## 与选区、悬停对比
 
-强制翻译从不禁用 `PrivacyGuard` 或密钥拦截。若提交信息或注释含 token 模式，翻译仍以 `msg.secretNotSent` 中止。悬停因检测跳过已是英文的代码注释而目标是 `en` 时，问题不在强制翻译——应降低 `detection.minLength` 或添加跳过模式例外。
+强制翻译从不禁用 `PrivacyGuard` 的路径排除或隐私确认。悬停因检测跳过已是英文的代码注释而目标是 `en` 时，问题不在强制翻译——应降低 `detection.minLength` 或添加跳过模式例外。
 
 ## 批量作业建议
 

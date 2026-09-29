@@ -16,7 +16,6 @@ export function defaultMarkdownSegmentConfig(): Pick<
       skipPatterns: [],
     },
     privacy: {
-      blockSecrets: true,
       exclude: [],
       allowedSchemes: ['file'],
     },

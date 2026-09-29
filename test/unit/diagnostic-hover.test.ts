@@ -69,7 +69,7 @@ const baseCfg: TranslateConfig = {
     codeLens: true,
   },
   cache: { enabled: true, memoryEntries: 500, maxDiskMB: 50 },
-  privacy: { exclude: [], allowedSchemes: ['file'], blockSecrets: true },
+  privacy: { exclude: [], allowedSchemes: ['file'] },
   glossary: { path: '.translate-glossary.json', maxTerms: 200 },
   selection: { output: 'auto' },
   parser: { maxFileSizeKB: 512 },

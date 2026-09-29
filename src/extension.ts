@@ -36,6 +36,8 @@ import { maybeShowDeepSeekThinkingHint } from './llm/deepSeekHint';
 import { handleCommandLlmError } from './llm/handleCommandError';
 import { initUiL10n, resetUiL10nCache, t } from './l10n/uiL10n';
 import { EXTENSION_SETTINGS_FILTER } from './constants/extensionId';
+import { bindSecretRedaction, redactForUserFacingText } from './secrets/redactBinding';
+import { wrapRedactingLogger } from './util/redactingLogger';
 let parserService: ParserService | undefined;
 let cacheService: CacheService | undefined;
 
@@ -43,9 +45,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   const config = new ConfigService();
   initUiL10n(context.extensionPath, () => config.getRawTargetLanguage());
   await applyTargetLanguageCursorUiBootstrap(context);
-  const logger = new Logger(() => config.get().log.level);
+  const baseLogger = new Logger(() => config.get().log.level);
   const stats = new StatsService();
   const apiKeys = new ApiKeyStore(context);
+  bindSecretRedaction(apiKeys);
+  const logger = wrapRedactingLogger(baseLogger);
   const llm = new LlmClient(() => config.get(), apiKeys, logger);
   const cfg = config.get();
   if (process.env.LINGUALENS_INTEGRATION_TEST === '1') {
@@ -66,12 +70,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   cacheService = new CacheService(context, cfg.cache.memoryEntries, cfg.cache.maxDiskMB);
   await cacheService.initialize();
 
-  const glossary = new GlossaryService(config, logger);
+  const glossary = new GlossaryService(config, baseLogger);
   const translation = new TranslationService((uri) => config.get(uri), cacheService, llm, glossary, stats);
   const guard = new PrivacyGuard(config, context);
   const wasmDir = vscode.Uri.joinPath(context.extensionUri, 'dist', 'wasm').fsPath;
-  parserService = new ParserService(wasmDir, cfg.parser.maxFileSizeKB, logger);
-  const extractor = new CombinedExtractor(parserService, logger);
+  parserService = new ParserService(wasmDir, cfg.parser.maxFileSizeKB, baseLogger);
+  const extractor = new CombinedExtractor(parserService, baseLogger);
   const hoverRegistry = new HoverActionRegistry();
   const preview = new PreviewContentProvider();
   const docService = new DocTranslationService(config, guard, translation, preview);
@@ -96,7 +100,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     }
   });
   context.subscriptions.push(
-    logger,
+    baseLogger,
     config,
     glossary,
     statusBar,
@@ -162,7 +166,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   reg('linguaLens.testConnection', async () => {
     const r = await llm.testConnection();
     if (r.ok) void vscode.window.showInformationMessage(r.message);
-    else void vscode.window.showErrorMessage(r.message);
+    else void redactForUserFacingText(r.message).then((m) => vscode.window.showErrorMessage(m));
   });
 
   reg('linguaLens.translateSelection', async () => {
@@ -176,10 +180,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     }
     if (!(await guard.ensureAcknowledged(true))) return;
     const text = doc.getText(editor.selection);
-    if (guard.containsSecret(text)) {
-      void vscode.window.showWarningMessage(t('msg.secretNotSent'));
-      return;
-    }
     const c = config.get(doc.uri);
     const unit = {
       kind: 'string' as const,
@@ -379,7 +379,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
   config.onDidChange(() => {
     const c = config.get();
-    logger.setLevelProvider(() => c.log.level);
+    baseLogger.setLevelProvider(() => c.log.level);
     cacheService?.configure(c.cache.enabled, c.cache.memoryEntries, c.cache.maxDiskMB);
     parserService?.setMaxFileSizeKB(c.parser.maxFileSizeKB);
     preview.setPreviewStyle(c.document.previewStyle);

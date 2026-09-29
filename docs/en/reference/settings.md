@@ -81,7 +81,7 @@ Keys appear in VS Code settings as `linguaLens.<key>`. Sections match the seven 
 - **Type:** array of string
 - **Default:** `["**/.env","**/.env.*","**/*.pem","**/*.key","**/*.p12","**/id_rsa*","**/secrets/**","**/.git/**","**/node_modules/**"]`
 - **Scope:** `resource`
-- **Description:** Glob patterns for files that LinguaLens will not read or translate (e.g. secrets). Works with `linguaLens.*` cross-link.
+- **Description:** Glob patterns for files that LinguaLens will not read or translate (e.g. `.env`, keys, `node_modules`).
 
 ### `statusBar.enabled`
 
@@ -378,13 +378,6 @@ Keys appear in VS Code settings as `linguaLens.<key>`. Sections match the seven 
 
 ## Advanced & debugging
 
-### `privacy.blockSecrets`
-
-- **Type:** boolean
-- **Default:** `true`
-- **Scope:** `application`
-- **Description:** Skip translation when content looks like API keys, tokens, or private keys.
-
 ### `privacy.allowedSchemes`
 
 - **Type:** array of string (advanced)
@@ -415,4 +408,4 @@ Keys appear in VS Code settings as `linguaLens.<key>`. Sections match the seven 
 
 ---
 
-_Total settings: 52_
+_Total settings: 51_

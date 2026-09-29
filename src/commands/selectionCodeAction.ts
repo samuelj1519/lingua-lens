@@ -24,7 +24,6 @@ export class SelectionTranslateCodeActionProvider implements vscode.CodeActionPr
       reliableMinLength: cfg.detection.reliableMinLength,
       strictChineseVariant: cfg.detection.strictChineseVariant,
       userSkipPatterns: cfg.detection.skipPatterns.map((p) => new RegExp(p)),
-      blockSecrets: cfg.privacy.blockSecrets,
     });
     if (det.action === 'skip') return [];
 

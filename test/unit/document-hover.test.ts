@@ -47,7 +47,6 @@ describe('document paragraph hover', () => {
       reliableMinLength: 20,
       strictChineseVariant: false,
       userSkipPatterns: [],
-      blockSecrets: true,
     });
     expect(decision.action).toBe('skip');
   });

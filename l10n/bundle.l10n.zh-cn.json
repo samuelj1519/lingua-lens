@@ -65,7 +65,6 @@
   "msg.replaceSelection": "替换选区",
   "msg.scm.empty": "SCM 提交说明框为空",
   "msg.scm.replacePrompt": "翻译完成，是否替换 SCM 输入框内容？",
-  "msg.secretNotSent": "疑似密钥，未发送",
   "msg.selectTextFirst": "请先选中文本",
   "msg.sideFileExists": "文件已存在，是否覆盖？",
   "msg.sideFileExistsNamed": "{0} 已存在，是否覆盖？",

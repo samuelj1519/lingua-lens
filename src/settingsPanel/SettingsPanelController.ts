@@ -18,7 +18,7 @@ import {
 import { readOverrides, readPanelValues, updatePanelKey } from './configState';
 import { getSettingsPanelHtml } from './panelHtml';
 import type { LanguageOption, SettingsPanelMessageFromWebview, SettingsScope } from './protocol';
-import { sanitizeConnectionError } from './sanitize';
+import { redactForUserFacingText } from '../secrets/redactBinding';
 import { EXTENSION_SETTINGS_FILTER } from '../constants/extensionId';
 
 export class SettingsPanelController {
@@ -217,7 +217,7 @@ export class SettingsPanelController {
           const modelSuffix = res.model ? ` · ${res.model}` : '';
           this.panel.webview.postMessage({ type: 'testResult', ok: true, message: line + modelSuffix });
         } else {
-          const err = sanitizeConnectionError(res.message);
+          const err = await redactForUserFacingText(res.message);
           this.panel.webview.postMessage({
             type: 'testResult',
             ok: false,

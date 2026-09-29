@@ -18,6 +18,7 @@ import {
 import type { HoverActionRegistry } from './HoverActionRegistry';
 import { t } from '../l10n/uiL10n';
 import { HOVER_TRUSTED_COMMANDS, hoverActionLinks } from './hoverActionLinks';
+import { redactForUserFacingText } from '../secrets/redactBinding';
 
 export interface HoverBlockResult {
   markdown: vscode.MarkdownString;
@@ -43,7 +44,6 @@ export async function buildSupplementalHoverBlocks(
     reliableMinLength: cfg.detection.reliableMinLength,
     strictChineseVariant: cfg.detection.strictChineseVariant,
     userSkipPatterns: cfg.detection.skipPatterns.map((p) => new RegExp(p)),
-    blockSecrets: cfg.privacy.blockSecrets,
   };
 
   let needsDelay = false;
@@ -173,7 +173,10 @@ export async function buildSupplementalHoverBlocks(
     } catch (e) {
       log.warn(`hover supplemental failed: ${e instanceof Error ? e.message : e}`);
       if (e instanceof LlmError && e.kind === 'noKey') {
-        const md = new vscode.MarkdownString(`**${t('hover.sectionPrefix', item.title)}**\n\n${e.message}`);
+        const msg = await redactForUserFacingText(e.message);
+        const md = new vscode.MarkdownString(
+          `**${t('hover.sectionPrefix', item.title)}**\n\n${msg}`,
+        );
         md.isTrusted = { enabledCommands: ['linguaLens.setApiKey'] };
         blocks.push({ markdown: md, range: item.range });
       }

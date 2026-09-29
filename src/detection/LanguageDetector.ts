@@ -1,6 +1,5 @@
 import type { Decision, LangFamily, TargetLang } from '../types';
 import { familyOf } from './families';
-import { containsSecret } from './secrets';
 import { scriptStats, stripNeutral, totalUnits, unitsOfFamily } from './scripts';
 import { STOPWORDS } from './stopwords';
 import { checkSkipRules } from './SkipRules';
@@ -13,7 +12,6 @@ export interface DetectOptions {
   reliableMinLength: number;
   strictChineseVariant: boolean;
   userSkipPatterns: RegExp[];
-  blockSecrets: boolean;
 }
 
 export type DetectedLang = LangFamily | 'unknown';
@@ -94,10 +92,6 @@ export function decide(text: string, opts: DetectOptions, backend: LangIdBackend
   }
   const skip = checkSkipRules(trimmed, opts);
   if (skip) return { action: 'skip', reason: skip };
-  if (opts.blockSecrets && containsSecret(trimmed)) {
-    return { action: 'skip', reason: 'secret' };
-  }
-
   const core = stripNeutral(trimmed);
   const s = scriptStats(core);
   const total = totalUnits(s);

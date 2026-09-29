@@ -1,7 +1,6 @@
 import picomatch from 'picomatch';
 import * as vscode from 'vscode';
 import type { ConfigService } from '../config/ConfigService';
-import { containsSecret } from '../detection/secrets';
 import { t } from '../l10n/uiL10n';
 
 export type BlockReason = 'disabled' | 'workspaceDisabled' | 'excluded' | 'scheme' | 'untrusted' | 'noAck';
@@ -23,11 +22,6 @@ export class PrivacyGuard {
       return 'noAck';
     }
     return null;
-  }
-
-  containsSecret(text: string): boolean {
-    const cfg = this.config.get();
-    return cfg.privacy.blockSecrets && containsSecret(text);
   }
 
   async ensureAcknowledged(interactive: boolean): Promise<boolean> {

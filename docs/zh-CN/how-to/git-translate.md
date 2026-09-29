@@ -66,7 +66,7 @@ git.getAPI(1).repositories[0].inputBox.value = result.text;
 ## 步骤 5：验证
 
 - 命令产生带译后主题/正文的 Markdown 预览。
-- 提交信息中的密钥在 `privacy.blockSecrets` 匹配模式时被阻止（`msg.secretNotSent`）。
+- 请勿在提交信息中放置真实 API 密钥；对敏感文件使用路径排除。
 - **Test Connection** 仍有效；翻译使用 `kind: 'selection'` 缓存键。
 
 ## 提供商示例（与其他处相同）
@@ -119,7 +119,7 @@ Git 翻译命令在命令面板 **LinguaLens** 分类下。`package.json` 未绑
 
 ## 安全与合规
 
-提交信息可能包含内部代号或凭据片段；`privacy.blockSecrets` 对 Git 文本同样生效。在开源仓库工作前，先 **Replace** SCM 输入前审阅译文，避免将内部中文说明意外提交到公开历史。`.git` 目录内文件本身受 `privacy.exclude` 保护，但 Git 命令读取的是 Git 扩展提供的消息对象，与是否在 `.git` 路径悬停无关。
+提交信息可能包含内部代号或凭据片段。在开源仓库工作前，先 **Replace** SCM 输入前审阅译文，避免将内部中文说明意外提交到公开历史。`.git` 目录内文件本身受 `privacy.exclude` 保护，但 Git 命令读取的是 Git 扩展提供的消息对象，与是否在 `.git` 路径悬停无关。
 
 ## 多仓库与 monorepo
 
@@ -139,7 +139,7 @@ Git 翻译命令在命令面板 **LinguaLens** 分类下。`package.json` 未绑
 
 ## 小结
 
-Git 翻译桥接 SCM 与历史 blame，不修改 `.git` 内对象；输出为预览或可选替换输入框。多仓库与合规场景下，优先人工审阅再 **Replace**，并保留 `blockSecrets` 开启。历史行翻译依赖 Git 扩展 API 可用性；若 Git 扩展禁用，命令会早期失败而非调用 LLM。
+Git 翻译桥接 SCM 与历史 blame，不修改 `.git` 内对象；输出为预览或可选替换输入框。多仓库与合规场景下，优先人工审阅再 **Replace**。历史行翻译依赖 Git 扩展 API 可用性；若 Git 扩展禁用，命令会早期失败而非调用 LLM。
 
 ## 相关文档
 

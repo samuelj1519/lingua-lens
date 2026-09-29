@@ -13,7 +13,7 @@ LinguaLens sends text you explicitly hover, select, or translate (comments, stri
 ## Secrets
 
 - API keys are stored in VS Code **SecretStorage**, keyed by API origin.
-- `linguaLens.privacy.blockSecrets` tries to block obvious secrets from being sent.
+- API keys are stored in VS Code SecretStorage only; they are not logged. Do not put live credentials in source files—use `linguaLens.privacy.exclude` for sensitive paths.
 - `.env` and excluded globs are not translated.
 
 ## Settings webview

@@ -4,7 +4,7 @@ import {
   EXTRA_BODY_TEMPLATE_QWEN,
   parseExtraBodyJson,
 } from '../../src/settingsPanel/extraBody';
-import { sanitizeConnectionError } from '../../src/settingsPanel/sanitize';
+import { redactSecrets } from '../../src/secrets/redact';
 import { loadBundleStrings, loadBundleStringsForPanel } from '../../src/l10n/bundleStrings';
 import { PANEL_CONFIG_KEYS } from '../../src/settingsPanel/protocol';
 
@@ -21,11 +21,12 @@ describe('settings panel helpers', () => {
     expect(EXTRA_BODY_TEMPLATE_QWEN).toEqual({ enable_thinking: false });
   });
 
-  it('sanitizes API keys from connection errors', () => {
-    const msg = 'Auth failed for sk-abcdefghijklmnopqrstuvwxyz and Bearer sk-secret123token';
-    const out = sanitizeConnectionError(msg);
-    expect(out).not.toContain('sk-abcdefghijklmnopqrstuvwxyz');
-    expect(out).toContain('sk-***');
+  it('redacts secrets from connection errors', () => {
+    const secret = 'supersecretkeyvalue12345';
+    const msg = `Auth failed: Bearer ${secret} api_key=${secret}`;
+    const out = redactSecrets(msg, [secret]);
+    expect(out).not.toContain(secret);
+    expect(out).toContain('Bearer ***');
   });
 
   it('loadBundleStrings falls back to English', () => {

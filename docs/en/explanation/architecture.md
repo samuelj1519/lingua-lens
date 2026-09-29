@@ -36,7 +36,7 @@ sequenceDiagram
 | `CacheService` | SHA-256 keys, LRU memory, sharded JSONL disk |
 | `TranslationService` | Cache, inflight dedupe, prompts, pause on failures |
 | `GlossaryService` | Workspace JSON glossary → prompt terms |
-| `PrivacyGuard` | Excludes paths, acknowledgment, secret heuristics |
+| `PrivacyGuard` | Excludes paths, privacy acknowledgment |
 | `ParserService` | tree-sitter WASM grammars for hover extraction |
 | `CombinedExtractor` | Comments, strings, config keys, diagnostics, etc. |
 | `DocTranslationService` | Segment, plan, batch translate, preview session |

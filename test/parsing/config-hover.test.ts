@@ -23,7 +23,6 @@ const detOpts = {
   reliableMinLength: 20,
   strictChineseVariant: false,
   userSkipPatterns: [],
-  blockSecrets: true,
 };
 
 describe('config file hover extraction', () => {

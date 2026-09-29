@@ -5,7 +5,7 @@
 ## 设计目标
 
 - 避免翻译已属于**目标语族**的文本（节省成本、减少噪音）。
-- 跳过不适用的文本：过短、无字母、用户模式、疑似密钥。
+- 跳过不适用的文本：过短、无字母、用户模式。
 - 保持快速且本地——检测不发起网络请求。
 - 对模糊的短拉丁字符串优雅降级。
 
@@ -20,7 +20,6 @@
 | `linguaLens.detection.targetRatio` | `targetRatio` | 0.6 |
 | `linguaLens.detection.reliableMinLength` | `reliableMinLength` | 20 |
 | `linguaLens.detection.skipPatterns` | `userSkipPatterns` | `[]` |
-| `linguaLens.privacy.blockSecrets` | `blockSecrets` | true |
 | `linguaLens.detection.strictChineseVariant` | `strictChineseVariant` | false |
 
 ### strictChineseVariant（重要）
@@ -43,9 +42,7 @@ flowchart TD
   L -->|yes| S1[skip: tooShort]
   L -->|no| R[checkSkipRules]
   R -->|match| S2[skip: user rule]
-  R -->|no| SEC{blockSecrets?}
-  SEC -->|secret| S3[skip: secret]
-  SEC -->|ok| CORE[stripNeutral + scriptStats]
+  R -->|no| CORE[stripNeutral + scriptStats]
   CORE --> Z{total units == 0?}
   Z -->|yes| S4[skip: noLetters]
   Z -->|no| TR{target CJK ratio}
@@ -107,7 +104,7 @@ flowchart TD
 
 ## 文档与悬停
 
-同一 `decide()` 逻辑用于文档计划，除非 `document.forceTranslate` 在文档计划器中覆盖跳过决策。选区命令**绕过**自动跳过（用户显式请求翻译），但仍执行隐私检查。
+同一 `decide()` 逻辑用于文档计划，除非 `document.forceTranslate` 在文档计划器中覆盖跳过决策。选区命令**绕过**自动跳过（用户显式请求翻译）。路径排除与隐私确认仍由 `PrivacyGuard` 处理。
 
 ## 调优指南
 
@@ -116,7 +113,10 @@ flowchart TD
 | 更多短字符串悬停 | 降低 `minLength`（注意：噪音↑） |
 | 中英混合时少跳过 | 降低 `targetRatio` 或强制文档翻译 |
 | 跳过标识符 | 添加 `skipPatterns` 正则 |
-| 永不把 API 密钥放进注释 | 保持 `blockSecrets` 为 true |
+
+## API 密钥与日志
+
+LinguaLens **不会**扫描文档正文以猜测凭据。请通过 **Set API Key** 将密钥存入 SecretStorage。面向用户的错误与输出通道日志经 `redactSecrets` 处理，若服务端错误文本中出现已存密钥、`Bearer`/`Authorization` 或常见 `key=value` 模式，会替换为 `***`。
 
 ## 日志与调试
 
@@ -124,15 +124,15 @@ flowchart TD
 
 ## 与术语表、占位符的边界
 
-检测在占位符提取之后对「可见文本」运行；因此 `{{PH0}}` 类占位不会干扰脚本统计。术语表不改变 `decide()` 结果，仅影响翻译提示词。选区命令在多数情况下将 `action` 视为显式 `translate`，但仍执行 `blockSecrets` 与路径排除——检测跳过逻辑不适用于用户明确选中的短字符串场景时，隐私规则依然优先。
+检测在占位符提取之后对「可见文本」运行；因此 `{{PH0}}` 类占位不会干扰脚本统计。术语表不改变 `decide()` 结果，仅影响翻译提示词。选区命令在多数情况下将 `action` 视为显式 `translate`，路径排除与隐私确认仍适用。
 
 ## 测试与回归建议
 
-修改 `LanguageDetector` 时，应覆盖短拉丁串、纯数字、URL、CJK 混合、密钥样例与 `skipPatterns` 命中用例。`reliableMinLength` 边界（19 vs 20 字符）对 tinyld 分支敏感。文档计划与悬停共用 `decide()`，单测失败可能同时影响两种 UI 路径。
+修改 `LanguageDetector` 时，应覆盖短拉丁串、纯数字、URL、CJK 混合与 `skipPatterns` 命中用例。`reliableMinLength` 边界（19 vs 20 字符）对 tinyld 分支敏感。文档计划与悬停共用 `decide()`，单测失败可能同时影响两种 UI 路径。
 
 ## 用户可配置反模式
 
-将 `minLength` 设为 1 会导致大量标识符与单字母变量触发翻译；将 `targetRatio` 设为 0 几乎禁用 CJK 跳过，成本激增。`skipPatterns` 错误正则可能抛错或永不匹配——在设置 JSON 中验证正则合法性。`blockSecrets` 关闭会增加凭据泄漏风险，仅建议在隔离环境短暂调试。对文档分段，检测在 `stripMarkdownForDetection` 之后运行，因此 Markdown 标记符号不计入脚本比例；纯英文段落即使用目标 `zh-CN` 也会翻译，除非整段被用户 `skipPatterns` 排除。悬停与文档共用本逻辑是刻意设计，避免两套规则让用户困惑。
+将 `minLength` 设为 1 会导致大量标识符与单字母变量触发翻译；将 `targetRatio` 设为 0 几乎禁用 CJK 跳过，成本激增。`skipPatterns` 错误正则可能抛错或永不匹配——在设置 JSON 中验证正则合法性。对文档分段，检测在 `stripMarkdownForDetection` 之后运行，因此 Markdown 标记符号不计入脚本比例；纯英文段落即使用目标 `zh-CN` 也会翻译，除非整段被用户 `skipPatterns` 排除。悬停与文档共用本逻辑是刻意设计，避免两套规则让用户困惑。
 
 ## 相关文档
 

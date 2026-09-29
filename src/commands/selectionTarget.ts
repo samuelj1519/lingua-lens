@@ -15,7 +15,6 @@ export function resolveSelectionTargetLanguage(
     reliableMinLength: cfg.detection.reliableMinLength,
     strictChineseVariant: cfg.detection.strictChineseVariant,
     userSkipPatterns: cfg.detection.skipPatterns.map((p) => new RegExp(p)),
-    blockSecrets: cfg.privacy.blockSecrets,
   };
   const decision = decide(text, detOpts);
   if (decision.action === 'skip' && decision.detected === 'zh') {

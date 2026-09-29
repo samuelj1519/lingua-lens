@@ -11,7 +11,6 @@ export function detectOptionsFromConfig(cfg: Pick<TranslateConfig, 'targetLangua
     reliableMinLength: cfg.detection.reliableMinLength,
     strictChineseVariant: cfg.detection.strictChineseVariant,
     userSkipPatterns: cfg.detection.skipPatterns.map((p) => new RegExp(p)),
-    blockSecrets: cfg.privacy.blockSecrets,
   };
 }
 

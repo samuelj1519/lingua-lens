@@ -5,7 +5,7 @@ Before calling the LLM, LinguaLens decides whether a text unit should be transla
 ## Design goals
 
 - Avoid translating text that is already in the **target language family** (save cost, reduce noise).
-- Skip unsuitable text: too short, no letters, user patterns, secrets.
+- Skip unsuitable text: too short, no letters, user patterns.
 - Remain fast and local — no network for detection.
 - Degrade gracefully on ambiguous short Latin strings.
 
@@ -20,7 +20,6 @@ Before calling the LLM, LinguaLens decides whether a text unit should be transla
 | `linguaLens.detection.targetRatio` | `targetRatio` | 0.6 |
 | `linguaLens.detection.reliableMinLength` | `reliableMinLength` | 20 |
 | `linguaLens.detection.skipPatterns` | `userSkipPatterns` | `[]` |
-| `linguaLens.privacy.blockSecrets` | `blockSecrets` | true |
 | `linguaLens.detection.strictChineseVariant` | `strictChineseVariant` | false |
 
 ### strictChineseVariant (important)
@@ -43,9 +42,7 @@ flowchart TD
   L -->|yes| S1[skip: tooShort]
   L -->|no| R[checkSkipRules]
   R -->|match| S2[skip: user rule]
-  R -->|no| SEC{blockSecrets?}
-  SEC -->|secret| S3[skip: secret]
-  SEC -->|ok| CORE[stripNeutral + scriptStats]
+  R -->|no| CORE[stripNeutral + scriptStats]
   CORE --> Z{total units == 0?}
   Z -->|yes| S4[skip: noLetters]
   Z -->|no| TR{target CJK ratio}
@@ -107,7 +104,7 @@ Hover code does not show reason to users by default; enable debug logging to ins
 
 ## Document vs hover
 
-Same `decide()` logic feeds document plans unless `document.forceTranslate` overrides skip decisions in the document planner. Selection commands **bypass** automatic skip (user explicitly requests translation) but still run privacy checks.
+Same `decide()` logic feeds document plans unless `document.forceTranslate` overrides skip decisions in the document planner. Selection commands **bypass** automatic skip (user explicitly requests translation). Path excludes and privacy acknowledgment still apply via `PrivacyGuard`.
 
 ## Tuning guide
 
@@ -116,7 +113,10 @@ Same `decide()` logic feeds document plans unless `document.forceTranslate` over
 | More hover on short strings | Lower `minLength` (careful: noise↑) |
 | Less skip on mixed Chinese/English | Lower `targetRatio` or force document |
 | Skip identifiers | Add `skipPatterns` regex |
-| Never send API keys in comments | Keep `blockSecrets` true |
+
+## API keys and logs
+
+LinguaLens does **not** scan document text for credential-like strings. Store API keys with **Set API Key** (SecretStorage only). User-visible errors and output-channel lines run through `redactSecrets` so stored key values, `Bearer`/`Authorization` headers, and common `key=value` patterns are masked if they appear in server error text.
 
 ## Related documentation
 

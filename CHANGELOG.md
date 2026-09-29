@@ -2,7 +2,7 @@
 
 ## 0.7.10
 
-- **Icon**: 256×256 marketplace icon on `#1e3a5f` — enlarged lens, Noto Sans SC Bold **文** (white) and Inter Bold **A** (`#7ec8e3`) inside the glass (1024px render → LANCZOS downscale); `scripts/generate-marketplace-icon.py` downloads OFL fonts on demand.
+- **Icon**: 256×256 marketplace icon on `#1e3a5f` — centered magnifying glass, Noto Sans SC Bold **中** (white) and Inter Bold **En** (`#7ec8e3`) balanced inside the glass (1024px → LANCZOS); `scripts/generate-marketplace-icon.py` downloads OFL fonts and prints layout metrics.
 - **Keywords**: remove `copilot` and `chatgpt` (trademark risk); keep `openai` and `cursor`.
 - **Publish tooling**: bump `@vscode/vsce` to 4.x; add `ovsx` and `publish:vsce` / `publish:ovsx` scripts (tokens via `VSCE_PAT` / `OVSX_PAT`).
 

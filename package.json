@@ -2,7 +2,7 @@
   "name": "cursor-ai-translate",
   "displayName": "AI Translate",
   "description": "使用 LLM 翻译项目中的注释、字符串和文档",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "publisher": "cursor-ai-translate",
   "repository": {
     "type": "git",

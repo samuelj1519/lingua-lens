@@ -1,4 +1,8 @@
+import type { TargetLang } from '../types';
+
 export type SettingsScope = 'global' | 'workspace';
+
+export type LanguageOption = { value: TargetLang; label: string };
 
 export type SettingsPanelMessageFromWebview =
   | { type: 'ready' }
@@ -25,8 +29,25 @@ export type SettingsPanelMessageToWebview =
       cacheStats: { memoryEntries: number; diskBytes: number };
       totalNativeSettings: number;
       targetLanguage: string;
+      targetLanguageIsCustom: boolean;
+      languageOptions: LanguageOption[];
+      showLocaleBootstrapHint: boolean;
     }
-  | { type: 'state'; values: Record<string, unknown>; overrides: Record<string, 'workspace' | 'workspaceFolder' | null> }
+  | {
+      type: 'localeUpdate';
+      strings: Record<string, string>;
+      targetLanguage: string;
+      targetLanguageIsCustom: boolean;
+      languageOptions: LanguageOption[];
+      showLocaleBootstrapHint: boolean;
+    }
+  | {
+      type: 'state';
+      values: Record<string, unknown>;
+      overrides: Record<string, 'workspace' | 'workspaceFolder' | null>;
+      cacheStats?: { memoryEntries: number; diskBytes: number };
+      apiKeyConfigured?: boolean;
+    }
   | { type: 'testResult'; ok: boolean; message: string }
   | { type: 'cacheCleared' }
   | { type: 'extraBodyError'; message: string };

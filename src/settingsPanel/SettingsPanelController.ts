@@ -5,8 +5,13 @@ import type { ConfigService } from '../config/ConfigService';
 import type { CacheService } from '../cache/CacheService';
 import type { ApiKeyStore } from '../secrets/ApiKeyStore';
 import type { LlmClient } from '../llm/LlmClient';
-import { loadBundleStrings, type BundleLocale } from '../l10n/bundleStrings';
-import type { TargetLang } from '../types';
+import { loadBundleStringsForPanel, type BundleLocale } from '../l10n/bundleStrings';
+import {
+  BUILTIN_TARGET_LANGUAGES,
+  isBuiltinTargetLanguage,
+  TARGET_LANGUAGE_NATIVE_LABELS,
+} from '../l10n/targetLanguage';
+import { consumeCursorUiBootstrapHint } from '../l10n/targetLanguageBootstrap';
 import {
   EXTRA_BODY_TEMPLATE_DEEPSEEK,
   EXTRA_BODY_TEMPLATE_QWEN,
@@ -14,13 +19,15 @@ import {
 } from './extraBody';
 import { readOverrides, readPanelValues, updatePanelKey } from './configState';
 import { getSettingsPanelHtml } from './panelHtml';
-import type { SettingsPanelMessageFromWebview, SettingsScope } from './protocol';
+import type { LanguageOption, SettingsPanelMessageFromWebview, SettingsScope } from './protocol';
 import { sanitizeConnectionError } from './sanitize';
 
 export class SettingsPanelController {
   private panel: vscode.WebviewPanel | undefined;
   private scope: SettingsScope = 'global';
   private readonly totalNativeSettings: number;
+  private webviewReady = false;
+  private showLocaleBootstrapHint = false;
 
   constructor(
     private readonly context: vscode.ExtensionContext,
@@ -36,7 +43,7 @@ export class SettingsPanelController {
         if (e.affectsConfiguration('aiTranslate') && this.panel) {
           void this.postState();
           if (e.affectsConfiguration('aiTranslate.targetLanguage')) {
-            void this.postInit();
+            void this.postLocaleUpdate();
           }
         }
       }),
@@ -44,8 +51,12 @@ export class SettingsPanelController {
   }
 
   reveal(): void {
+    if (this.showLocaleBootstrapHint === false) {
+      this.showLocaleBootstrapHint = consumeCursorUiBootstrapHint(this.context);
+    }
     if (this.panel) {
       this.panel.reveal(vscode.ViewColumn.One);
+      void this.postLocaleUpdate();
       return;
     }
     this.panel = vscode.window.createWebviewPanel(
@@ -56,6 +67,7 @@ export class SettingsPanelController {
     );
     this.panel.onDidDispose(() => {
       this.panel = undefined;
+      this.webviewReady = false;
     });
     this.panel.webview.onDidReceiveMessage((msg: SettingsPanelMessageFromWebview) => {
       void this.onMessage(msg);
@@ -70,8 +82,21 @@ export class SettingsPanelController {
     return JSON.parse(fs.readFileSync(p, 'utf8')) as Record<string, string>;
   }
 
-  private stringsForTarget(target: TargetLang): Record<string, string> {
-    return loadBundleStrings((loc) => this.readBundle(loc), target);
+  private rawTargetLanguage(): string {
+    const values = readPanelValues(this.scope);
+    const v = values['targetLanguage'];
+    return typeof v === 'string' ? v : this.config.get().targetLanguage;
+  }
+
+  private stringsForPanel(rawTarget: string): Record<string, string> {
+    return loadBundleStringsForPanel((loc) => this.readBundle(loc), rawTarget);
+  }
+
+  private languageOptions(): LanguageOption[] {
+    return BUILTIN_TARGET_LANGUAGES.map((value) => ({
+      value,
+      label: TARGET_LANGUAGE_NATIVE_LABELS[value],
+    }));
   }
 
   private async render(): Promise<void> {
@@ -81,36 +106,72 @@ export class SettingsPanelController {
       vscode.Uri.joinPath(this.context.extensionUri, 'dist', 'settings-panel-webview.js'),
     );
     this.panel.webview.html = getSettingsPanelHtml(scriptUri.toString(), nonce);
+    this.webviewReady = false;
     await this.postInit();
+  }
+
+  private localePayload(raw: string) {
+    const strings = this.stringsForPanel(raw);
+    return {
+      strings,
+      targetLanguage: raw,
+      targetLanguageIsCustom: !isBuiltinTargetLanguage(raw),
+      languageOptions: this.languageOptions(),
+      showLocaleBootstrapHint: this.showLocaleBootstrapHint,
+    };
+  }
+
+  private applyPanelTitle(strings: Record<string, string>): void {
+    if (!this.panel) return;
+    this.panel.title = strings['panel.title'] ?? 'AI Translate Settings';
   }
 
   private async postInit(): Promise<void> {
     if (!this.panel) return;
-    const cfg = this.config.get();
-    const strings = this.stringsForTarget(cfg.targetLanguage);
-    const title = strings['panel.title'] ?? 'AI Translate Settings';
-    this.panel.title = title;
-    const baseUrl = cfg.llm.baseUrl;
+    const raw = this.rawTargetLanguage();
+    const { strings, ...locale } = this.localePayload(raw);
+    this.applyPanelTitle(strings);
+    const baseUrl = this.config.get().llm.baseUrl;
     const apiKeyConfigured = Boolean(await this.apiKeys.get(baseUrl));
     this.panel.webview.postMessage({
       type: 'init',
       strings,
+      ...locale,
       scope: this.scope,
       values: readPanelValues(this.scope),
       overrides: readOverrides(),
       apiKeyConfigured,
       cacheStats: this.cache.stats(),
       totalNativeSettings: this.totalNativeSettings,
-      targetLanguage: cfg.targetLanguage,
+    });
+  }
+
+  private async postLocaleUpdate(): Promise<void> {
+    if (!this.panel) return;
+    const raw = this.rawTargetLanguage();
+    const { strings, ...locale } = this.localePayload(raw);
+    this.applyPanelTitle(strings);
+    if (!this.webviewReady) {
+      await this.postInit();
+      return;
+    }
+    this.panel.webview.postMessage({
+      type: 'localeUpdate',
+      strings,
+      ...locale,
     });
   }
 
   private async postState(): Promise<void> {
     if (!this.panel) return;
+    const baseUrl = this.config.get().llm.baseUrl;
+    const apiKeyConfigured = Boolean(await this.apiKeys.get(baseUrl));
     this.panel.webview.postMessage({
       type: 'state',
       values: readPanelValues(this.scope),
       overrides: readOverrides(),
+      cacheStats: this.cache.stats(),
+      apiKeyConfigured,
     });
   }
 
@@ -118,11 +179,13 @@ export class SettingsPanelController {
     if (!this.panel) return;
     switch (msg.type) {
       case 'ready':
+        this.webviewReady = true;
         await this.postInit();
         break;
       case 'setScope':
         this.scope = msg.scope;
-        await this.postInit();
+        await this.postLocaleUpdate();
+        await this.postState();
         break;
       case 'update':
         if (msg.key === 'llm.extraBody' && typeof msg.value === 'string') {
@@ -135,8 +198,11 @@ export class SettingsPanelController {
         } else {
           await updatePanelKey(msg.key, msg.value, this.scope);
         }
+        if (msg.key === 'targetLanguage') {
+          this.showLocaleBootstrapHint = false;
+        }
         await this.postState();
-        if (msg.key === 'targetLanguage') await this.postInit();
+        if (msg.key === 'targetLanguage') await this.postLocaleUpdate();
         break;
       case 'applyExtraBodyTemplate':
         if (msg.template === 'clear') {
@@ -150,7 +216,7 @@ export class SettingsPanelController {
         break;
       case 'testConnection': {
         const res = await this.llm.testConnection();
-        const strings = this.stringsForTarget(this.config.get().targetLanguage);
+        const strings = this.stringsForPanel(this.rawTargetLanguage());
         if (res.ok) {
           const line = (strings['panel.testConnection.success'] ?? 'OK ({0} ms)').replace(
             '{0}',
@@ -169,14 +235,13 @@ export class SettingsPanelController {
         break;
       }
       case 'clearCache': {
-        const strings = this.stringsForTarget(this.config.get().targetLanguage);
+        const strings = this.stringsForPanel(this.rawTargetLanguage());
         const confirm = strings['panel.cache.clearConfirm'] ?? 'Clear all translation cache?';
         const yes = strings['panel.cache.clearYes'] ?? 'Clear';
         const pick = await vscode.window.showWarningMessage(confirm, { modal: true }, yes);
         if (pick === yes) {
           await this.cache.clear();
-          this.panel.webview.postMessage({ type: 'cacheCleared' });
-          await this.postInit();
+          await this.postState();
         }
         break;
       }
@@ -188,7 +253,7 @@ export class SettingsPanelController {
         break;
       case 'openSetApiKey':
         await vscode.commands.executeCommand('aiTranslate.setApiKey');
-        await this.postInit();
+        await this.postState();
         break;
     }
   }

@@ -49,5 +49,9 @@
   "panel.cache.stats": "Cache usage",
   "panel.cache.clear": "Clear cache",
   "panel.cache.clearConfirm": "Clear all cached translations?",
-  "panel.cache.clearYes": "Clear"
+  "panel.cache.clearYes": "Clear",
+  "panel.language.label": "Language",
+  "panel.targetLanguage.custom": "Custom: {0}",
+  "panel.localeBootstrapHint": "Set from Cursor UI language. You can change this anytime.",
+  "panel.section.detection": "Detection"
 }

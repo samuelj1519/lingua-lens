@@ -2,19 +2,8 @@ import * as vscode from 'vscode';
 import type { ApiKeyStore } from '../secrets/ApiKeyStore';
 import type { ConfigService } from '../config/ConfigService';
 import type { StatsService } from '../stats/StatsService';
+import { TARGET_LANGUAGE_NATIVE_LABELS } from '../l10n/targetLanguage';
 import type { TargetLang } from '../types';
-
-const LANG_LABELS: Record<TargetLang, string> = {
-  'zh-CN': '简体中文',
-  'zh-TW': '繁體中文',
-  en: 'English',
-  ja: '日本語',
-  ko: '한국어',
-  fr: 'Français',
-  de: 'Deutsch',
-  es: 'Español',
-  ru: 'Русский',
-};
 
 export class StatusBarController implements vscode.Disposable {
   private readonly toggleItem: vscode.StatusBarItem;
@@ -81,8 +70,8 @@ export class StatusBarController implements vscode.Disposable {
 
   async pickLanguage(): Promise<void> {
     const cfg = this.config.get();
-    const items = (Object.keys(LANG_LABELS) as TargetLang[]).map((code) => ({
-      label: (code === cfg.targetLanguage ? '$(check) ' : '') + LANG_LABELS[code],
+    const items = (Object.keys(TARGET_LANGUAGE_NATIVE_LABELS) as TargetLang[]).map((code) => ({
+      label: (code === cfg.targetLanguage ? '$(check) ' : '') + TARGET_LANGUAGE_NATIVE_LABELS[code],
       description: code,
       code,
     }));

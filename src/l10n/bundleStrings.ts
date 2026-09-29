@@ -1,4 +1,5 @@
 import type { TargetLang } from '../types';
+import { isBuiltinTargetLanguage } from './targetLanguage';
 
 export type BundleLocale =
   | 'en'
@@ -28,12 +29,31 @@ export function targetLanguageToBundleLocale(target: TargetLang): BundleLocale {
   return TARGET_TO_BUNDLE[target] ?? 'en';
 }
 
+export function bundleLocaleForPanelUi(rawTarget: string): BundleLocale {
+  if (isBuiltinTargetLanguage(rawTarget)) {
+    return targetLanguageToBundleLocale(rawTarget);
+  }
+  return 'en';
+}
+
 export function loadBundleStrings(
   readJson: (locale: BundleLocale) => Record<string, string> | undefined,
   target: TargetLang,
 ): Record<string, string> {
   const primary = targetLanguageToBundleLocale(target);
   const en = readJson('en') ?? {};
+  const localized = readJson(primary) ?? {};
+  return { ...en, ...localized };
+}
+
+/** Panel UI strings: built-in targets use that locale; custom values use English only. */
+export function loadBundleStringsForPanel(
+  readJson: (locale: BundleLocale) => Record<string, string> | undefined,
+  rawTarget: string,
+): Record<string, string> {
+  const primary = bundleLocaleForPanelUi(rawTarget);
+  const en = readJson('en') ?? {};
+  if (primary === 'en') return { ...en };
   const localized = readJson(primary) ?? {};
   return { ...en, ...localized };
 }

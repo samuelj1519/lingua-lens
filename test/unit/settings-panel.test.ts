@@ -5,7 +5,7 @@ import {
   parseExtraBodyJson,
 } from '../../src/settingsPanel/extraBody';
 import { sanitizeConnectionError } from '../../src/settingsPanel/sanitize';
-import { loadBundleStrings } from '../../src/l10n/bundleStrings';
+import { loadBundleStrings, loadBundleStringsForPanel } from '../../src/l10n/bundleStrings';
 import { PANEL_CONFIG_KEYS } from '../../src/settingsPanel/protocol';
 
 describe('settings panel helpers', () => {
@@ -32,6 +32,14 @@ describe('settings panel helpers', () => {
     const en = { 'panel.title': 'English' };
     const strings = loadBundleStrings((loc) => (loc === 'en' ? en : undefined), 'ja');
     expect(strings['panel.title']).toBe('English');
+  });
+
+  it('loadBundleStringsForPanel uses English-only UI for custom targets', () => {
+    const strings = loadBundleStringsForPanel(
+      (loc) => (loc === 'en' ? { 'panel.title': 'EN' } : { 'panel.title': 'JA' }),
+      'custom-lang',
+    );
+    expect(strings['panel.title']).toBe('EN');
   });
 
   it('panel exposes expected config keys', () => {

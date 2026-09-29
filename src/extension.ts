@@ -29,12 +29,14 @@ import { suggestVariableNames } from './commands/variableNaming';
 import { refreshHoverTranslation } from './commands/refreshHover';
 import { SettingsPanelController } from './settingsPanel/SettingsPanelController';
 import { countConfigurationProperties } from './settingsPanel/countSettings';
+import { applyTargetLanguageCursorUiBootstrap } from './l10n/targetLanguageBootstrap';
 
 let parserService: ParserService | undefined;
 let cacheService: CacheService | undefined;
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
   const config = new ConfigService();
+  await applyTargetLanguageCursorUiBootstrap(context);
   const logger = new Logger(() => config.get().log.level);
   const stats = new StatsService();
   const apiKeys = new ApiKeyStore(context);

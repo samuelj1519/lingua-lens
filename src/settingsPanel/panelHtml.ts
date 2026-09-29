@@ -16,7 +16,21 @@ export function getSettingsPanelHtml(scriptUri: string, nonce: string): string {
       background: var(--vscode-editor-background);
     }
     body { margin: 0; padding: var(--pad); }
-    h1 { font-size: 1.25em; margin: 0 0 var(--gap); font-weight: 600; }
+    h1 { font-size: 1.25em; margin: 0; font-weight: 600; flex: 1; min-width: 0; }
+    .header-row {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px;
+      margin-bottom: var(--gap);
+    }
+    .lang-control { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .lang-control label { margin: 0; font-weight: 600; white-space: nowrap; }
+    select.lang-select, #lang-select {
+      min-width: 11rem;
+      font-weight: 500;
+    }
+    .locale-hint {
+      margin: 0 0 10px; font-size: 0.85em;
+      color: var(--vscode-descriptionForeground);
+    }
     h2 { font-size: 1em; margin: 16px 0 8px; font-weight: 600; color: var(--vscode-textLink-foreground); }
     label { display: block; margin-bottom: 4px; opacity: 0.9; }
     input[type="text"], input[type="number"], select, textarea {

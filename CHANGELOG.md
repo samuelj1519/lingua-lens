@@ -2,7 +2,7 @@
 
 ## 0.7.10
 
-- **Icon**: replace placeholder square with a 256×256 lens-and-text marketplace icon aligned with gallery banner `#1e3a5f`.
+- **Icon**: 256×256 marketplace icon on gallery banner `#1e3a5f` — white lens with vector **文** (source) and cyan **A** (target) inside the glass; reproducible via `scripts/generate-marketplace-icon.py`.
 - **Keywords**: remove `copilot` and `chatgpt` (trademark risk); keep `openai` and `cursor`.
 - **Publish tooling**: bump `@vscode/vsce` to 4.x; add `ovsx` and `publish:vsce` / `publish:ovsx` scripts (tokens via `VSCE_PAT` / `OVSX_PAT`).
 

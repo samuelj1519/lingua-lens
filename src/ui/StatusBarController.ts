@@ -43,11 +43,11 @@ export class StatusBarController implements vscode.Disposable {
     const key = await this.apiKeys.get(cfg.llm.baseUrl);
     const enabled = cfg.enabled;
     if (!key) {
-      this.toggleItem.text = '$(warning) 译';
+      this.toggleItem.text = `$(warning) ${t('statusbar.shortLabel')}`;
     } else if (enabled) {
-      this.toggleItem.text = '$(globe) 译';
+      this.toggleItem.text = `$(globe) ${t('statusbar.shortLabel')}`;
     } else {
-      this.toggleItem.text = '$(circle-slash) 译';
+      this.toggleItem.text = `$(circle-slash) ${t('statusbar.shortLabel')}`;
     }
     this.langItem.text = cfg.targetLanguage;
     const s = this.stats.snapshot();

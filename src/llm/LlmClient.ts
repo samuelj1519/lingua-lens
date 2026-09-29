@@ -52,8 +52,8 @@ export class LlmClient {
     const config = this.getConfig();
     this.sem.setMax(config.llm.maxConcurrency);
     const key = await this.apiKeys.get(config.llm.baseUrl);
-    if (!key) throw new LlmError('noKey', '未设置 API Key');
-    if (!config.llm.model) throw new LlmError('noModel', '未配置模型名');
+    if (!key) throw new LlmError('noKey', 'API Key is not set');
+    if (!config.llm.model) throw new LlmError('noModel', 'Model name is not configured');
 
     const release = await this.sem.acquire(req.priority);
     const start = Date.now();
@@ -164,17 +164,17 @@ export class LlmClient {
       }
 
       if (res.status === 401 || res.status === 403) {
-        throw new LlmError('auth', `API Key 无效或无权限 (HTTP ${res.status})`, res.status);
+        throw new LlmError('auth', `Invalid API Key or forbidden (HTTP ${res.status})`, res.status);
       }
       if (res.status === 404) {
-        throw new LlmError('notFound', '接口地址或模型不存在', res.status);
+        throw new LlmError('notFound', 'API endpoint or model not found', res.status);
       }
       if (res.status === 429) {
         const ra = parseRetryAfter(res.headers.get('Retry-After'));
-        throw new LlmError('rateLimit', '请求过于频繁', res.status, ra);
+        throw new LlmError('rateLimit', 'Rate limit exceeded', res.status, ra);
       }
       if (res.status >= 500) {
-        throw new LlmError('server', `服务暂时不可用 (HTTP ${res.status})`, res.status);
+        throw new LlmError('server', `Service unavailable (HTTP ${res.status})`, res.status);
       }
       if (!res.ok) {
         const text = await res.text();
@@ -192,7 +192,7 @@ export class LlmClient {
       const msg = data.choices?.[0]?.message;
       const content = msg?.content ?? '';
       if (!isCacheableTranslation(content)) {
-        throw new LlmError('invalidResponse', '模型返回空译文');
+        throw new LlmError('invalidResponse', 'Model returned an empty translation');
       }
       return {
         content,
@@ -206,12 +206,12 @@ export class LlmClient {
       };
     } catch (e) {
       clearTimeout(timeout);
-      if (req.signal?.aborted) throw new LlmError('cancelled', '已取消');
+      if (req.signal?.aborted) throw new LlmError('cancelled', 'Cancelled');
       if (e instanceof LlmError) throw e;
       if (e instanceof Error && e.name === 'AbortError') {
-        throw new LlmError('timeout', `请求超时 (${config.llm.timeoutMs}ms)`);
+        throw new LlmError('timeout', `Request timed out (${config.llm.timeoutMs}ms)`);
       }
-      throw new LlmError('network', e instanceof Error ? e.message : '网络错误');
+      throw new LlmError('network', e instanceof Error ? e.message : 'Network error');
     }
   }
 
@@ -224,7 +224,7 @@ export class LlmClient {
       });
       return {
         ok: true,
-        message: `连接成功 (${res.latencyMs}ms)，模型 ${res.model}`,
+        message: `Connected (${res.latencyMs}ms), model ${res.model}`,
         latencyMs: res.latencyMs,
         model: res.model,
       };
@@ -240,7 +240,7 @@ async function readSseContent(body: ReadableStream<Uint8Array>, signal: AbortSig
   let buf = '';
   let content = '';
   while (true) {
-    if (signal.aborted) throw new LlmError('cancelled', '已取消');
+    if (signal.aborted) throw new LlmError('cancelled', 'Cancelled');
     const { done, value } = await reader.read();
     if (done) break;
     buf += decoder.decode(value, { stream: true });
@@ -254,7 +254,7 @@ async function readSseContent(body: ReadableStream<Uint8Array>, signal: AbortSig
     }
   }
   if (!isCacheableTranslation(content)) {
-    throw new LlmError('invalidResponse', '流式响应为空');
+    throw new LlmError('invalidResponse', 'Empty streamed response');
   }
   return content;
 }

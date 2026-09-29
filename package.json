@@ -1,8 +1,8 @@
 {
   "name": "cursor-ai-translate",
   "displayName": "AI Translate",
-  "description": "使用 LLM 翻译项目中的注释、字符串和文档",
-  "version": "0.5.3",
+  "description": "Translate comments, strings, and documents in your editor with an OpenAI-compatible LLM",
+  "version": "0.6.0",
   "publisher": "cursor-ai-translate",
   "repository": {
     "type": "git",
@@ -28,7 +28,7 @@
   "capabilities": {
     "untrustedWorkspaces": {
       "supported": "limited",
-      "description": "受限模式下不读取工作区术语表",
+      "description": "Glossary path is not read in restricted untrusted workspaces",
       "restrictedConfigurations": [
         "aiTranslate.glossary.path",
         "aiTranslate.detection.skipPatterns"
@@ -36,7 +36,7 @@
     },
     "virtualWorkspaces": {
       "supported": "limited",
-      "description": "虚拟工作区中仅支持悬停和选区翻译"
+      "description": "Hover and selection translation only in virtual workspaces"
     }
   },
   "contributes": {
@@ -933,7 +933,8 @@
     "merge-config": "node scripts/merge-configuration.mjs",
     "merge-nls": "node scripts/merge-nls.mjs",
     "prebuild": "npm run merge-config && npm run merge-nls",
-    "pretest": "npm run merge-config && npm run merge-nls",
+    "generate-docs": "node scripts/generate-settings-reference.mjs",
+    "pretest": "npm run merge-config && npm run merge-nls && npm run generate-docs",
     "build": "node esbuild.mjs && node scripts/copy-wasm.mjs",
     "watch": "node esbuild.mjs --watch",
     "test": "vitest run",

@@ -148,5 +148,14 @@
   "statusbar.tooltip.skipped": "Skipped locally",
   "statusbar.tooltip.target": "Target",
   "statusbar.tooltip.title": "AI Translate",
-  "statusbar.tooltip.tokens": "Tokens (in/out)"
+  "statusbar.tooltip.tokens": "Tokens (in/out)",
+  "doc.preview.failed": "Translation failed: {0} (source kept)",
+  "doc.preview.failed.unknown": "unknown error",
+  "doc.preview.translating": "*(Translating…)*",
+  "hover.error.internal": "Hover translation failed. See the AI Translate output log.",
+  "hover.error.servicePaused": "Translation paused after repeated failures; retrying in ~60s.",
+  "hover.error.showLog": "Show log",
+  "naming.pickStyleTitle": "Choose a naming style to insert",
+  "naming.promptDescription": "Describe the feature (any language)",
+  "statusbar.shortLabel": "Tr"
 }

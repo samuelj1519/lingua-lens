@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import {
   countCompletedTranslatableSegments,
   DOCUMENT_PROGRESS_TEMPLATE_EN,
-  DOCUMENT_PROGRESS_TEMPLATE_ZH,
   formatDocumentProgressMessage,
   segmentProgressIncrement,
 } from '../../src/document/documentProgress';
@@ -42,12 +41,14 @@ function miniSession(
 }
 
 describe('document progress', () => {
-  it('formats English and Chinese progress messages with file name only', () => {
+  it('formats progress messages with file name only', () => {
     expect(formatDocumentProgressMessage('README.md', 12, 18, DOCUMENT_PROGRESS_TEMPLATE_EN)).toBe(
       'Translating README.md: 12/18 segments',
     );
-    expect(formatDocumentProgressMessage('README.md', 12, 18, DOCUMENT_PROGRESS_TEMPLATE_ZH)).toBe(
-      '正在翻译 README.md：12/18 段',
+    // Intentional zh-CN template (mirrors l10n bundle) for placeholder substitution.
+    const zhTemplate = '\u6b63\u5728\u7ffb\u8bd1 {0}\uff1a{1}/{2} \u6bb5';
+    expect(formatDocumentProgressMessage('README.md', 12, 18, zhTemplate)).toBe(
+      '\u6b63\u5728\u7ffb\u8bd1 README.md\uff1a12/18 \u6bb5',
     );
   });
 

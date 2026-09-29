@@ -57,7 +57,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       .getConfiguration('aiTranslate')
       .update('hover.extraDelayMs', 0, vscode.ConfigurationTarget.Global);
     await apiKeys.set(baseUrl, 'integration-test-key');
-    logger.info(`集成测试模式：LLM -> ${baseUrl}`);
+    logger.info(`Integration test mode: LLM -> ${baseUrl}`);
   }
   cacheService = new CacheService(context, cfg.cache.memoryEntries, cfg.cache.maxDiskMB);
   await cacheService.initialize();
@@ -385,7 +385,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   });
 
   void glossary.ensureLoaded();
-  logger.info(`AI Translate 已激活 (VS Code ${vscode.version})`);
+  logger.info(`AI Translate activated (VS Code ${vscode.version})`);
 }
 
 export async function deactivate(): Promise<void> {

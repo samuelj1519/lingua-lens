@@ -1,6 +1,11 @@
-/** Marker in our hover markdown so we can ignore it when reading other providers. */
-export const AI_TRANSLATE_HOVER_MARKER = '**AI 翻译**';
+/** Language-neutral marker embedded in our hover markdown. */
+export const AI_TRANSLATE_HOVER_MARKER = '<!-- aiTranslate -->';
 
 export function isAiTranslateHoverContent(text: string): boolean {
-  return text.includes(AI_TRANSLATE_HOVER_MARKER) || text.includes('aiTranslate.hover.');
+  return (
+    text.includes(AI_TRANSLATE_HOVER_MARKER) ||
+    text.includes('**AI Translate**') ||
+    text.includes('**AI \u7ffb\u8bd1**') ||
+    text.includes('aiTranslate.hover.')
+  );
 }

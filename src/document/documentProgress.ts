@@ -3,9 +3,6 @@ import type { DocSession } from './DocTranslationService';
 /** English template (mirrors `package.l10n.json`). */
 export const DOCUMENT_PROGRESS_TEMPLATE_EN = 'Translating {0}: {1}/{2} segments';
 
-/** Chinese template (mirrors `package.l10n.zh-cn.json`). */
-export const DOCUMENT_PROGRESS_TEMPLATE_ZH = '正在翻译 {0}：{1}/{2} 段';
-
 export function formatDocumentProgressMessage(
   fileName: string,
   completed: number,

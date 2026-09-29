@@ -68,7 +68,7 @@ export async function validateAndFallbackContainers(
     } else {
       session.results.set(seg.id, {
         status: 'failed',
-        error: '结构校验未通过，已保留原文块',
+        error: 'Structure validation failed; kept the source block',
       });
     }
   }

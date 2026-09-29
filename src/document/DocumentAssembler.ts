@@ -95,15 +95,17 @@ function translationBlockForSegment(
   if (st?.status === 'skipped') return '';
   if (!st || st.status === 'pending') {
     if (seg.kind === 'frontmatter' && style === 'interleaved') {
-      return '\n> *(翻译中…)*';
+      return `\n> ${t('doc.preview.translating')}`;
     }
-    return style === 'interleaved' ? `${gap}> *(翻译中…)*` : '';
+    return style === 'interleaved' ? `${gap}> ${t('doc.preview.translating')}` : '';
   }
   if (st.status === 'failed') {
+    const err = st.error ?? t('doc.preview.failed.unknown');
+    const failed = t('doc.preview.failed', err);
     if (seg.kind === 'frontmatter' && style === 'interleaved') {
-      return `\n# ⚠️ 翻译失败：${st.error ?? '未知错误'}`;
+      return `\n# ⚠️ ${failed}`;
     }
-    return `${gap}> ⚠️ 翻译失败：${st.error ?? '未知错误'}（保留原文）`;
+    return `${gap}> ⚠️ ${failed}`;
   }
   const restored = restore(st.text ?? '', seg.placeholders);
   const text = (restored.ok ? restored.text : (st.text ?? '')).trimEnd();

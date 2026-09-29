@@ -15,7 +15,7 @@ describe('diagnostic hover helpers', () => {
   });
 
   it('detects own hover marker', () => {
-    expect(isAiTranslateHoverContent('**AI 翻译** `zh-CN`')).toBe(true);
+    expect(isAiTranslateHoverContent('<!-- aiTranslate -->\n**AI Translate** `en`')).toBe(true);
     expect(isAiTranslateHoverContent('normal docs')).toBe(false);
   });
 });

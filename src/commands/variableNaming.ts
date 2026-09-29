@@ -13,7 +13,7 @@ export async function suggestVariableNames(
   const desc =
     editor && !editor.selection.isEmpty
       ? editor.document.getText(editor.selection)
-      : await vscode.window.showInputBox({ prompt: '输入中文或英文功能描述' });
+      : await vscode.window.showInputBox({ prompt: t('naming.promptDescription') });
   if (!desc?.trim()) return;
   if (!(await guard.ensureAcknowledged(true))) return;
 
@@ -33,7 +33,7 @@ export async function suggestVariableNames(
         label: data[k] ?? k,
         description: k,
       })),
-      { title: '选择要插入的命名风格' },
+      { title: t('naming.pickStyleTitle') },
     );
     if (!pick) return;
     if (editor) {

@@ -94,7 +94,7 @@ Interview the user.
     const out = assembleDocument(skillFixture, session, 'interleaved');
     const body = out.split('\n\n').slice(1).join('\n\n');
     expect(body).toContain('description: Grill the user relentlessly');
-    expect(body).toMatch(/# 描述：无情拷问用户的计划。/);
+    expect(body).toContain('# Description: \u65e0\u60c5\u62f7\u95ee\u7528\u6237\u7684\u8ba1\u5212\u3002');
     expect(body).toContain('---');
     const fmBlock = body.slice(0, body.indexOf('---', 4));
     expect(fmBlock).not.toMatch(/\n[^#\n-].*无情拷问/);
@@ -107,7 +107,7 @@ Interview the user.
   });
 
   it('formatFrontmatterYamlComments handles multiline', () => {
-    expect(formatFrontmatterYamlComments('description', 'a\nb')).toBe('# 描述：a\n# b');
+    expect(formatFrontmatterYamlComments('description', 'a\nb')).toBe('# Description: a\n# b');
   });
 
   it('empty whitelist disables frontmatter segments', () => {

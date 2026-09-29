@@ -33,7 +33,7 @@ export class SelectionHoverProvider implements vscode.HoverProvider {
     const block = this.guard.check(doc);
     if (block && block !== 'noAck') return undefined;
     if (block === 'noAck') {
-      return new vscode.Hover('首次使用需确认隐私提示', editor.selection);
+      return new vscode.Hover(t('privacy.prompt', new URL(cfg.llm.baseUrl).origin), editor.selection);
     }
 
     const text = doc.getText(editor.selection);

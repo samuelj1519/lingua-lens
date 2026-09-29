@@ -79,7 +79,7 @@ export class GlossaryService implements vscode.Disposable {
     try {
       const buf = await vscode.workspace.fs.readFile(uri);
       if (buf.byteLength > 512 * 1024) {
-        this.logger.warn('术语表超过 512KB，已忽略');
+        this.logger.warn('Glossary exceeds 512KB; ignored');
         return [];
       }
       const data = JSON.parse(Buffer.from(buf).toString('utf8')) as GlossaryFile;

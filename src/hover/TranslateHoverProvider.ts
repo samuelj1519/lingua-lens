@@ -12,6 +12,7 @@ import type { AppLogger } from '../util/logger';
 import { t } from '../l10n/uiL10n';
 import type { HoverActionRegistry } from './HoverActionRegistry';
 import { HOVER_TRUSTED_COMMANDS, hoverActionLinks } from './hoverActionLinks';
+import { AI_TRANSLATE_HOVER_MARKER } from './hoverMarkers';
 import { buildSupplementalHoverBlocks } from './HoverBlocks';
 
 export class TranslateHoverProvider implements vscode.HoverProvider {
@@ -35,8 +36,8 @@ export class TranslateHoverProvider implements vscode.HoverProvider {
     } catch (e) {
       const msg = e instanceof Error ? e.stack ?? e.message : String(e);
       this.log.error(`provideHover unexpected error: ${msg}`);
-      return errorHover(doc, pos, '悬停翻译内部错误，请查看 AI Translate 输出日志', [
-        `[显示日志](command:aiTranslate.showLog)`,
+      return errorHover(doc, pos, t('hover.error.internal'), [
+        `[${t('hover.error.showLog')}](command:aiTranslate.showLog)`,
       ]);
     }
   }
@@ -61,8 +62,8 @@ export class TranslateHoverProvider implements vscode.HoverProvider {
     }
     if (block === 'noAck') {
       const origin = new URL(cfg.llm.baseUrl).origin;
-      return errorHover(doc, pos, `首次使用需确认：文本将发送至 ${origin}`, [
-        `[确认并继续](command:aiTranslate.acknowledgePrivacy)`,
+      return errorHover(doc, pos, t('privacy.prompt', origin), [
+        `[${t('privacy.continue')}](command:aiTranslate.acknowledgePrivacy)`,
       ]);
     }
 
@@ -94,7 +95,7 @@ export class TranslateHoverProvider implements vscode.HoverProvider {
     }
 
     if (!skipPrimary && this.guard.containsSecret(unit.text)) {
-      primary = errorHover(doc, pos, '疑似密钥，未发送', []);
+      primary = errorHover(doc, pos, t('msg.secretNotSent'), []);
       skipPrimary = true;
     }
 
@@ -122,7 +123,7 @@ export class TranslateHoverProvider implements vscode.HoverProvider {
         if (cached.fromCache === 'memory') this.stats.inc('memoryHits');
         primary = this.buildHover(doc, range, unit, cached.text, cfg, true, cached.placeholderOk);
       } else if (this.translation.isPaused()) {
-        primary = errorHover(doc, pos, '翻译服务暂停中 (连续失败)，60 秒后自动恢复', []);
+        primary = errorHover(doc, pos, t('hover.error.servicePaused'), []);
       } else {
         const ok = await cancellableDelay(cfg.hover.extraDelayMs, token);
         if (!ok) {
@@ -178,7 +179,7 @@ export class TranslateHoverProvider implements vscode.HoverProvider {
     md.isTrusted = { enabledCommands: [...HOVER_TRUSTED_COMMANDS] };
     md.supportHtml = false;
     const cacheLabel = fromCache ? t('hover.fromCache') : '';
-    md.appendMarkdown(`**${t('hover.brand')}** \`${cfg.targetLanguage}\`${cacheLabel}\n\n`);
+    md.appendMarkdown(`${AI_TRANSLATE_HOVER_MARKER}\n**${t('hover.brand')}** \`${cfg.targetLanguage}\`${cacheLabel}\n\n`);
     const isString = unit.kind === 'string' || unit.kind === 'templateString';
     if (isString) md.appendText(translation);
     else md.appendMarkdown(translation);
@@ -228,7 +229,7 @@ export function createHoverProvider(
   const provider = new TranslateHoverProvider(config, guard, extractor, translation, stats, registry, log);
   const schemes = config.get().privacy.allowedSchemes;
   const selector = buildHoverDocumentSelector(schemes);
-  log.info(`注册悬停提供器，scheme: ${schemes.join(', ')}`);
+  log.info(`Registered hover provider for schemes: ${schemes.join(', ')}`);
   return vscode.languages.registerHoverProvider(selector, provider);
 }
 

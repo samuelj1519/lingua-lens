@@ -10,13 +10,14 @@ export const DEFAULT_FRONTMATTER_FIELDS = [
   'about',
 ];
 
+/** English labels for YAML comment lines in translated frontmatter previews. */
 export const FRONTMATTER_FIELD_LABELS: Record<string, string> = {
-  description: '描述',
-  title: '标题',
-  summary: '摘要',
-  subtitle: '副标题',
-  excerpt: '摘录',
-  about: '关于',
+  description: 'Description',
+  title: 'Title',
+  summary: 'Summary',
+  subtitle: 'Subtitle',
+  excerpt: 'Excerpt',
+  about: 'About',
 };
 
 export interface FrontmatterBlock {
@@ -163,6 +164,6 @@ export function shouldTranslateFrontmatterField(
 export function formatFrontmatterYamlComments(fieldKey: string, translation: string): string {
   const label = FRONTMATTER_FIELD_LABELS[fieldKey.toLowerCase()] ?? fieldKey;
   const lines = translation.split('\n');
-  if (lines.length === 1) return `# ${label}：${lines[0]}`;
-  return [`# ${label}：${lines[0]}`, ...lines.slice(1).map((l) => (l ? `# ${l}` : '#'))].join('\n');
+  if (lines.length === 1) return `# ${label}: ${lines[0]}`;
+  return [`# ${label}: ${lines[0]}`, ...lines.slice(1).map((l) => (l ? `# ${l}` : '#'))].join('\n');
 }

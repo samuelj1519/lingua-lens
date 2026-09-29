@@ -193,11 +193,11 @@ export class TranslationService {
       this.failures = 0;
       const cleaned = sanitizeModelOutput(res.content);
       if (!isCacheableTranslation(cleaned)) {
-        throw new LlmError('invalidResponse', '模型返回空译文');
+        throw new LlmError('invalidResponse', 'Model returned an empty translation');
       }
       const restored = restore(cleaned, unit.placeholders);
       if (!isCacheableTranslation(restored.text)) {
-        throw new LlmError('invalidResponse', '模型返回空译文');
+        throw new LlmError('invalidResponse', 'Model returned an empty translation');
       }
       this.cache.set(
         this.cacheKey(unit.text, target, opts.kind, opts.uri),
@@ -276,12 +276,12 @@ export class TranslationService {
         for (const item of batch) {
           const raw = map.get(item.id);
           if (raw === undefined) {
-            results.set(item.id, new LlmError('invalidResponse', `缺失 id ${item.id}`));
+            results.set(item.id, new LlmError('invalidResponse', `Missing id ${item.id}`));
             continue;
           }
           const cleaned = sanitizeModelOutput(raw);
           if (!isCacheableTranslation(cleaned)) {
-            results.set(item.id, new LlmError('invalidResponse', '模型返回空译文'));
+            results.set(item.id, new LlmError('invalidResponse', 'Model returned an empty translation'));
             continue;
           }
           const restored = restore(cleaned, item.placeholders);

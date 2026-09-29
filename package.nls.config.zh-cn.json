@@ -62,6 +62,7 @@
   "config.document.previewStyle.enum.append": "旧版：在每块末尾追加译文",
   "config.document.codeLens.markdownDescription": "在 Markdown/纯文本顶部显示「翻译全文」CodeLens。",
   "config.document.forceTranslate.markdownDescription": "开启后全文翻译不再做语言检测，所有段落都会请求模型（可能导致已是目标语言的文档出现重复内容）。默认与悬停相同，遵循 [#aiTranslate.detection.targetRatio#](settings://aiTranslate.detection.targetRatio)。",
+  "document.progress.message": "正在翻译 {0}：{1}/{2} 段",
   "config.document.batchSize.markdownDescription": "全文翻译时每批提交的段落数量。",
   "config.document.maxBatchChars.markdownDescription": "每批全文翻译的最大源字符总数（与 [#aiTranslate.document.batchSize#](settings://aiTranslate.document.batchSize) 共同限制分批）。",
   "config.document.sideFileNamePattern.markdownDescription": "**生成译文文件**的文件名模式；`${lang}` 替换为目标语言代码。",

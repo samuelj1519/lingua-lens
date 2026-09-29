@@ -17,6 +17,8 @@ import {
 } from './documentTranslationPlan';
 import { translatePartialDocumentSegments } from './documentPartialTranslate';
 import { isSameTranslationAsSource } from '../util/textEquivalence';
+import { DocumentSegmentProgressReporter } from './DocumentSegmentProgressReporter';
+import type { Placeholder } from '../types';
 
 export type SegmentResultStatus = 'pending' | 'done' | 'failed' | 'skipped';
 
@@ -211,6 +213,20 @@ export class DocTranslationService {
     await this.runTranslation(session, doc.getText());
   }
 
+  private setSegmentTranslationResult(
+    session: DocSession,
+    segId: string,
+    text: string,
+    placeholders: Placeholder[],
+  ): void {
+    const seg = session.segments.find((s) => s.id === segId);
+    if (seg && isSameTranslationAsSource(seg.sourceText, text, placeholders)) {
+      session.results.set(segId, { status: 'skipped' });
+    } else {
+      session.results.set(segId, { status: 'done', text });
+    }
+  }
+
   private async runTranslation(session: DocSession, _source: string, waitComplete = false): Promise<void> {
     const items: {
       id: string;
@@ -231,10 +247,26 @@ export class DocTranslationService {
     }
 
     const cfg = this.config.get(session.sourceUri);
+    const pendingItems: typeof items = [];
+    for (const item of items) {
+      const cached = await this.translation.peekDocumentBatchCache(
+        item.text,
+        item.placeholders,
+        session.target,
+        item.batchCacheKind,
+        session.sourceUri,
+      );
+      if (cached) {
+        this.setSegmentTranslationResult(session, item.id, cached.text, item.placeholders);
+      } else {
+        pendingItems.push(item);
+      }
+    }
+
     const batches: typeof items[] = [];
     let batch: typeof items = [];
     let chars = 0;
-    for (const item of items) {
+    for (const item of pendingItems) {
       const kindClash = batch.length > 0 && batch[0].batchCacheKind !== item.batchCacheKind;
       if (
         kindClash ||
@@ -250,14 +282,20 @@ export class DocTranslationService {
     }
     if (batch.length) batches.push(batch);
 
+    const totalSegments = session.totalTranslatable;
+    const fileName = session.sourceLabel;
+
     await vscode.window.withProgress(
       { location: vscode.ProgressLocation.Notification, title: 'AI Translate', cancellable: true },
       async (progress, token) => {
         token.onCancellationRequested(() => session.cts.cancel());
-        let done = 0;
+        const segmentProgress = new DocumentSegmentProgressReporter(progress, fileName, totalSegments);
+        segmentProgress.sync(session);
+        session.doneCount = [...session.results.values()].filter((v) => v.status === 'done').length;
+        this.preview.notify(session.previewUri);
+
         for (let i = 0; i < batches.length; i++) {
           if (token.isCancellationRequested || session.cts.token.isCancellationRequested) break;
-          progress.report({ message: `正在翻译 ${session.sourceLabel}: ${i + 1}/${batches.length} 批` });
           const ac = new AbortController();
           session.cts.token.onCancellationRequested(() => ac.abort());
           const res = await this.translation.translateBatch(
@@ -271,24 +309,24 @@ export class DocTranslationService {
             if (r instanceof Error) {
               session.results.set(id, { status: 'failed', error: r.message });
             } else {
-              const seg = session.segments.find((s) => s.id === id);
-              if (
-                seg &&
-                isSameTranslationAsSource(seg.sourceText, r.text, seg.placeholders)
-              ) {
-                session.results.set(id, { status: 'skipped' });
-              } else {
-                session.results.set(id, { status: 'done', text: r.text });
-                done++;
-              }
+              const item = batches[i].find((b) => b.id === id);
+              this.setSegmentTranslationResult(
+                session,
+                id,
+                r.text,
+                item?.placeholders ?? [],
+              );
             }
           }
           session.doneCount = [...session.results.values()].filter((v) => v.status === 'done').length;
+          segmentProgress.sync(session);
           this.preview.notify(session.previewUri);
         }
         await translatePartialDocumentSegments(session, _source, cfg, this.translation, session.target);
+        segmentProgress.sync(session);
         await validateAndFallbackContainers(session, _source, this.translation, session.target, cfg);
         session.doneCount = [...session.results.values()].filter((v) => v.status === 'done').length;
+        segmentProgress.sync(session);
         this.preview.notify(session.previewUri);
       },
     );

@@ -74,6 +74,33 @@ export class TranslationService {
     });
   }
 
+  async peekDocumentBatchCache(
+    text: string,
+    placeholders: Placeholder[],
+    target: TargetLang,
+    batchCacheKind: 'documentBatch' | 'documentFrontmatterBatch',
+    uri?: vscode.Uri,
+  ): Promise<TranslateResult | undefined> {
+    const kind = batchCacheKind;
+    const key = this.cacheKey(text, target, kind, uri);
+    const mem = this.cache.getMemory(key);
+    const unit: TextUnit = {
+      kind: 'documentParagraph',
+      range: { start: 0, end: text.length },
+      rawText: text,
+      text,
+      placeholders,
+      languageId: 'markdown',
+      source: 'document',
+    };
+    if (mem !== undefined) {
+      return this.resultFromCached(mem, unit, key, 'memory');
+    }
+    const disk = await this.cache.get(key);
+    if (!disk) return undefined;
+    return this.resultFromCached(disk.value, unit, key, disk.tier);
+  }
+
   async peekCache(
     unit: TextUnit,
     target: TargetLang,

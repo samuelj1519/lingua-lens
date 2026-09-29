@@ -114,5 +114,6 @@
   "config.targetLanguage.enum.ru": "Russian",
   "config.targetLanguage.enum.zh-CN": "Simplified Chinese",
   "config.targetLanguage.enum.zh-TW": "Traditional Chinese",
-  "config.targetLanguage.markdownDescription": "Target language for translations. Detection skips text that already matches the target (see [#aiTranslate.detection.strictChineseVariant#](settings://aiTranslate.detection.strictChineseVariant))."
+  "config.targetLanguage.markdownDescription": "Target language for translations. Detection skips text that already matches the target (see [#aiTranslate.detection.strictChineseVariant#](settings://aiTranslate.detection.strictChineseVariant)).",
+  "document.progress.message": "Translating {0}: {1}/{2} segments"
 }

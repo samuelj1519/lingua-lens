@@ -114,5 +114,6 @@
   "config.targetLanguage.enum.ru": "俄语",
   "config.targetLanguage.enum.zh-CN": "简体中文",
   "config.targetLanguage.enum.zh-TW": "繁体中文",
-  "config.targetLanguage.markdownDescription": "译文目标语言。已符合目标语言的文本会被跳过（繁简豁免见 [#aiTranslate.detection.strictChineseVariant#](settings://aiTranslate.detection.strictChineseVariant)）。"
+  "config.targetLanguage.markdownDescription": "译文目标语言。已符合目标语言的文本会被跳过（繁简豁免见 [#aiTranslate.detection.strictChineseVariant#](settings://aiTranslate.detection.strictChineseVariant)）。",
+  "document.progress.message": "正在翻译 {0}：{1}/{2} 段"
 }

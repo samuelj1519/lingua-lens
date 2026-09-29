@@ -12,6 +12,7 @@ export async function run(): Promise<void> {
 
   const root = path.join(ext.extensionPath, 'test', 'fixtures', 'hover');
 
+  // Code-file hover (not supported for markdown/plaintext body text)
   for (const file of ['sample.ts', 'sample.py']) {
     const uri = vscode.Uri.file(path.join(root, file));
     const doc = await vscode.workspace.openTextDocument(uri);

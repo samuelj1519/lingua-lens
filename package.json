@@ -32,8 +32,24 @@
       { "command": "aiTranslate.clearApiKey", "title": "%command.clearApiKey%", "category": "AI Translate" },
       { "command": "aiTranslate.testConnection", "title": "%command.testConnection%", "category": "AI Translate" },
       { "command": "aiTranslate.translateSelection", "title": "%command.translateSelection%", "category": "AI Translate" },
-      { "command": "aiTranslate.translateDocument", "title": "%command.translateDocument%", "category": "AI Translate", "icon": "$(globe)" },
-      { "command": "aiTranslate.refreshPreview", "title": "%command.refreshPreview%", "category": "AI Translate", "icon": "$(refresh)" },
+      {
+        "command": "aiTranslate.translateDocument",
+        "title": "%command.translateDocument%",
+        "category": "AI Translate",
+        "icon": {
+          "light": "resources/icons/translate-document.svg",
+          "dark": "resources/icons/translate-document.svg"
+        }
+      },
+      {
+        "command": "aiTranslate.refreshPreview",
+        "title": "%command.refreshPreview%",
+        "category": "AI Translate",
+        "icon": {
+          "light": "resources/icons/refresh-translation.svg",
+          "dark": "resources/icons/refresh-translation.svg"
+        }
+      },
       { "command": "aiTranslate.generateSideFile", "title": "%command.generateSideFile%", "category": "AI Translate" },
       { "command": "aiTranslate.clearCache", "title": "%command.clearCache%", "category": "AI Translate" },
       { "command": "aiTranslate.disableForWorkspace", "title": "%command.disableForWorkspace%", "category": "AI Translate" },
@@ -70,9 +86,15 @@
         {
           "command": "aiTranslate.translateDocument",
           "when": "resourceScheme != aitranslate && (resourceLangId == markdown || resourceLangId == plaintext)",
-          "group": "navigation@90"
+          "group": "navigation@1",
+          "icon": "$(book)"
         },
-        { "command": "aiTranslate.refreshPreview", "when": "resourceScheme == aitranslate", "group": "navigation" },
+        {
+          "command": "aiTranslate.refreshPreview",
+          "when": "resourceScheme == aitranslate",
+          "group": "navigation@1",
+          "icon": "$(refresh)"
+        },
         {
           "command": "aiTranslate.generateSideFile",
           "when": "resourceScheme != aitranslate && (resourceLangId == markdown || resourceLangId == plaintext)",

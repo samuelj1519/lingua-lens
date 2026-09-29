@@ -6,6 +6,8 @@
 - 修复：tree-sitter 失败时 TypeScript/JavaScript 现可回退到正则提取；解析错误会记录日志并回退
 - 新增：`aiTranslate.log.level` 配置；悬停流水线 debug 日志
 - 修复：命令面板标题重复「AI Translate:」前缀
+- 改进：Markdown/纯文本编辑器标题栏「翻译文档」「刷新翻译」使用 SVG/codicon 图标（Cursor 标题栏更易见）
+- 说明：`.md` 文件悬停不翻译正文，请用标题栏翻译按钮或选区翻译
 
 ## 0.1.0
 

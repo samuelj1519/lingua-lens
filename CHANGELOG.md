@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.1
+
+- Packaging: exclude `README.zh-CN.md`, `CONTRIBUTING*.md`, and `SECURITY*.md` from the VSIX (root `README.md`, `CHANGELOG.md`, and `LICENSE` still ship)
+- Tests: extend `vsix-contents` to assert the above inclusion and exclusion rules
+
 ## 0.6.0
 
 - **English-first codebase**: comments, logs, errors, and tests in `src/`, `scripts/`, and `test/` use English; user-facing runtime UI remains in `l10n/` and `package.nls.*`

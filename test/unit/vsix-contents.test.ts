@@ -30,6 +30,16 @@ const BUNDLE_L10N = [
   'l10n/bundle.l10n.pt-br.json',
 ];
 
+const SHIPPED_README_DOCS = ['README.md', 'CHANGELOG.md', 'LICENSE'];
+
+const EXCLUDED_REPO_DOCS = [
+  'README.zh-CN.md',
+  'CONTRIBUTING.md',
+  'CONTRIBUTING.zh-CN.md',
+  'SECURITY.md',
+  'SECURITY.zh-CN.md',
+];
+
 const REQUIRED_RUNTIME = [
   'package.json',
   'dist/extension.js',
@@ -63,6 +73,12 @@ describe('VSIX packaging', () => {
     }
     for (const rel of REQUIRED_RUNTIME) {
       expect(paths).toContain(rel);
+    }
+    for (const rel of SHIPPED_README_DOCS) {
+      expect(paths).toContain(rel);
+    }
+    for (const rel of EXCLUDED_REPO_DOCS) {
+      expect(paths).not.toContain(rel);
     }
 
     for (const p of paths) {

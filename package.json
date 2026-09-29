@@ -2,7 +2,7 @@
   "name": "cursor-ai-translate",
   "displayName": "AI Translate",
   "description": "Translate comments, strings, and documents in your editor with an OpenAI-compatible LLM",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "publisher": "cursor-ai-translate",
   "repository": {
     "type": "git",

@@ -10,6 +10,11 @@ vitest.config.ts
 esbuild.mjs
 **/*.ts
 docs/**
+README.zh-CN.md
+CONTRIBUTING.md
+CONTRIBUTING.zh-CN.md
+SECURITY.md
+SECURITY.zh-CN.md
 i18n/**
 uploads/**
 wasm/**

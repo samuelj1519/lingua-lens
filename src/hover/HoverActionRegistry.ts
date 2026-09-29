@@ -1,4 +1,4 @@
-import type { TextUnit, OffsetRange } from '../types';
+import type { TextUnit, OffsetRange, TargetLang } from '../types';
 import { randomBytes } from 'crypto';
 
 export interface HoverAction {
@@ -7,6 +7,8 @@ export interface HoverAction {
   range: OffsetRange;
   languageId: string;
   unit: TextUnit;
+  targetLanguage: TargetLang;
+  translateKind: 'hover' | 'selection';
 }
 
 export class HoverActionRegistry {
@@ -21,6 +23,11 @@ export class HoverActionRegistry {
       this.map.delete(first);
     }
     return id;
+  }
+
+  updateTranslation(id: string, translation: string): void {
+    const entry = this.map.get(id);
+    if (entry) entry.action.translation = translation;
   }
 
   get(id: string): HoverAction | undefined {

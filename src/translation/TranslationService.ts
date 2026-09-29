@@ -4,7 +4,7 @@ import { LlmError } from '../llm/errors';
 import type { LlmClient } from '../llm/LlmClient';
 import { parseBatchResponse, PromptBuilder, sanitizeModelOutput } from '../prompts/PromptBuilder';
 import type { CacheService } from '../cache/CacheService';
-import type { Placeholder, TargetLang, TextUnit } from '../types';
+import type { Placeholder, Segment, TargetLang, TextUnit } from '../types';
 import { restore } from '../parsing/placeholders';
 import type { StatsService } from '../stats/StatsService';
 import { isCacheableTranslation } from './cacheable';
@@ -182,6 +182,18 @@ export class TranslationService {
         if (this.failures >= 5) this.pausedUntil = Date.now() + 60_000;
       }
       throw e;
+    }
+  }
+
+  async invalidateDocumentSegmentCaches(
+    segments: Segment[],
+    target: TargetLang,
+    uri?: vscode.Uri,
+  ): Promise<void> {
+    for (const seg of segments) {
+      if (seg.kind === 'preserved') continue;
+      const key = this.cacheKey(seg.sourceText, target, 'documentBatch', uri);
+      await this.cache.delete(key);
     }
   }
 

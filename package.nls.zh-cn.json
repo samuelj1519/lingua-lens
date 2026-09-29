@@ -28,5 +28,7 @@
   "command.showQuickPick": "AI Translate 菜单",
   "command.translateSelectionPopup": "翻译选区（弹窗）",
   "command.selectionReplace": "用译文替换选区",
-  "command.selectionInsertBelow": "在下方插入译文"
+  "command.selectionInsertBelow": "在下方插入译文",
+  "command.refreshDocumentTranslation": "刷新全文翻译",
+  "command.hoverRefresh": "刷新译文"
 }

@@ -28,5 +28,7 @@
   "command.showQuickPick": "AI Translate Menu",
   "command.translateSelectionPopup": "Translate Selection (Popup)",
   "command.selectionReplace": "Replace Selection with Translation",
-  "command.selectionInsertBelow": "Insert Translation Below"
+  "command.selectionInsertBelow": "Insert Translation Below",
+  "command.refreshDocumentTranslation": "Refresh Document Translation",
+  "command.hoverRefresh": "Refresh Translation"
 }

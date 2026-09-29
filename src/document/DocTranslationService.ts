@@ -77,13 +77,36 @@ export class DocTranslationService {
     });
   }
 
-  async refresh(previewUri: vscode.Uri): Promise<void> {
+  async refreshDocumentTranslation(doc: vscode.TextDocument): Promise<void> {
+    const cfg = this.config.get(doc.uri);
+    const previewUri = this.previewUriFor(doc.uri, cfg.targetLanguage);
+    const session = this.sessions.get(previewUri.toString());
+    if (!session) {
+      void vscode.window.showInformationMessage('请先打开全文翻译预览');
+      await this.openPreview(doc);
+      return;
+    }
+    await this.refresh(previewUri, { bypassCache: true });
+  }
+
+  async refresh(previewUri: vscode.Uri, opts?: { bypassCache?: boolean }): Promise<void> {
     const session = this.sessions.get(previewUri.toString());
     if (!session) return;
     const doc = await vscode.workspace.openTextDocument(session.sourceUri);
     session.sourceVersion = doc.version;
     session.sourceText = doc.getText();
     session.segments = this.segment(doc);
+    for (const seg of session.segments) {
+      if (seg.kind !== 'preserved') session.results.set(seg.id, { status: 'pending' });
+    }
+    session.doneCount = 0;
+    if (opts?.bypassCache) {
+      await this.translation.invalidateDocumentSegmentCaches(
+        session.segments,
+        session.target,
+        session.sourceUri,
+      );
+    }
     await this.runTranslation(session, session.sourceText);
   }
 

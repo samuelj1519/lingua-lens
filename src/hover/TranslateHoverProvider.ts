@@ -10,6 +10,7 @@ import type { TranslationService } from '../translation/TranslationService';
 import { cancellableDelay } from '../util/delay';
 import type { AppLogger } from '../util/logger';
 import type { HoverActionRegistry } from './HoverActionRegistry';
+import { HOVER_TRUSTED_COMMANDS, hoverActionLinks } from './hoverActionLinks';
 import { buildSupplementalHoverBlocks } from './HoverBlocks';
 
 export class TranslateHoverProvider implements vscode.HoverProvider {
@@ -158,6 +159,7 @@ export class TranslateHoverProvider implements vscode.HoverProvider {
       this.translation,
       this.stats,
       this.log,
+      this.registry,
     );
     return mergeHoverBlocks(primary, supplemental, doc, pos);
   }
@@ -172,17 +174,7 @@ export class TranslateHoverProvider implements vscode.HoverProvider {
     placeholderOk: boolean,
   ): vscode.Hover {
     const md = new vscode.MarkdownString();
-    md.isTrusted = {
-      enabledCommands: [
-        'aiTranslate.hover.copy',
-        'aiTranslate.hover.insertComment',
-        'aiTranslate.hover.retranslate',
-        'aiTranslate.acknowledgePrivacy',
-        'aiTranslate.setApiKey',
-        'aiTranslate.openSettings',
-        'aiTranslate.showLog',
-      ],
-    };
+    md.isTrusted = { enabledCommands: [...HOVER_TRUSTED_COMMANDS] };
     md.supportHtml = false;
     const cacheLabel = fromCache ? ' · 缓存' : '';
     md.appendMarkdown(`**AI 翻译** \`${cfg.targetLanguage}\`${cacheLabel}\n\n`);
@@ -200,11 +192,11 @@ export class TranslateHoverProvider implements vscode.HoverProvider {
       range: unit.range,
       languageId: doc.languageId,
       unit,
+      targetLanguage: cfg.targetLanguage,
+      translateKind: 'hover',
     });
     md.appendMarkdown(
-      `\n\n---\n[复制](command:aiTranslate.hover.copy?${encodeURIComponent(JSON.stringify([id]))}) · ` +
-        `[插入为注释](command:aiTranslate.hover.insertComment?${encodeURIComponent(JSON.stringify([id]))}) · ` +
-        `[重新翻译](command:aiTranslate.hover.retranslate?${encodeURIComponent(JSON.stringify([id]))})`,
+      hoverActionLinks(id, { copy: true, insertComment: true, refresh: true }),
     );
     return new vscode.Hover(md, range);
   }

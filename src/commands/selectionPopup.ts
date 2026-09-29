@@ -27,8 +27,12 @@ export async function translateSelectionPopup(
     languageId: doc.languageId,
     source: 'selection' as const,
   };
-  try {
-    const result = await translation.translate(unit, cfg.targetLanguage, { kind: 'selection', uri: doc.uri });
+  const showResult = async (bypassCache: boolean) => {
+    const result = await translation.translate(unit, cfg.targetLanguage, {
+      kind: 'selection',
+      bypassCache,
+      uri: doc.uri,
+    });
     const pos = editor.selection.active;
     const deco = vscode.window.createTextEditorDecorationType({
       after: {
@@ -42,6 +46,7 @@ export async function translateSelectionPopup(
       result.text.slice(0, 500),
       '复制',
       '替换选区',
+      '刷新',
       '关闭',
     );
     deco.dispose();
@@ -49,6 +54,13 @@ export async function translateSelectionPopup(
     if (action === '替换选区') {
       await editor.edit((eb) => eb.replace(editor.selection, result.text));
     }
+    if (action === '刷新') {
+      await showResult(true);
+    }
+  };
+
+  try {
+    await showResult(false);
   } catch (e) {
     void vscode.window.showErrorMessage(e instanceof Error ? e.message : String(e));
   }

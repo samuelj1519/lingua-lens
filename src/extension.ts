@@ -26,6 +26,7 @@ import { translateInsertBelow, translateReplaceSelection } from './commands/sele
 import { translateGitCommitAtLine, translateScmInput } from './commands/gitTranslate';
 import { generateLocaleFile } from './locale/LocaleFileGenerator';
 import { suggestVariableNames } from './commands/variableNaming';
+import { refreshHoverTranslation } from './commands/refreshHover';
 
 let parserService: ParserService | undefined;
 let cacheService: CacheService | undefined;
@@ -186,8 +187,14 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   reg('aiTranslate.refreshPreview', () => {
     const editor = vscode.window.activeTextEditor;
     if (editor?.document.uri.scheme === 'aitranslate') {
-      return docService.refresh(editor.document.uri);
+      return docService.refresh(editor.document.uri, { bypassCache: true });
     }
+  });
+
+  reg('aiTranslate.refreshDocumentTranslation', () => {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor) return;
+    return docService.refreshDocumentTranslation(editor.document);
   });
 
   reg('aiTranslate.generateSideFile', () => {
@@ -316,20 +323,14 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     });
   });
 
+  reg('aiTranslate.hover.refresh', async (...args: unknown[]) => {
+    const id = args[0] as string;
+    await refreshHoverTranslation(id, config, translation, hoverRegistry);
+  });
+
   reg('aiTranslate.hover.retranslate', async (...args: unknown[]) => {
     const id = args[0] as string;
-    const action = hoverRegistry.get(id);
-    if (!action) return;
-    try {
-      await translation.translate(action.unit, config.get().targetLanguage, {
-        kind: 'hover',
-        bypassCache: true,
-        uri: vscode.Uri.parse(action.uri),
-      });
-      void vscode.window.showInformationMessage('已重新翻译，再次悬停查看');
-    } catch (e) {
-      void vscode.window.showErrorMessage(e instanceof Error ? e.message : String(e));
-    }
+    await refreshHoverTranslation(id, config, translation, hoverRegistry);
   });
 
   config.onDidChange(() => {

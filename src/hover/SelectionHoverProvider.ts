@@ -8,6 +8,7 @@ import { cancellableDelay } from '../util/delay';
 import type { HoverActionRegistry } from './HoverActionRegistry';
 import { LlmError } from '../llm/errors';
 import { isCacheableTranslation } from '../translation/cacheable';
+import { HOVER_TRUSTED_COMMANDS, hoverActionLinks } from './hoverActionLinks';
 
 export class SelectionHoverProvider implements vscode.HoverProvider {
   constructor(
@@ -84,10 +85,10 @@ export class SelectionHoverProvider implements vscode.HoverProvider {
 
   private emptyBodyHover(range: vscode.Selection, fromCache: boolean): vscode.Hover {
     const md = new vscode.MarkdownString();
-    md.isTrusted = { enabledCommands: ['aiTranslate.hover.retranslate', 'aiTranslate.showLog'] };
+    md.isTrusted = { enabledCommands: [...HOVER_TRUSTED_COMMANDS] };
     md.appendMarkdown(
       `**AI 翻译 · 选区**${fromCache ? ' · 缓存无效' : ''}\n\n` +
-        `译文为空。请 [重新翻译](command:aiTranslate.hover.retranslate) 或查看 [日志](command:aiTranslate.showLog)。`,
+        `译文为空。请再次悬停并点击 **刷新**，或查看 [日志](command:aiTranslate.showLog)。`,
     );
     return new vscode.Hover(md, range);
   }
@@ -101,15 +102,7 @@ export class SelectionHoverProvider implements vscode.HoverProvider {
     fromCache: boolean,
   ): vscode.Hover {
     const md = new vscode.MarkdownString();
-    md.isTrusted = {
-      enabledCommands: [
-        'aiTranslate.hover.copy',
-        'aiTranslate.hover.insertComment',
-        'aiTranslate.hover.retranslate',
-        'aiTranslate.selection.replace',
-        'aiTranslate.selection.insertBelow',
-      ],
-    };
+    md.isTrusted = { enabledCommands: [...HOVER_TRUSTED_COMMANDS] };
     md.appendMarkdown(`**AI 翻译 · 选区** \`${cfg.targetLanguage}\`${fromCache ? ' · 缓存' : ''}\n\n`);
     if (!isCacheableTranslation(translation)) {
       md.appendMarkdown('*译文为空，请重新翻译。*');
@@ -122,11 +115,16 @@ export class SelectionHoverProvider implements vscode.HoverProvider {
       range: unit.range,
       languageId: doc.languageId,
       unit,
+      targetLanguage: cfg.targetLanguage,
+      translateKind: 'hover',
     });
     md.appendMarkdown(
-      `\n\n---\n[复制](command:aiTranslate.hover.copy?${encodeURIComponent(JSON.stringify([id]))}) · ` +
-        `[替换选区](command:aiTranslate.selection.replace?${encodeURIComponent(JSON.stringify([id]))}) · ` +
-        `[插入下方](command:aiTranslate.selection.insertBelow?${encodeURIComponent(JSON.stringify([id]))})`,
+      hoverActionLinks(id, {
+        copy: true,
+        replaceSelection: true,
+        insertBelow: true,
+        refresh: true,
+      }),
     );
     return new vscode.Hover(md, range);
   }

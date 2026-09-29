@@ -34,6 +34,8 @@
       { "command": "aiTranslate.translateSelection", "title": "%command.translateSelection%", "category": "AI Translate" },
       { "command": "aiTranslate.translateDocument", "title": "%command.translateDocument%", "category": "AI Translate" },
       { "command": "aiTranslate.refreshPreview", "title": "%command.refreshPreview%", "category": "AI Translate" },
+      { "command": "aiTranslate.refreshDocumentTranslation", "title": "%command.refreshDocumentTranslation%", "category": "AI Translate" },
+      { "command": "aiTranslate.hover.refresh", "title": "%command.hoverRefresh%", "category": "AI Translate" },
       { "command": "aiTranslate.showQuickPick", "title": "%command.showQuickPick%", "category": "AI Translate" },
       { "command": "aiTranslate.translateSelectionPopup", "title": "%command.translateSelectionPopup%", "category": "AI Translate" },
       { "command": "aiTranslate.selection.replace", "title": "%command.selectionReplace%", "category": "AI Translate" },
@@ -100,6 +102,7 @@
         { "command": "aiTranslate.hover.copy", "when": "false" },
         { "command": "aiTranslate.hover.insertComment", "when": "false" },
         { "command": "aiTranslate.hover.retranslate", "when": "false" },
+        { "command": "aiTranslate.hover.refresh", "when": "false" },
         { "command": "aiTranslate.refreshPreview", "when": "resourceScheme == aitranslate" },
         { "command": "aiTranslate.translateSelection", "when": "editorHasSelection" }
       ],

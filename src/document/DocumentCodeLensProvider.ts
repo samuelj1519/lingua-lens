@@ -25,6 +25,11 @@ export class DocumentCodeLensProvider implements vscode.CodeLensProvider {
         command: 'aiTranslate.generateSideFile',
         arguments: [],
       }),
+      new vscode.CodeLens(top, {
+        title: '🔄 刷新全文翻译',
+        command: 'aiTranslate.refreshDocumentTranslation',
+        arguments: [],
+      }),
     ];
   }
 }

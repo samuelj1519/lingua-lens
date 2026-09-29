@@ -15,6 +15,8 @@ import {
   isGitBlameHoverPosition,
   shouldTranslateCommitMessage,
 } from './GitCommitHover';
+import type { HoverActionRegistry } from './HoverActionRegistry';
+import { HOVER_TRUSTED_COMMANDS, hoverActionLinks } from './hoverActionLinks';
 
 export interface HoverBlockResult {
   markdown: vscode.MarkdownString;
@@ -30,6 +32,7 @@ export async function buildSupplementalHoverBlocks(
   translation: TranslationService,
   _stats: StatsService,
   log: AppLogger,
+  registry: HoverActionRegistry,
 ): Promise<HoverBlockResult[]> {
   const blocks: HoverBlockResult[] = [];
   const detOpts = {
@@ -140,10 +143,21 @@ export async function buildSupplementalHoverBlocks(
       }
       const md = new vscode.MarkdownString();
       md.supportHtml = false;
+      md.isTrusted = { enabledCommands: [...HOVER_TRUSTED_COMMANDS] };
       const cacheLabel = fromCache ? ' · 缓存' : '';
       md.appendMarkdown(`**AI 翻译 · ${item.title}** \`${cfg.targetLanguage}\`${cacheLabel}\n\n`);
       md.appendMarkdown(text);
       if (!placeholderOk) md.appendMarkdown('\n\n*部分占位符未保留*');
+      const id = registry.put({
+        translation: text,
+        uri: doc.uri.toString(),
+        range: item.unit.range,
+        languageId: doc.languageId,
+        unit: item.unit,
+        targetLanguage: cfg.targetLanguage,
+        translateKind: 'hover',
+      });
+      md.appendMarkdown(hoverActionLinks(id, { copy: true, refresh: true }));
       blocks.push({ markdown: md, range: item.range });
     } catch (e) {
       log.warn(`hover supplemental failed: ${e instanceof Error ? e.message : e}`);

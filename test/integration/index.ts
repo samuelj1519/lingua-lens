@@ -18,7 +18,7 @@ async function hoverMarkdownAt(uri: vscode.Uri, search: string): Promise<string 
 }
 
 export async function run(): Promise<void> {
-  const ext = vscode.extensions.getExtension('samuel-j.lingua-lens');
+  const ext = vscode.extensions.getExtension('samuelj1519.lingua-lens');
   assert.ok(ext, 'extension should be loaded');
   await ext.activate();
 

@@ -12,6 +12,6 @@ export async function applyDeepSeekThinkingDisabledPreset(
 export async function openExtraBodySettings(): Promise<void> {
   await vscode.commands.executeCommand(
     'workbench.action.openSettings',
-    '@ext:samuel-j.lingua-lens linguaLens.llm.extraBody',
+    '@ext:samuelj1519.lingua-lens linguaLens.llm.extraBody',
   );
 }

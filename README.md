@@ -4,7 +4,7 @@ English | [简体中文](README.zh-CN.md)
 
 **Translate comments, strings, and docs inside VS Code and Cursor with your own OpenAI-compatible LLM—API keys stay in VS Code SecretStorage, not in settings files.**
 
-LinguaLens works in **Visual Studio Code** and compatible editors (**Cursor**, **Windsurf**, **VSCodium**, etc.). Marketplace name: **LinguaLens for Visual Studio Code** (`samuel-j.lingua-lens`).
+LinguaLens works in **Visual Studio Code** and compatible editors (**Cursor**, **Windsurf**, **VSCodium**, etc.). Marketplace name: **LinguaLens for Visual Studio Code** (`samuelj1519.lingua-lens`).
 
 Hover translation, selection and clipboard workflows, whole-document bilingual preview, config-file hovers, Git helpers, a glossary, LRU + disk cache, and a settings webview. Only text you hover or explicitly translate is sent to the LLM endpoint you configure.
 

@@ -1,6 +1,6 @@
 # LinguaLens 入门
 
-LinguaLens（扩展 ID `samuel-j.lingua-lens`）将 OpenAI 兼容的 LLM 翻译带入 VS Code 与 Cursor。它可在悬停时翻译代码注释与字符串字面量、翻译编辑器选区、在并排预览中翻译整篇 Markdown 或纯文本文档，并协助 Git 提交信息与 SCM 输入框。本教程从安装到首次成功的 API 调用与翻译。
+LinguaLens（扩展 ID `samuelj1519.lingua-lens`）将 OpenAI 兼容的 LLM 翻译带入 VS Code 与 Cursor。它可在悬停时翻译代码注释与字符串字面量、翻译编辑器选区、在并排预览中翻译整篇 Markdown 或纯文本文档，并协助 Git 提交信息与 SCM 输入框。本教程从安装到首次成功的 API 调用与翻译。
 
 ## 开始前需要准备
 
@@ -17,7 +17,7 @@ LinguaLens（扩展 ID `samuel-j.lingua-lens`）将 OpenAI 兼容的 LLM 翻译�
 
 ## 配置 LLM 端点
 
-打开**设置**（`@ext:samuel-j.lingua-lens`）或运行 **LinguaLens: Open Settings Panel** 使用引导表单。至少设置：
+打开**设置**（`@ext:samuelj1519.lingua-lens`）或运行 **LinguaLens: Open Settings Panel** 使用引导表单。至少设置：
 
 | 设置 | 用途 |
 |------|------|

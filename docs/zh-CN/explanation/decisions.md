@@ -57,7 +57,7 @@ Webview 适合富 HTML，但不利于 diff、无障碍与编辑器快捷键。`T
 
 ## D1–D2：发布者与平台基线
 
-发布者 ID `lingua-lens` 与扩展 marketplace 标识一致，便于设置搜索（`@ext:samuel-j.lingua-lens`）与密钥存储命名空间区分。最低 VS Code `^1.85.0` 与 D6 悬停命令白名单、部分 API 行为绑定；激活日志记录实际引擎版本，便于支持人员对照用户环境。
+发布者 ID `lingua-lens` 与扩展 marketplace 标识一致，便于设置搜索（`@ext:samuelj1519.lingua-lens`）与密钥存储命名空间区分。最低 VS Code `^1.85.0` 与 D6 悬停命令白名单、部分 API 行为绑定；激活日志记录实际引擎版本，便于支持人员对照用户环境。
 
 ## D4、D9、D11 补充说明
 

@@ -1,6 +1,6 @@
 # Getting started with LinguaLens
 
-LinguaLens (extension ID `samuel-j.lingua-lens`) brings OpenAI-compatible LLM translation into VS Code and Cursor. It can translate code comments and string literals on hover, translate editor selections, translate whole Markdown or plain-text documents in a side-by-side preview, and help with Git commit messages and SCM input. This tutorial walks you from installation through your first successful API call and translation.
+LinguaLens (extension ID `samuelj1519.lingua-lens`) brings OpenAI-compatible LLM translation into VS Code and Cursor. It can translate code comments and string literals on hover, translate editor selections, translate whole Markdown or plain-text documents in a side-by-side preview, and help with Git commit messages and SCM input. This tutorial walks you from installation through your first successful API call and translation.
 
 ## What you need before you begin
 
@@ -17,7 +17,7 @@ After install, the extension activates on **`onStartupFinished`**. You should se
 
 ## Configure the LLM endpoint
 
-Open **Settings** (`@ext:samuel-j.lingua-lens`) or run **LinguaLens: Open Settings Panel** for a guided form. At minimum set:
+Open **Settings** (`@ext:samuelj1519.lingua-lens`) or run **LinguaLens: Open Settings Panel** for a guided form. At minimum set:
 
 | Setting | Purpose |
 |--------|---------|

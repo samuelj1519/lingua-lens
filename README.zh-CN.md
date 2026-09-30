@@ -6,7 +6,7 @@
 
 LinguaLens 适用于 **Visual Studio Code** 及兼容编辑器（**Cursor**、**Windsurf**、**VSCodium** 等）；市场显示名遵循微软品牌规范：**LinguaLens for Visual Studio Code**。
 
-LinguaLens（扩展 ID：`samuel-j.lingua-lens`）提供悬停翻译、选区与剪贴板工作流、全文双语预览、配置文件悬停、Git 辅助、术语表、内存 LRU + 磁盘缓存以及设置 Webview。密钥按 API **origin** 存入 SecretStorage；只有你悬停或主动翻译的文本会发往所配置的端点。
+LinguaLens（扩展 ID：`samuelj1519.lingua-lens`）提供悬停翻译、选区与剪贴板工作流、全文双语预览、配置文件悬停、Git 辅助、术语表、内存 LRU + 磁盘缓存以及设置 Webview。密钥按 API **origin** 存入 SecretStorage；只有你悬停或主动翻译的文本会发往所配置的端点。
 
 <!-- TODO：截图 — 代码注释悬停与 Markdown 全文预览 -->
 

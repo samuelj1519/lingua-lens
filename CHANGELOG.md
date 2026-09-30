@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.11
+
+- **Publisher / extension ID**: marketplace publisher is now **`samuelj1519`** (extension ID **`samuelj1519.lingua-lens`**) so Open VSX namespace matches the GitHub account for namespace verification. SecretStorage and `globalState` are tied to the extension ID — after upgrading, uninstall the old **`samuel-j.lingua-lens`** build if present and run **`LinguaLens: Set API Key`** again (no automatic migration).
+- **Tooling**: `scripts/generate-marketplace-icon.py` uses `.woff2` font cache filenames and optional `--preview-dir` instead of a hard-coded artifacts path.
+
 ## 0.7.10
 
 - **Icon**: 256×256 marketplace icon on `#1e3a5f` — centered magnifying glass, Noto Sans SC Bold **中** (white) and Inter Bold **En** (`#7ec8e3`) balanced inside the glass (1024px → LANCZOS); `scripts/generate-marketplace-icon.py` downloads OFL fonts and prints layout metrics.
@@ -43,7 +48,7 @@
 
 ## 0.7.0
 
-- Renamed from **cursor-ai-translate** / **AI Translate** to **LinguaLens** (`lingua-lens`, **`samuel-j.lingua-lens`**); settings and commands use **`linguaLens.*`** (preview scheme completed in **0.7.2**)
+- Renamed from **cursor-ai-translate** / **AI Translate** to **LinguaLens** (`lingua-lens`, extension ID later **`samuelj1519.lingua-lens`**); settings and commands use **`linguaLens.*`** (preview scheme completed in **0.7.2**)
 
 ## 0.6.1
 

@@ -9,12 +9,13 @@ Fonts (downloaded on demand, not committed — SIL Open Font License 1.1):
 
 from __future__ import annotations
 
+import argparse
 import json
 import math
 import sys
+import tempfile
 import urllib.request
 from dataclasses import dataclass
-from io import BytesIO
 from pathlib import Path
 
 from fontTools.ttLib import TTFont
@@ -24,13 +25,13 @@ ROOT = Path(__file__).resolve().parents[1]
 CACHE = Path("/tmp/lingua-lens-fonts")
 
 FONT_SOURCES = {
-    "NotoSansSC-Bold.otf": (
+    "NotoSansSC-Bold.woff2": (
         "https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-sc@5.2.5/files/"
         "noto-sans-sc-chinese-simplified-700-normal.woff2",
         "Noto Sans SC Bold — Copyright 2014-2021 Adobe (http://www.adobe.com/), "
         "Google LLC. Licensed under SIL Open Font License 1.1.",
     ),
-    "Inter-Bold.otf": (
+    "Inter-Bold.woff2": (
         "https://cdn.jsdelivr.net/npm/@fontsource/inter@5.2.5/files/inter-latin-700-normal.woff2",
         "Inter Bold — Copyright 2016 The Inter Project Authors. "
         "Licensed under SIL Open Font License 1.1.",
@@ -64,10 +65,16 @@ def ensure_font(filename: str) -> Path:
         return dest
     url, _ = FONT_SOURCES[filename]
     print(f"Downloading {filename} from {url}", file=sys.stderr)
-    data = urllib.request.urlopen(url, timeout=120).read()
-    font = TTFont(BytesIO(data))
-    font.save(dest)
+    dest.write_bytes(urllib.request.urlopen(url, timeout=120).read())
     return dest
+
+
+def pil_truetype(woff2_path: Path, size: int) -> ImageFont.FreeTypeFont:
+    """Pillow needs SFNT; derive a TTF cache next to the downloaded .woff2."""
+    derived = woff2_path.with_name(f"{woff2_path.stem}.pil.ttf")
+    if not derived.exists() or derived.stat().st_mtime < woff2_path.stat().st_mtime:
+        TTFont(woff2_path).save(derived)
+    return ImageFont.truetype(str(derived), size)
 
 
 def circular_mask(size: int, center: tuple[float, float], radius: float) -> Image.Image:
@@ -150,8 +157,8 @@ def layout_glyphs(
     for _ in range(28):
         layer = Image.new("RGBA", (size, size), (0, 0, 0, 0))
         ld = ImageDraw.Draw(layer)
-        font_zh = ImageFont.truetype(str(sc_path), sc_size)
-        font_en = ImageFont.truetype(str(inter_path), en_size)
+        font_zh = pil_truetype(sc_path, sc_size)
+        font_en = pil_truetype(inter_path, en_size)
         zh_pos = (lens_cx - diag, lens_cy - diag * 0.92)
         en_pos = (lens_cx + diag, lens_cy + diag * 0.92)
         ld.text(zh_pos, "中", font=font_zh, fill=WHITE, anchor="mm")
@@ -184,8 +191,8 @@ def layout_glyphs(
 
 
 def draw_icon(size: int = RENDER_SIZE) -> tuple[Image.Image, IconMetrics]:
-    sc_font_path = ensure_font("NotoSansSC-Bold.otf")
-    inter_font_path = ensure_font("Inter-Bold.otf")
+    sc_font_path = ensure_font("NotoSansSC-Bold.woff2")
+    inter_font_path = ensure_font("Inter-Bold.woff2")
 
     r_outer = size * R_OUTER_FRAC
     stroke = max(8, int(size * STROKE_FRAC))
@@ -277,16 +284,31 @@ def size_comparison_sheet(master: Image.Image) -> Image.Image:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description="Generate LinguaLens marketplace icon assets.")
+    parser.add_argument(
+        "--preview-dir",
+        type=Path,
+        default=Path(tempfile.gettempdir()) / "lingua-lens-icon-preview",
+        help="Directory for lingua-lens-icon.png and lingua-lens-icon-sizes.png previews",
+    )
+    parser.add_argument(
+        "--skip-repo-icon",
+        action="store_true",
+        help="Do not overwrite resources/icon.png in the repository",
+    )
+    args = parser.parse_args()
+
     master, metrics = draw_icon(RENDER_SIZE)
     validate_icon(master)
     icon = master.resize((OUT_SIZE, OUT_SIZE), Image.Resampling.LANCZOS)
 
     icon_path = ROOT / "resources" / "icon.png"
-    preview = Path("/opt/cursor/artifacts/lingua-lens-icon.png")
-    sizes_png = Path("/opt/cursor/artifacts/lingua-lens-icon-sizes.png")
-    preview.parent.mkdir(parents=True, exist_ok=True)
+    args.preview_dir.mkdir(parents=True, exist_ok=True)
+    preview = args.preview_dir / "lingua-lens-icon.png"
+    sizes_png = args.preview_dir / "lingua-lens-icon-sizes.png"
 
-    icon.save(icon_path, optimize=True)
+    if not args.skip_repo_icon:
+        icon.save(icon_path, optimize=True)
     icon.save(preview, optimize=True)
     size_comparison_sheet(icon).save(sizes_png, optimize=True)
 
@@ -295,7 +317,8 @@ def main() -> None:
         "Glyph group offset from lens inner center (px):",
         json.dumps(metrics.glyph_offset_from_lens_center, indent=2),
     )
-    print(f"Wrote {icon_path} ({icon_path.stat().st_size} bytes)")
+    if not args.skip_repo_icon:
+        print(f"Wrote {icon_path} ({icon_path.stat().st_size} bytes)")
     print(f"Wrote {preview}")
     print(f"Wrote {sizes_png}")
 

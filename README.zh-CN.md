@@ -8,7 +8,15 @@ LinguaLens 适用于 **Visual Studio Code** 及兼容编辑器（**Cursor**、**
 
 LinguaLens（扩展 ID：`samuelj1519.lingua-lens`）提供悬停翻译、选区与剪贴板工作流、全文双语预览、配置文件悬停、Git 辅助、术语表、内存 LRU + 磁盘缓存以及设置 Webview。密钥按 API **origin** 存入 SecretStorage；只有你悬停或主动翻译的文本会发往所配置的端点。
 
-<!-- TODO：截图 — 代码注释悬停与 Markdown 全文预览 -->
+## 在 Cursor 中查看效果
+
+以下画面使用示例文本，翻译目标为简体中文（`zh-CN`）。
+
+![英文代码注释的 LinguaLens 悬停卡片，显示中文译文和后续操作](resources/media/hover-translation.png)
+
+点击 Markdown 文档左上方的「翻译全文（对照预览）」按钮后，可在右侧查看原文与译文：
+
+![点击 Markdown 左上方的翻译全文按钮，在 Cursor 右侧打开双语预览](resources/media/document-preview.gif)
 
 ## 为什么选择它
 

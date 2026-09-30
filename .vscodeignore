@@ -25,3 +25,6 @@ out/**
 dist/**
 !dist/*.js
 !dist/wasm/**
+
+# README/docs screenshots: served from GitHub (vsce rewrites links), not shipped
+resources/media/**

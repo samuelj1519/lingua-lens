@@ -8,6 +8,16 @@ LinguaLens works in **Visual Studio Code** and compatible editors (**Cursor**, *
 
 Hover translation, selection and clipboard workflows, whole-document bilingual preview, config-file hovers, Git helpers, a glossary, LRU + disk cache, and a settings webview. Only text you hover or explicitly translate is sent to the LLM endpoint you configure.
 
+## See it in Cursor
+
+These examples translate sample content into Simplified Chinese (`zh-CN`).
+
+![An English code comment with a LinguaLens hover showing its Chinese translation and actions](resources/media/hover-translation.png)
+
+Click **Translate document (preview)** above the Markdown text to open the source and translation side by side:
+
+![Clicking the Translate document button above Markdown opens a bilingual preview on the right in Cursor](resources/media/document-preview.gif)
+
 ## Quick start
 
 1. **Install** LinguaLens from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/) or [Open VSX](https://open-vsx.org/), or install a `.vsix` from [GitHub Releases](https://github.com/samuelj1519/lingua-lens/releases).

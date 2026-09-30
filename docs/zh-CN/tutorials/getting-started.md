@@ -43,6 +43,10 @@ OpenAI 示例：
 
 设置面板不会在 webview HTML 中嵌入 API 密钥；密钥仅通过扩展宿主的 Secret Storage API 写入。见[设置面板安全](../explanation/settings-panel-security.md)。
 
+设置面板显示目标语言、API 地址、模型和密钥是否已配置，不显示密钥内容：
+
+![Cursor 中的 LinguaLens 设置面板：目标为简体中文，API 密钥显示为已配置](../../../resources/media/settings-panel.png)
+
 ## 选择目标语言
 
 `linguaLens.targetLanguage` 在 `package.json` 中默认为 `zh-CN`，但在**首次激活**时，若您从未在任何配置层设置该值（`applyTargetLanguageCursorUiBootstrap`），扩展可能一次性将目标与 UI 区域对齐。例如英文 UI 映射到目标 `en`；繁体中文 UI 映射到 `zh-TW`。
@@ -68,6 +72,10 @@ OpenAI 示例：
 
 用 **LinguaLens: Toggle** 或状态栏切换扩展全局翻译。
 
+下图展示英文代码注释的中文悬停译文，以及复制、插入为注释和刷新操作：
+
+![英文代码注释及 LinguaLens 悬停卡片中的中文译文](../../../resources/media/hover-translation.png)
+
 ## 第一次选区翻译
 
 1. 在编辑器中选中文本。
@@ -81,11 +89,15 @@ OpenAI 示例：
 文档翻译仅适用于 **Markdown**（`markdown`）与**纯文本**（`plaintext`）。
 
 1. 打开 `README.md` 或任意 `.md` 文件。
-2. 运行 **LinguaLens: Translate Document**（资源语言为 markdown 或 plaintext 时 `Ctrl+Alt+Shift+D` / `Cmd+Alt+Shift+D`），或点击编辑器标题栏地球图标。
+2. 点击 Markdown 文档左上方的「🌐 翻译全文（对照预览）」按钮。也可以运行 **LinguaLens: Translate Document**（资源语言为 markdown 或 plaintext 时 `Ctrl+Alt+Shift+D` / `Cmd+Alt+Shift+D`），或点击编辑器标题栏地球图标。
 3. 打开 scheme 为 `lingualens:` 的虚拟文档，显示双语预览（`linguaLens.document.previewStyle`：`interleaved` 或 `append`）。
 4. 在预览标题栏使用刷新图标（**LinguaLens: Refresh Preview**）绕过缓存并重新获取分段。
 
 翻译完成后，使用 **LinguaLens: Generate Side File** 将译文文件写入磁盘。模式：`linguaLens.document.sideFileNamePattern`（默认 `${fileBasenameNoExtension}.${lang}${fileExtname}`）。
+
+下图左侧是 Markdown 原文，右侧是按交错排版显示的原文与译文：
+
+![Markdown 原文与 LinguaLens 双语对照预览并排显示](../../../resources/media/bilingual-preview.png)
 
 ## 术语表（可选）
 

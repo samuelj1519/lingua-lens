@@ -43,6 +43,10 @@ For other providers, see [Configure providers](../how-to/configure-providers.md)
 
 The settings panel never embeds your API key in the webview HTML; keys are only written through the Secret Storage API from the extension host. See [Settings panel security](../explanation/settings-panel-security.md).
 
+The settings panel shows the target language, API endpoint, model, and whether a key is configured. It does not show the key itself:
+
+![LinguaLens settings panel in Cursor with Simplified Chinese selected and an API key marked configured](../../../resources/media/settings-panel.png)
+
 ## Choose a target language
 
 `linguaLens.targetLanguage` defaults to `zh-CN` in `package.json`, but on **first activation** the extension may align the target with your UI locale once if you have never set the value at any configuration layer (`applyTargetLanguageCursorUiBootstrap`). For example, English UI maps to target `en`; Traditional Chinese UI maps to `zh-TW`.
@@ -68,6 +72,10 @@ Before text is sent to your LLM, **PrivacyGuard** may ask you to acknowledge tha
 
 Toggle extension-wide translation with **LinguaLens: Toggle** or the status bar.
 
+This hover shows the Chinese translation of a sample English code comment, with copy, insert-comment, and refresh actions:
+
+![English code comment and its Chinese translation in a LinguaLens hover](../../../resources/media/hover-translation.png)
+
 ## Your first selection translation
 
 1. Select text in the editor.
@@ -81,11 +89,15 @@ Related commands: clipboard-or-selection (`Ctrl+Alt+Shift+Y`), replace selection
 Document translation applies to **Markdown** (`markdown`) and **plain text** (`plaintext`) only.
 
 1. Open `README.md` or any `.md` file.
-2. Run **LinguaLens: Translate Document** (`Ctrl+Alt+Shift+D` when the resource language is markdown or plaintext) or click the globe icon in the editor title bar.
+2. Click **Translate document (preview)** above the Markdown text. You can also run **LinguaLens: Translate Document** (`Ctrl+Alt+Shift+D` when the resource language is markdown or plaintext) or click the globe icon in the editor title bar.
 3. A virtual document opens with scheme `lingualens:` showing bilingual preview (`linguaLens.document.previewStyle`: `interleaved` or `append`).
 4. Use the refresh icon in the preview title bar (**LinguaLens: Refresh Preview**) to bypass cache and re-fetch segments.
 
 To write a translated file to disk, use **LinguaLens: Generate Side File** after translation completes. Pattern: `linguaLens.document.sideFileNamePattern` (default `${fileBasenameNoExtension}.${lang}${fileExtname}`).
+
+The completed preview keeps the original Markdown in the left editor and interleaves the source and translation in the right editor:
+
+![Markdown source beside a completed interleaved English and Chinese LinguaLens preview](../../../resources/media/bilingual-preview.png)
 
 ## Glossary (optional)
 

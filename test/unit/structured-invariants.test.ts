@@ -6,6 +6,7 @@ import { tomlAdapter } from '../../src/document/structured/tomlAdapter';
 import { xmlAdapter } from '../../src/document/structured/xmlAdapter';
 import type { StructuredFormatAdapter, StructuredStringSpan } from '../../src/document/structured/types';
 import { buildStructuredReplacement } from '../../src/document/structured/escape';
+import { expectedYamlBlockParsedValue } from '../../src/document/structured/yamlBlockEncode';
 import { StructuredSegmenter } from '../../src/document/structured/StructuredSegmenter';
 import { assembleStructuredTranslated } from '../../src/document/structured/applyReplacements';
 import type { DocSession } from '../../src/document/DocTranslationService';
@@ -14,21 +15,15 @@ import type { Segment } from '../../src/types';
 /** Fake translation: newlines, quotes, colon-space, hash (YAML/TOML sensitive). */
 const FAKE = 'FAKE\u00a9: line1\nline2 \'q\' "w" # hash';
 
-function expectedYamlClipBlock(style: string, tr: string): string {
-  const folded = style.startsWith('>');
-  const flat = tr.replace(/\s*\n\s*/g, ' ').trim();
-  if (folded) {
-    if (style.includes('-')) return flat;
-    if (style.includes('+')) return `${flat}\n`;
-    return `${flat}\n`;
-  }
-  if (style.includes('-')) return tr.replace(/\n+$/, '');
-  if (style.includes('+')) {
-    const base = tr.replace(/\n+$/, '');
-    const extra = tr.match(/\n+$/)?.[0] ?? '';
-    return extra.length > 0 ? base + extra : `${base}\n`;
-  }
-  return tr.endsWith('\n') ? tr : `${tr}\n`;
+function blockSpan(src: string) {
+  const span = yamlAdapter.extractSpans(src).find((s) => s.yamlBlock);
+  if (!span?.yamlBlock) throw new Error('expected block span');
+  return span;
+}
+
+function blockExpectedValue(src: string, tr: string): string {
+  const span = blockSpan(src);
+  return expectedYamlBlockParsedValue(span.yamlBlock!, span.decoded, tr);
 }
 
 function translateYamlSource(src: string, tr: string): string {
@@ -149,7 +144,7 @@ describe('structured invariants YAML', () => {
     const src = 'block: |\n  First line of text\nnext: com.example.app\n';
     translatedRoundTrip(yamlAdapter, src, (s) => YAML.parse(s), (_b, a) => {
       const o = a as { block: string; next: string };
-      expect(o.block).toBe(`${FAKE}\n`);
+      expect(o.block).toBe(blockExpectedValue(src, FAKE));
       expect(o.next).toBe('com.example.app');
     });
     const seg = new StructuredSegmenter();
@@ -158,6 +153,66 @@ describe('structured invariants YAML', () => {
     const out = assembleStructuredTranslated(src, session);
     expect(out).toContain('\nnext:');
     expect(YAML.parse(out).block).toBe('\u8baf\u6587\n');
+  });
+
+  it('clip block keeps chomping without indent indicator (315 regression)', () => {
+    const src = 'k: |\n  Body line one\n  Body line two\nsib: x\n';
+    const tr = '\u8baf\u6587\u5355\u884c';
+    const out = translateYamlSource(src, tr);
+    expect(out).toMatch(/^k: \|\n/);
+    expect(out).not.toMatch(/\|2-/);
+    const parsed = YAML.parse(out) as { k: string; sib: string };
+    expect(parsed.k).toBe(`${tr}\n`);
+    expect(parsed.sib).toBe('x');
+  });
+
+  it('leading whitespace in block translations (0.8.1)', () => {
+    const repro =
+      'b: |\n  Block line\nc: com.example.app\n';
+    const trMulti = '  indented first\nsecond line';
+    const out = translateYamlSource(repro, trMulti);
+    const parsed = YAML.parse(out) as { b: string; c: string };
+    expect(parsed.b).toBe(blockExpectedValue(repro, trMulti));
+    expect(parsed.c).toBe('com.example.app');
+    identityRoundTrip(yamlAdapter, repro);
+
+    const leadingTr = ['  lead', '  first\nsecond', FAKE.replace(/^/, '  ')] as const;
+    const styles = ['|', '>', '|-', '|+', '>-', '>+', '|2'];
+    for (const style of styles) {
+      for (const tr of leadingTr) {
+        const src = `k: ${style}\n  Hello\nnext: com.example.app\n`;
+        identityRoundTrip(yamlAdapter, src);
+        const after = YAML.parse(translateYamlSource(src, tr)) as { k: string; next: string };
+        expect(after.next).toBe('com.example.app');
+        expect(after.k).toBe(blockExpectedValue(src, tr));
+      }
+    }
+  });
+
+  it('block matrix: ten styles, leading whitespace, chomping preserved', () => {
+    const styles = ['|', '>', '|-', '|+', '>-', '>+', '|2', '>2', '|+2', '>+2'];
+    const translations: Array<{ label: string; tr: string }> = [
+      { label: 'single', tr: 'TR' },
+      { label: 'multi', tr: 'a\nb' },
+      { label: 'lead-single', tr: '  TR' },
+      { label: 'lead-multi', tr: '  a\n  b' },
+    ];
+    for (const style of styles) {
+      for (const { tr } of translations) {
+        const src = `k: ${style}\n  Body\nsib: com.example.app\n`;
+        identityRoundTrip(yamlAdapter, src);
+        const out = translateYamlSource(src, tr);
+        const parsed = YAML.parse(out) as { k: string; sib: string };
+        expect(parsed.sib).toBe('com.example.app');
+        expect(parsed.k).toBe(blockExpectedValue(src, tr));
+        if (!/^[ \t]/.test(tr) && !tr.startsWith('\n')) {
+          expect(out).not.toMatch(/\|2-|>2-/);
+        }
+        if (style.startsWith('>') && /^[ \t]/.test(tr) && tr.includes('\n')) {
+          expect(out).toMatch(/k: \|/);
+        }
+      }
+    }
   });
 
   it('chomped block styles keep sibling keys (r4)', () => {
@@ -225,7 +280,7 @@ describe('structured invariants YAML', () => {
             li === 1
               ? (after as { root: { inner: string } }).root.inner
               : (after as { k: string }).k;
-          expect(value).toBe(expectedYamlClipBlock(style, tr));
+          expect(value).toBe(blockExpectedValue(src, tr));
         }
       }
     }
@@ -234,7 +289,7 @@ describe('structured invariants YAML', () => {
     const seqOut = translateYamlSource(seqSrc, FAKE);
     const seqParsed = YAML.parse(seqOut) as { items: string[] };
     expect(seqParsed.items[1]).toBe('com.example.app');
-    expect(seqParsed.items[0]).toBe(expectedYamlClipBlock('|', FAKE));
+    expect(seqParsed.items[0]).toBe(blockExpectedValue(seqSrc, FAKE));
   });
 
   it('block styles | > |- |+ >- and nested', () => {

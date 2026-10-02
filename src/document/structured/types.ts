@@ -24,9 +24,15 @@ export interface YamlBlockMeta {
   scalarStart: number;
   scalarEnd: number;
   contentIndent: string;
+  /** Spaces before the key on the block header line (e.g. 2 in `  inner: |`). */
+  headerKeyIndent: number;
+  /** Explicit indentation indicator from header (e.g. 2 in `|2`), or null when inferred. */
+  indentIndicator: number | null;
   chomp: YamlBlockChomp;
   folded: boolean;
   scalarEndsWithNewline: boolean;
+  /** Newlines between bodyEnd and scalarEnd (keep chomp tail preserved outside replace range). */
+  trailingNewlinesOutsideBody: number;
 }
 
 export interface StructuredStringSpan {

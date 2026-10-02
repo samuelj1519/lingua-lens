@@ -1,4 +1,12 @@
 import type { StructuredEscapeKind, YamlBlockMeta } from './types';
+import {
+  buildBlockHeader,
+  encodeYamlBlockPhysicalLines,
+  foldedNeedsLiteralBlock,
+  needsExplicitIndentIndicator,
+  blockStripWidth,
+  keepBlockBodyPhysicalSuffix,
+} from './yamlBlockEncode';
 
 export interface StructuredReplacementMeta {
   escape: StructuredEscapeKind;
@@ -78,28 +86,43 @@ function encodeXmlAttrSingle(text: string): string {
 }
 
 function yamlBlockNeedsQuotedFallback(text: string, block: YamlBlockMeta): boolean {
-  if (!block.contentIndent && text.includes('\n')) return true;
+  if (!blockStripWidth(block) && text.includes('\n')) return true;
   return false;
 }
 
 function encodeYamlBlockBody(text: string, decoded: string, sourceLiteral: string, block: YamlBlockMeta): string {
   if (text === decoded) return sourceLiteral;
 
-  const indent = block.contentIndent;
-  const lines = text.split('\n');
-  if (!text.endsWith('\n') && lines.length > 1 && lines[lines.length - 1] === '') {
-    lines.pop();
-  }
-  let body = lines.map((line) => indent + line).join('\n');
+  const asLiteral = !block.folded || foldedNeedsLiteralBlock(text);
+  let body = encodeYamlBlockPhysicalLines(block, text, asLiteral);
 
+  body = body.replace(/\n+$/, '');
   if (block.chomp === 'keep') {
-    const trailing = text.match(/\n+$/)?.[0] ?? '';
-    body = body.replace(/\n+$/, '') + trailing;
-  } else {
-    body = body.replace(/\n+$/, '');
+    body += keepBlockBodyPhysicalSuffix(block, decoded);
   }
 
   return body;
+}
+
+function yamlBlockHeaderRewrite(
+  block: YamlBlockMeta,
+  text: string,
+): { rewrite: boolean; block: YamlBlockMeta; header: string } {
+  const toLiteral = block.folded && foldedNeedsLiteralBlock(text);
+  let workBlock: YamlBlockMeta = toLiteral ? { ...block, folded: false } : block;
+  const needIndent = needsExplicitIndentIndicator(workBlock, text);
+  if (!needIndent && !toLiteral) {
+    return { rewrite: false, block: workBlock, header: '' };
+  }
+  if (needIndent) {
+    workBlock = { ...workBlock, indentIndicator: blockStripWidth(workBlock) };
+  }
+  const includeDigit = needIndent || workBlock.indentIndicator != null;
+  return {
+    rewrite: true,
+    block: workBlock,
+    header: buildBlockHeader(workBlock, includeDigit),
+  };
 }
 
 /** Replacement bytes for replaceRange (identity when text === decoded). */
@@ -170,8 +193,22 @@ export function buildStructuredReplacement(
         literal,
       };
     }
-    const literal = encodeYamlBlockBody(text, meta.decoded, meta.sourceLiteral, meta.yamlBlock);
-    return { start: meta.yamlBlock.bodyStart, end: meta.yamlBlock.bodyEnd, literal };
+    const block = meta.yamlBlock;
+    const headerPlan = yamlBlockHeaderRewrite(block, text);
+    const literal = encodeYamlBlockBody(
+      text,
+      meta.decoded,
+      meta.sourceLiteral,
+      headerPlan.block,
+    );
+    if (headerPlan.rewrite) {
+      return {
+        start: block.scalarStart,
+        end: block.bodyEnd,
+        literal: `${headerPlan.header}\n${literal}`,
+      };
+    }
+    return { start: block.bodyStart, end: block.bodyEnd, literal };
   }
 
   const literal = encodeStructuredReplacement(

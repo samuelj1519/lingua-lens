@@ -9,7 +9,7 @@ export function assembleStructuredTranslated(source: string, session: DocSession
   for (const seg of session.segments) {
     if (seg.kind !== 'structured' || !seg.structuredMeta) continue;
     const st = session.results.get(seg.id);
-    if (st?.status !== 'done' || !st.text) continue;
+    if (st?.status !== 'done' || st.text === undefined || st.text === null) continue;
     const r = restore(st.text, seg.placeholders);
     const inner = r.ok ? r.text : st.text;
     const meta = seg.structuredMeta;

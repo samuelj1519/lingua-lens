@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.8.1
+
+- **YAML block scalars**: preserve leading whitespace in translated values—add an explicit indentation indicator (e.g. `|2`, `>2-`) when the translation starts with spaces or lines have uneven indent, and use strip chomp when needed so parsed values match the translation exactly (no spurious trailing newline). Avoids breaking sibling keys and fixes `|2` double-indent on write-back.
+
+### 0.8.1（中文）
+
+- **YAML 块标量**：译文中的前导空白与多行 uneven 缩进会按块头缩进指示符（如 `|2`、`>2-`）写回；必要时改用 strip chomp，使解析结果与译文严格一致，避免吞掉兄弟键或 `|2` 重复加缩进。
+
 ## 0.8.0
 
 - **Structured documents**: whole-document preview, side-file generation, and CodeLens for JSON/JSONC, YAML, TOML, XML, and INI/`.properties` (plus `.plist` as XML). Only **string values** are translated; keys, numbers, booleans, and syntax stay byte-identical via offset-based replacement (no parse-and-reserialize).

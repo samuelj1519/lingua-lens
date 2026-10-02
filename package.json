@@ -2,7 +2,7 @@
   "name": "lingua-lens",
   "displayName": "LinguaLens for Visual Studio Code",
   "description": "Translate comments, strings, and docs in the editor with your own OpenAI-compatible LLM.",
-  "version": "0.7.11",
+  "version": "0.8.0",
   "publisher": "samuelj1519",
   "homepage": "https://github.com/samuelj1519/lingua-lens#readme",
   "bugs": {
@@ -282,7 +282,7 @@
         "command": "linguaLens.translateDocument",
         "key": "ctrl+alt+shift+d",
         "mac": "cmd+alt+shift+d",
-        "when": "editorTextFocus && resourceLangId =~ /(markdown|plaintext)/"
+        "when": "editorTextFocus && (resourceLangId =~ /^(markdown|plaintext|json|jsonc|yaml|toml|xml)$/ || resourceExtname =~ /\\.(md|markdown|txt|json|jsonc|yaml|yml|toml|xml|plist)$/i)"
       },
       {
         "command": "linguaLens.translateSelectionPopup",
@@ -338,19 +338,19 @@
         },
         {
           "command": "linguaLens.translateDocument",
-          "when": "resourceScheme != lingualens && (resourceLangId == markdown || resourceLangId == plaintext)",
+          "when": "resourceScheme != lingualens && (resourceLangId == markdown || resourceLangId == plaintext || resourceLangId =~ /^(json|jsonc|yaml|toml|xml)$/ || resourceExtname =~ /\\.(json|jsonc|yaml|yml|toml|xml|plist)$/i)",
           "group": "navigation@89"
         },
         {
           "command": "linguaLens.generateSideFile",
-          "when": "resourceScheme != lingualens && (resourceLangId == markdown || resourceLangId == plaintext)",
+          "when": "resourceScheme != lingualens && (resourceLangId == markdown || resourceLangId == plaintext || resourceLangId =~ /^(json|jsonc|yaml|toml|xml)$/ || resourceExtname =~ /\\.(json|jsonc|yaml|yml|toml|xml|plist)$/i)",
           "group": "navigation@88"
         }
       ],
       "editor/title": [
         {
           "command": "linguaLens.translateDocument",
-          "when": "resourceScheme != lingualens && (resourceLangId == markdown || resourceLangId == plaintext)",
+          "when": "resourceScheme != lingualens && (resourceLangId == markdown || resourceLangId == plaintext || resourceLangId =~ /^(json|jsonc|yaml|toml|xml)$/ || resourceExtname =~ /\\.(json|jsonc|yaml|yml|toml|xml|plist)$/i)",
           "group": "navigation@1",
           "icon": "$(globe)"
         },
@@ -362,19 +362,19 @@
         },
         {
           "command": "linguaLens.generateSideFile",
-          "when": "resourceScheme != lingualens && (resourceLangId == markdown || resourceLangId == plaintext)",
+          "when": "resourceScheme != lingualens && (resourceLangId == markdown || resourceLangId == plaintext || resourceLangId =~ /^(json|jsonc|yaml|toml|xml)$/ || resourceExtname =~ /\\.(json|jsonc|yaml|yml|toml|xml|plist)$/i)",
           "group": "1_linguaLens"
         }
       ],
       "explorer/context": [
         {
           "command": "linguaLens.translateDocument",
-          "when": "resourceExtname =~ /\\.(md|markdown|txt)$/",
+          "when": "resourceExtname =~ /\\.(md|markdown|txt|json|jsonc|yaml|yml|toml|xml|plist)$/i",
           "group": "7_linguaLens"
         },
         {
           "command": "linguaLens.generateSideFile",
-          "when": "resourceExtname =~ /\\.(md|markdown|txt)$/",
+          "when": "resourceExtname =~ /\\.(md|markdown|txt|json|jsonc|yaml|yml|toml|xml|plist)$/i",
           "group": "7_linguaLens"
         }
       ]
@@ -1014,6 +1014,8 @@
     "tinyld": "^1.3.4",
     "tree-sitter-wasms": "^0.1.12",
     "unified": "^11.0.5",
-    "web-tree-sitter": "^0.22.6"
+    "web-tree-sitter": "^0.22.6",
+    "jsonc-parser": "^3.3.1",
+    "yaml": "^2.7.0"
   }
 }

@@ -19,6 +19,7 @@ const ctx = await esbuild.context({
   format: 'cjs',
   external: ['vscode'],
   target: 'node18',
+  mainFields: ['module', 'main'],
 });
 
 const webviewCtx = await esbuild.context({

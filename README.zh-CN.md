@@ -6,7 +6,7 @@
 
 LinguaLens 适用于 **Visual Studio Code** 及兼容编辑器（**Cursor**、**Windsurf**、**VSCodium** 等）；市场显示名遵循微软品牌规范：**LinguaLens for Visual Studio Code**。
 
-LinguaLens（扩展 ID：`samuelj1519.lingua-lens`）提供悬停翻译、选区与剪贴板工作流、全文双语预览、配置文件悬停、Git 辅助、术语表、内存 LRU + 磁盘缓存以及设置 Webview。密钥按 API **origin** 存入 SecretStorage；只有你悬停或主动翻译的文本会发往所配置的端点。
+LinguaLens（扩展 ID：`samuelj1519.lingua-lens`）提供悬停翻译、选区与剪贴板工作流、全文预览与译文文件（Markdown/纯文本及 JSON、YAML、TOML、XML 等结构化文件）、配置文件悬停、Git 辅助、术语表、内存 LRU + 磁盘缓存以及设置 Webview。密钥按 API **origin** 存入 SecretStorage；只有你悬停或主动翻译的文本会发往所配置的端点。
 
 ## 在 Cursor 中查看效果
 
@@ -84,7 +84,7 @@ LinguaLens（扩展 ID：`samuelj1519.lingua-lens`）提供悬停翻译、选区
 | --- | --- | --- |
 | `linguaLens.setApiKey` | — | 随时可用。 |
 | `linguaLens.translateSelection` | `Ctrl+Alt+Shift+T` | 编辑器有选区。 |
-| `linguaLens.translateDocument` | `Ctrl+Alt+Shift+D` | Markdown / 纯文本编辑器。 |
+| `linguaLens.translateDocument` | `Ctrl+Alt+Shift+D` | Markdown、纯文本及 JSON/YAML/TOML/XML 等结构化文件。 |
 | `linguaLens.translateClipboardOrSelection` | `Ctrl+Alt+Shift+Y` | 终端选区或剪贴板。 |
 | `linguaLens.openSettingsPanel` | — | QuickPick / 命令面板。 |
 | `linguaLens.clearCache` | — | 命令面板 / 状态栏链接。 |

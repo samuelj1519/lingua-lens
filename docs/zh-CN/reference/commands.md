@@ -12,7 +12,7 @@
 | `linguaLens.clearApiKey` | 清除 API Key | — | command palette |
 | `linguaLens.testConnection` | 测试连接 | — | command palette |
 | `linguaLens.translateSelection` | 翻译选中内容 | `ctrl+alt+shift+t` / mac: `cmd+alt+shift+t` (when: `editorTextFocus && editorHasSelection`) | command palette, editor context |
-| `linguaLens.translateDocument` | 翻译文档 (双语预览) | `ctrl+alt+shift+d` / mac: `cmd+alt+shift+d` (when: `editorTextFocus && resourceLangId =~ /(markdown|plaintext)/`) | command palette, editor context, editor title, explorer context, CodeLens (Markdown) |
+| `linguaLens.translateDocument` | 翻译文档 (双语预览) | `ctrl+alt+shift+d` / mac: `cmd+alt+shift+d` (when: `editorTextFocus && (resourceLangId =~ /^(markdown|plaintext|json|jsonc|yaml|toml|xml)$/ || resourceExtname =~ /\.(md|markdown|txt|json|jsonc|yaml|yml|toml|xml|plist)$/i)`) | command palette, editor context, editor title, explorer context, CodeLens (Markdown) |
 | `linguaLens.refreshPreview` | 刷新翻译 | — | command palette, editor title |
 | `linguaLens.refreshDocumentTranslation` | 刷新全文翻译 | — | command palette, CodeLens (Markdown) |
 | `linguaLens.hover.refresh` | 刷新译文 | — | hover markdown link |

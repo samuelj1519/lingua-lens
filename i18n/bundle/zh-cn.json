@@ -6,7 +6,7 @@
   "doc.alreadyTarget": "文档已是目标语言，无需翻译",
   "doc.disabled": "LinguaLens 已禁用",
   "doc.fileExcluded": "该文件已被排除",
-  "doc.markdownOnly": "整篇翻译仅支持 Markdown / 纯文本；配置文件请使用悬停翻译。",
+  "doc.markdownOnly": "此文件类型不支持整篇翻译。",
   "doc.openPreviewFirst": "请先打开全文翻译预览",
   "doc.preview.header": "> LinguaLens预览 (只读) · 源文件 {0} · 目标 {1} · 进度 {2}/{3}",
   "doc.previewExpired": "预览已失效，请重新执行「翻译文档」命令。",

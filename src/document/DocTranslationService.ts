@@ -22,6 +22,9 @@ import { isDocumentAlreadyInTargetLanguage } from './documentTranslationGate';
 import { showAlreadyTargetLanguageStatusHint } from './documentTranslationHints';
 import { t } from '../l10n/uiL10n';
 import { documentPreviewUri } from './previewUri';
+import { StructuredSegmenter } from './structured/StructuredSegmenter';
+import { documentRenderMode, type DocumentRenderMode } from './structuredDocumentProfile';
+import { assembleStructuredTranslated } from './structured/applyReplacements';
 
 export type SegmentResultStatus = 'pending' | 'done' | 'failed' | 'skipped';
 
@@ -38,12 +41,14 @@ export interface DocSession {
   doneCount: number;
   totalTranslatable: number;
   sourceText: string;
+  renderMode: DocumentRenderMode;
 }
 
 export class DocTranslationService {
   private readonly sessions = new Map<string, DocSession>();
   private readonly md = new MarkdownSegmenter();
   private readonly plain = new PlainTextSegmenter();
+  private readonly structured = new StructuredSegmenter();
   private readonly renderer = new BilingualRenderer();
   readonly sideWriter = new SideFileWriter();
 
@@ -161,15 +166,25 @@ export class DocTranslationService {
       await this.runTranslation(session, doc.getText(), true);
     }
     const content =
-      cfg.document.sideFileContent === 'bilingual'
-        ? this.renderer.renderBilingual(doc.getText(), session)
-        : this.renderer.renderTranslated(doc.getText(), session);
+      session.renderMode === 'structured' || cfg.document.sideFileContent !== 'bilingual'
+        ? this.renderTranslatedOutput(doc.getText(), session)
+        : this.renderer.renderBilingual(doc.getText(), session);
     await this.sideWriter.write(doc.uri, content, cfg.targetLanguage, cfg.document.sideFileNamePattern);
+  }
+
+  renderTranslatedOutput(source: string, session: DocSession): string {
+    if (session.renderMode === 'structured') {
+      return assembleStructuredTranslated(source, session);
+    }
+    return this.renderer.renderTranslated(source, session);
   }
 
   private segment(doc: vscode.TextDocument): Segment[] {
     const text = doc.getText();
     const cfg = this.config.get(doc.uri);
+    if (documentRenderMode(doc) === 'structured') {
+      return this.structured.segment(text, doc.languageId, doc.fileName);
+    }
     if (doc.languageId === 'markdown') {
       return this.md.segment(text, {
         targetLanguage: cfg.targetLanguage,
@@ -215,6 +230,7 @@ export class DocTranslationService {
       doneCount: 0,
       totalTranslatable: translatableCount,
       sourceText: doc.getText(),
+      renderMode: documentRenderMode(doc),
     };
     this.initResultsFromPlans(session);
     this.sessions.set(previewUri.toString(), session);

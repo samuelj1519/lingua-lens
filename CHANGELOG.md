@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.8.0
+
+- **Structured documents**: whole-document preview, side-file generation, and CodeLens for JSON/JSONC, YAML, TOML, XML, and INI/`.properties` (plus `.plist` as XML). Only **string values** are translated; keys, numbers, booleans, and syntax stay byte-identical via offset-based replacement (no parse-and-reserialize).
+- **Preview**: structured files reuse the same translation session as side files; the virtual document shows a **valid translated copy** of the source format (no Markdown bilingual wrapper, so JSON/YAML stay parseable while translating).
+- **Skip heuristics**: URLs, paths, semver, hex colors, UUIDs, numeric strings, and identifier-like tokens are not sent to the model. XML translates text nodes and selective attributes; **comments are not translated** (metadata, often English-only tooling).
+- **Dependencies**: `jsonc-parser`, `yaml` (for YAML pair values with source ranges).
+- **Fixes (0.8.0)**: bundle `jsonc-parser` ESM (`mainFields`); JSON property values only; YAML block/plain quoting; TOML value-side strings with correct escapes; XML PI/plist-key/entity handling and attribute allowlist; drop INI/`.properties` until a safe offset model exists; anchor `resourceLangId` `when` clauses; packaged `dist/extension.js` load test.
+
 ## 0.7.11
 
 - **Publisher / extension ID**: marketplace publisher is now **`samuelj1519`** (extension ID **`samuelj1519.lingua-lens`**) so Open VSX namespace matches the GitHub account for namespace verification. SecretStorage and `globalState` are tied to the extension ID — after upgrading, uninstall the old **`samuel-j.lingua-lens`** build if present and run **`LinguaLens: Set API Key`** again (no automatic migration).

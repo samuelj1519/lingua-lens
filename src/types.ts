@@ -66,7 +66,7 @@ export interface DocumentSnapshot {
 
 export interface Segment {
   id: string;
-  kind: 'heading' | 'paragraph' | 'table' | 'list' | 'blockquote' | 'frontmatter' | 'preserved';
+  kind: 'heading' | 'paragraph' | 'table' | 'list' | 'blockquote' | 'frontmatter' | 'preserved' | 'structured';
   range: OffsetRange;
   sourceText: string;
   placeholders: Placeholder[];
@@ -88,6 +88,16 @@ export interface Segment {
     text: string;
     placeholders: Placeholder[];
   }[];
+  structuredMeta?: {
+    valueStart: number;
+    valueEnd: number;
+    sourceLiteral: string;
+    decoded: string;
+    escape: import('./document/structured/types').StructuredEscapeKind;
+    formatId: string;
+    yamlBlock?: import('./document/structured/types').YamlBlockMeta;
+    xmlAttrQuote?: "'" | '"';
+  };
 }
 
 export interface GlossaryTerm {

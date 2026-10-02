@@ -6,7 +6,7 @@
   "doc.alreadyTarget": "Document is already in the target language; nothing to translate.",
   "doc.disabled": "LinguaLens is disabled.",
   "doc.fileExcluded": "This file is excluded.",
-  "doc.markdownOnly": "Whole-document translation supports Markdown/plain text only; use hover for config files.",
+  "doc.markdownOnly": "Whole-document translation is not available for this file type.",
   "doc.openPreviewFirst": "Open the document translation preview first.",
   "doc.preview.header": "> LinguaLens preview (read-only) · Source {0} · Target {1} · Progress {2}/{3}",
   "doc.previewExpired": "Preview expired. Run the translate document command again.",

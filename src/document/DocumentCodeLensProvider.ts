@@ -48,7 +48,15 @@ export function registerDocumentCodeLens(config: ConfigService): {
 } {
   const provider = new DocumentCodeLensProvider(config);
   const disposable = vscode.languages.registerCodeLensProvider(
-    [{ language: 'markdown' }, { language: 'plaintext' }],
+    [
+      { language: 'markdown' },
+      { language: 'plaintext' },
+      { language: 'json' },
+      { language: 'jsonc' },
+      { language: 'yaml' },
+      { language: 'toml' },
+      { language: 'xml' },
+    ],
     provider,
   );
   return { disposable, provider };

@@ -3,6 +3,7 @@ import { t } from '../l10n/uiL10n';
 import { BilingualRenderer } from './BilingualRenderer';
 import type { DocSession } from './DocTranslationService';
 import type { PreviewStyle } from './DocumentAssembler';
+import { assembleStructuredTranslated } from './structured/applyReplacements';
 
 export class PreviewContentProvider implements vscode.TextDocumentContentProvider {
   private readonly emitter = new vscode.EventEmitter<vscode.Uri>();
@@ -43,6 +44,9 @@ export class PreviewContentProvider implements vscode.TextDocumentContentProvide
     const session = this.sessions.get(uri.toString());
     if (!session) {
       return t('doc.previewExpired');
+    }
+    if (session.renderMode === 'structured') {
+      return assembleStructuredTranslated(session.sourceText, session);
     }
     return this.renderer.renderBilingual(session.sourceText, session, this.previewStyle);
   }

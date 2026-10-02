@@ -32,7 +32,7 @@ Tutorial: [Getting started](https://github.com/samuelj1519/lingua-lens/blob/main
 | Capability | What you get |
 | --- | --- |
 | **Hover translation** | Tree-sitter (with regex fallback) extracts comments, strings, Markdown paragraphs, config values/keys, template UI text, and more. Optional blocks for diagnostics, symbol docs, Git commit messages, and active selections. |
-| **Document preview** | `lingualens:` virtual document with interleaved or append layout; progress per translatable segment; side files such as `README.zh-CN.md`. |
+| **Document preview** | `lingualens:` virtual document: Markdown/plain text uses interleaved or append layout; **JSON, YAML, TOML, XML** show a same-format translated preview (string values only). Side files such as `README.zh-CN.md` or `config.zh-CN.json`. |
 | **Editor workflows** | Keybindings for selection, clipboard/terminal, replace/insert, and popup translation. CodeLens on Markdown for translate / refresh / side file. |
 | **Operations** | Per-origin API keys, connection test, cache clear, workspace disable, privacy acknowledgement, and exclude globs for sensitive paths. |
 | **i18n** | Runtime UI follows `linguaLens.targetLanguage` (`l10n/bundle`); built-in settings labels follow the editor UI language (`package.nls`). |

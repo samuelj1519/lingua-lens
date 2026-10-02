@@ -297,7 +297,7 @@
 - **Type:** boolean
 - **Default:** `true`
 - **Scope:** `resource`
-- **Description:** 在 Markdown/纯文本顶部显示「翻译全文」CodeLens。
+- **Description:** 在 Markdown、纯文本及结构化文件（JSON、YAML、TOML、XML、`.yml`、`.plist`）顶部显示翻译 / 生成译文 / 刷新 CodeLens。
 
 ### `document.forceTranslate`
 

@@ -297,7 +297,7 @@ Keys appear in VS Code settings as `linguaLens.<key>`. Sections match the seven 
 - **Type:** boolean
 - **Default:** `true`
 - **Scope:** `resource`
-- **Description:** Show **Translate document** CodeLens at the top of Markdown/plain-text files.
+- **Description:** Show translate / side-file / refresh CodeLens at the top of Markdown, plain text, and structured document types (JSON, YAML, TOML, XML, `.yml`, `.plist`).
 
 ### `document.forceTranslate`
 

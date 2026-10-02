@@ -2,7 +2,7 @@
   "name": "lingua-lens",
   "displayName": "LinguaLens for Visual Studio Code",
   "description": "Translate comments, strings, and docs in the editor with your own OpenAI-compatible LLM.",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "publisher": "samuelj1519",
   "homepage": "https://github.com/samuelj1519/lingua-lens#readme",
   "bugs": {

@@ -60,7 +60,7 @@
   "config.document.previewStyle.markdownDescription": "Layout of the `lingualens:` bilingual preview: interleaved blocks (recommended) or append translations after each block.",
   "config.document.previewStyle.enum.interleaved": "Original block, blank line, then translation (lists/tables as whole blocks)",
   "config.document.previewStyle.enum.append": "Legacy style: translation appended after each block",
-  "config.document.codeLens.markdownDescription": "Show **Translate document** CodeLens at the top of Markdown/plain-text files.",
+  "config.document.codeLens.markdownDescription": "Show translate / side-file / refresh CodeLens at the top of Markdown, plain text, and structured document types (JSON, YAML, TOML, XML, `.yml`, `.plist`).",
   "config.document.forceTranslate.markdownDescription": "When enabled, skip language detection for whole-document translation and send every segment to the model (may duplicate text already in the target language). Default follows [#linguaLens.detection.targetRatio#](settings://linguaLens.detection.targetRatio) like hover translation.",
   "document.progress.message": "Translating {0}: {1}/{2} segments",
   "config.document.batchSize.markdownDescription": "Number of document segments per API batch when translating whole files.",

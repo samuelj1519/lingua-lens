@@ -33,7 +33,7 @@ Tutorial: [Getting started](https://github.com/samuelj1519/lingua-lens/blob/main
 | --- | --- |
 | **Hover translation** | Tree-sitter (with regex fallback) extracts comments, strings, Markdown paragraphs, config values/keys, template UI text, and more. Optional blocks for diagnostics, symbol docs, Git commit messages, and active selections. |
 | **Document preview** | `lingualens:` virtual document: Markdown/plain text uses interleaved or append layout; **JSON, YAML, TOML, XML** show a same-format translated preview (string values only). Side files such as `README.zh-CN.md` or `config.zh-CN.json`. |
-| **Editor workflows** | Keybindings for selection, clipboard/terminal, replace/insert, and popup translation. CodeLens on Markdown for translate / refresh / side file. |
+| **Editor workflows** | Keybindings for selection, clipboard/terminal, replace/insert, and popup translation. CodeLens at the top of supported document types (Markdown, plain text, JSON/JSONC, YAML, TOML, XML, `.yml`, `.plist`) for translate / refresh / side file. |
 | **Operations** | Per-origin API keys, connection test, cache clear, workspace disable, privacy acknowledgement, and exclude globs for sensitive paths. |
 | **i18n** | Runtime UI follows `linguaLens.targetLanguage` (`l10n/bundle`); built-in settings labels follow the editor UI language (`package.nls`). |
 
@@ -77,6 +77,16 @@ Details: [Configure providers](https://github.com/samuelj1519/lingua-lens/blob/m
 | `linguaLens.cache.enabled` | `true` | Memory LRU + disk JSONL under global storage. |
 
 Full list: [Settings reference](https://github.com/samuelj1519/lingua-lens/blob/main/docs/en/reference/settings.md) (auto-generated in repo).
+
+### Cursor: title bar vs CodeLens
+
+In **Cursor 3.23+**, extension-contributed **editor title** buttons are hidden unless the command id is listed in `cursor.general.pinnedTitleActions` or you pin them from the title bar context menu. To always show **Translate document**, add to `settings.json`:
+
+```json
+"cursor.general.pinnedTitleActions": ["linguaLens.translateDocument"]
+```
+
+**CodeLens** (translate preview, generate side file, refresh) appears at the top of every supported format when `linguaLens.document.codeLens` is enabled—including structured files where the title button may be hidden.
 
 ## Commands (palette)
 

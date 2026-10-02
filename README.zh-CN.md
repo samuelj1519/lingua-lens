@@ -24,7 +24,7 @@ LinguaLens（扩展 ID：`samuelj1519.lingua-lens`）提供悬停翻译、选区
 | --- | --- |
 | **悬停翻译** | tree-sitter（含正则回退）提取注释、字符串、Markdown 段落、配置值/键名、模板 UI 文本等；可选诊断、符号文档、Git 提交说明与选区块。 |
 | **全文预览** | `lingualens:` 虚拟文档，支持交错或追加布局；按可译段落显示进度；可生成 `README.zh-CN.md` 等侧车文件。 |
-| **编辑器工作流** | 选区、剪贴板/终端、替换/插入、弹窗翻译等快捷键；Markdown 顶部 CodeLens（翻译 / 刷新 / 生成译文）。 |
+| **编辑器工作流** | 选区、剪贴板/终端、替换/插入、弹窗翻译等快捷键；支持的文档类型（Markdown、纯文本、JSON/JSONC、YAML、TOML、XML、`.yml`、`.plist`）顶部 CodeLens（翻译 / 刷新 / 生成译文）。 |
 | **运维与隐私** | 分 origin 管理 API Key、测试连接、清缓存、工作区禁用、首次隐私确认、密钥检测与排除 glob。 |
 | **国际化** | 扩展自绘 UI 跟随 `linguaLens.targetLanguage`（`l10n/bundle`）；内置设置页标签跟随编辑器界面语言（`package.nls`）。 |
 
@@ -77,6 +77,16 @@ LinguaLens（扩展 ID：`samuelj1519.lingua-lens`）提供悬停翻译、选区
 | `linguaLens.cache.enabled` | `true` | 内存 LRU + globalStorage 下 JSONL。 |
 
 完整 52 项、七个设置分组：[设置参考](docs/zh-CN/reference/settings.md)（自动生成）。
+
+### Cursor：标题栏按钮与 CodeLens
+
+**Cursor 3.23+** 默认会隐藏扩展注册的 **编辑器标题栏** 按钮，除非命令 id 写在 `cursor.general.pinnedTitleActions` 中，或在标题栏右键菜单里勾选固定。若希望始终显示「翻译全文」，可在 `settings.json` 中加入：
+
+```json
+"cursor.general.pinnedTitleActions": ["linguaLens.translateDocument"]
+```
+
+在 `linguaLens.document.codeLens` 开启时，**CodeLens**（对照预览、生成译文文件、刷新全文翻译）会出现在所有支持格式的文档顶部（含 TOML/YAML 等结构化文件），即使标题栏按钮被隐藏也可从此进入。
 
 ## 常用命令（命令面板）
 

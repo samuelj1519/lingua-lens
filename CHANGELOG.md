@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.8.2
+
+- **Document CodeLens**: show translate / side-file / refresh CodeLens at the top of **JSON, JSONC, YAML, TOML, XML**, and extension-matched `.yml` / `.plist` files (same coverage as editor title actions), not only Markdown/plain text. Structured files use the same whole-document translation path as before.
+- **Eligibility**: shared `isWholeDocumentTranslationSupported` for commands, CodeLens, and menus (TOML/YAML/JSON/XML/plist by language or extension); config-hover no longer blocks structured whole-document translation.
+- **Cursor**: document title-bar translate button may be hidden by default in Cursor 3.23+; pin `linguaLens.translateDocument` via `cursor.general.pinnedTitleActions` or the editor title context menu (see README).
+
+### 0.8.2（中文）
+
+- **全文 CodeLens**：在 **JSON、JSONC、YAML、TOML、XML** 及 `.yml`、`.plist` 等匹配扩展名的文件顶部显示翻译 / 生成译文 / 刷新 CodeLens（与标题栏按钮范围一致），不再仅限 Markdown/纯文本。
+- **资格判断**：统一 `isWholeDocumentTranslationSupported`（命令/CodeLens/菜单一致）；TOML 等结构化文件不再误报「不支持整篇翻译」。
+- **Cursor**：3.23+ 默认可能隐藏扩展的标题栏翻译按钮；可通过 `cursor.general.pinnedTitleActions` 或标题栏右键固定（见 README）。
+
 ## 0.8.1
 
 - **YAML block scalars**: preserve leading whitespace in translated values—add an explicit indentation indicator (e.g. `|2`, `>2-`) when the translation starts with spaces or lines have uneven indent, and use strip chomp when needed so parsed values match the translation exactly (no spurious trailing newline). Avoids breaking sibling keys and fixes `|2` double-indent on write-back.

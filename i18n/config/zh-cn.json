@@ -60,7 +60,7 @@
   "config.document.previewStyle.markdownDescription": "`lingualens:` 双语预览排版：**交错**（推荐）或在每块末尾**追加**译文。",
   "config.document.previewStyle.enum.interleaved": "原文整块 → 空行 → 译文整块（列表/表格整块翻译）",
   "config.document.previewStyle.enum.append": "旧版：在每块末尾追加译文",
-  "config.document.codeLens.markdownDescription": "在 Markdown/纯文本顶部显示「翻译全文」CodeLens。",
+  "config.document.codeLens.markdownDescription": "在 Markdown、纯文本及结构化文件（JSON、YAML、TOML、XML、`.yml`、`.plist`）顶部显示翻译 / 生成译文 / 刷新 CodeLens。",
   "config.document.forceTranslate.markdownDescription": "开启后全文翻译不再做语言检测，所有段落都会请求模型（可能导致已是目标语言的文档出现重复内容）。默认与悬停相同，遵循 [#linguaLens.detection.targetRatio#](settings://linguaLens.detection.targetRatio)。",
   "document.progress.message": "正在翻译 {0}：{1}/{2} 段",
   "config.document.batchSize.markdownDescription": "全文翻译时每批提交的段落数量。",

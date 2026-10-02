@@ -44,7 +44,7 @@
   "config.detection.targetRatio.markdownDescription": "若已有足够比例的字符像目标语言，则跳过该片段（减少多余 API 调用）。",
   "config.document.autoRefresh.markdownDescription": "源文档变更时自动刷新预览（实验性，可能增加 API 用量）。",
   "config.document.batchSize.markdownDescription": "全文翻译时每批提交的段落数量。",
-  "config.document.codeLens.markdownDescription": "在 Markdown/纯文本顶部显示「翻译全文」CodeLens。",
+  "config.document.codeLens.markdownDescription": "在 Markdown、纯文本及结构化文件（JSON、YAML、TOML、XML、`.yml`、`.plist`）顶部显示翻译 / 生成译文 / 刷新 CodeLens。",
   "config.document.forceTranslate.markdownDescription": "开启后全文翻译不再做语言检测，所有段落都会请求模型（可能导致已是目标语言的文档出现重复内容）。默认与悬停相同，遵循 [#linguaLens.detection.targetRatio#](settings://linguaLens.detection.targetRatio)。",
   "config.document.maxBatchChars.markdownDescription": "每批全文翻译的最大源字符总数（与 [#linguaLens.document.batchSize#](settings://linguaLens.document.batchSize) 共同限制分批）。",
   "config.document.previewStyle.enum.append": "旧版：在每块末尾追加译文",

@@ -8,7 +8,7 @@ import { MarkdownSegmenter } from './MarkdownSegmenter';
 import { PlainTextSegmenter } from './PlainTextSegmenter';
 import type { PreviewContentProvider } from './PreviewContentProvider';
 import { SideFileWriter } from './SideFileWriter';
-import { canTranslateWholeDocument } from './documentEligibility';
+import { isWholeDocumentTranslationSupported } from './documentTranslateSupport';
 import { validateAndFallbackContainers } from './containerPostProcess';
 import {
   buildDocumentTranslationPlan,
@@ -67,11 +67,16 @@ export class DocTranslationService {
     return documentPreviewUri(source, lang);
   }
 
-  async openPreview(doc: vscode.TextDocument): Promise<void> {
-    if (!canTranslateWholeDocument(doc)) {
+  private rejectUnsupportedDocument(doc: vscode.TextDocument): boolean {
+    if (!isWholeDocumentTranslationSupported(doc)) {
       void vscode.window.showWarningMessage(t('doc.markdownOnly'));
-      return;
+      return true;
     }
+    return false;
+  }
+
+  async openPreview(doc: vscode.TextDocument): Promise<void> {
+    if (this.rejectUnsupportedDocument(doc)) return;
     const block = this.guard.check(doc);
     if (block === 'excluded') {
       void vscode.window.showWarningMessage(t('doc.fileExcluded'));
@@ -103,6 +108,7 @@ export class DocTranslationService {
   }
 
   async refreshDocumentTranslation(doc: vscode.TextDocument): Promise<void> {
+    if (this.rejectUnsupportedDocument(doc)) return;
     const cfg = this.config.get(doc.uri);
     const segments = this.segment(doc);
     const text = doc.getText();
@@ -148,6 +154,7 @@ export class DocTranslationService {
   }
 
   async generateSideFile(doc: vscode.TextDocument): Promise<void> {
+    if (this.rejectUnsupportedDocument(doc)) return;
     const cfg = this.config.get(doc.uri);
     const segments = this.segment(doc);
     const text = doc.getText();

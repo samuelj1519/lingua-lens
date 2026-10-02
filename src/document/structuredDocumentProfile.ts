@@ -31,3 +31,21 @@ export function documentRenderMode(doc: vscode.TextDocument): DocumentRenderMode
 export function matchesStructuredExtension(fileName: string): boolean {
   return STRUCTURED_EXT_RE.test(fileName);
 }
+
+/** CodeLens registration: same coverage as editor/title translate actions (excludes `lingualens:`). */
+export const DOCUMENT_TRANSLATE_CODE_LENS_SELECTORS: vscode.DocumentFilter[] = [
+  { language: 'markdown' },
+  { language: 'plaintext' },
+  { language: 'json' },
+  { language: 'jsonc' },
+  { language: 'yaml' },
+  { language: 'toml' },
+  { language: 'xml' },
+  { pattern: '**/*.json' },
+  { pattern: '**/*.jsonc' },
+  { pattern: '**/*.yaml' },
+  { pattern: '**/*.yml' },
+  { pattern: '**/*.toml' },
+  { pattern: '**/*.xml' },
+  { pattern: '**/*.plist' },
+];

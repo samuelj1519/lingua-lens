@@ -1,7 +1,10 @@
 import * as vscode from 'vscode';
 import type { ConfigService } from '../config/ConfigService';
 import { t } from '../l10n/uiL10n';
-import { canTranslateWholeDocument } from './documentEligibility';
+import {
+  DOCUMENT_TRANSLATE_CODE_LENS_SELECTORS,
+  isWholeDocumentTranslationSupported,
+} from './documentTranslateSupport';
 
 export class DocumentCodeLensProvider implements vscode.CodeLensProvider {
   private readonly onDidChangeEmitter = new vscode.EventEmitter<void>();
@@ -19,7 +22,7 @@ export class DocumentCodeLensProvider implements vscode.CodeLensProvider {
   ): vscode.CodeLens[] {
     const cfg = this.config.get(doc.uri);
     if (!cfg.document.codeLens || !cfg.enabled) return [];
-    if (!canTranslateWholeDocument(doc)) return [];
+    if (!isWholeDocumentTranslationSupported(doc)) return [];
 
     const top = new vscode.Range(0, 0, 0, 0);
     return [
@@ -48,15 +51,7 @@ export function registerDocumentCodeLens(config: ConfigService): {
 } {
   const provider = new DocumentCodeLensProvider(config);
   const disposable = vscode.languages.registerCodeLensProvider(
-    [
-      { language: 'markdown' },
-      { language: 'plaintext' },
-      { language: 'json' },
-      { language: 'jsonc' },
-      { language: 'yaml' },
-      { language: 'toml' },
-      { language: 'xml' },
-    ],
+    DOCUMENT_TRANSLATE_CODE_LENS_SELECTORS,
     provider,
   );
   return { disposable, provider };

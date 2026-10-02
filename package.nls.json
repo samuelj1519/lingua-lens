@@ -44,7 +44,7 @@
   "config.detection.targetRatio.markdownDescription": "If this fraction of characters already looks like the target language, the fragment is skipped (reduces redundant API calls).",
   "config.document.autoRefresh.markdownDescription": "Automatically refresh the preview when the source document changes (experimental; may increase API usage).",
   "config.document.batchSize.markdownDescription": "Number of document segments per API batch when translating whole files.",
-  "config.document.codeLens.markdownDescription": "Show **Translate document** CodeLens at the top of Markdown/plain-text files.",
+  "config.document.codeLens.markdownDescription": "Show translate / side-file / refresh CodeLens at the top of Markdown, plain text, and structured document types (JSON, YAML, TOML, XML, `.yml`, `.plist`).",
   "config.document.forceTranslate.markdownDescription": "When enabled, skip language detection for whole-document translation and send every segment to the model (may duplicate text already in the target language). Default follows [#linguaLens.detection.targetRatio#](settings://linguaLens.detection.targetRatio) like hover translation.",
   "config.document.maxBatchChars.markdownDescription": "Maximum total source characters per document batch (splits batches with [#linguaLens.document.batchSize#](settings://linguaLens.document.batchSize)).",
   "config.document.previewStyle.enum.append": "Legacy style: translation appended after each block",

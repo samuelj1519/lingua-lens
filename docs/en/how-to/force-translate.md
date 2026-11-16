@@ -87,7 +87,7 @@ Force translate does not bypass privacy or secrets. Example stack:
 |---------|--------|
 | Redundant API spend | Every segment may translate including already-native prose. |
 | Glossary required for terms | Without glossary, proper nouns may be transliterated differently pass to pass. |
-| Identity skip still applies | `isSameTranslationAsSource` can skip caching when model returns unchanged text. |
+| Identical output is cached | Unchanged model text is stored. Use Refresh Preview with bypass to request it again. |
 | Not for code files | Force flag does not enable document mode on `.ts` files. |
 | strictChineseVariant | Setting alone does not change behavior until implemented in `decide()`. |
 

@@ -85,7 +85,7 @@ Keep technical ids (`slug`, `layout`, `date`) **out** of the list so they are ne
 
 ## Glossary interaction
 
-Workspace glossary terms apply to batch text concatenated for glossary matching in `translateBatch`. Long frontmatter values benefit from consistent terminology entries in `.translate-glossary.json`.
+Workspace glossary terms are matched against each frontmatter field or body fragment on its own, then included in that segment's prompt and cache key. Long fields still benefit from consistent entries in `.translate-glossary.json`.
 
 ## Pitfalls
 

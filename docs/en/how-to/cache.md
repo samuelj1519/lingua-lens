@@ -66,7 +66,7 @@ Use after:
 
 ## Step 5: Document batch caching
 
-`translateBatch` writes per-item keys after successful parse. `peekDocumentBatchCache` allows fast preview reopen. Identity translations (`isSameTranslationAsSource`) may skip cache write but still return result.
+`translateBatch` writes one key per segment after a successful parse. Glossary terms are matched against that segment alone and go into both the prompt and the cache key. `peekDocumentBatchCache` reads with the same per-segment match. A displayable translation that equals the source is stored too.
 
 ## Step 6: Monitor cache effectiveness
 

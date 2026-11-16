@@ -66,7 +66,7 @@
 
 ## 步骤 5：文档批量缓存
 
-`translateBatch` 在成功解析后按项写入键。`peekDocumentBatchCache` 支持快速重开预览。恒等译文（`isSameTranslationAsSource`）可能跳过缓存写入但仍返回结果。
+`translateBatch` 在成功解析后按段写入键。每段术语表只按该段文本匹配，并同时进入提示词和缓存键。`peekDocumentBatchCache` 用同一套单段匹配读取。与源文相同的可展示译文也会写入缓存。
 
 ## 步骤 6：观察缓存效果
 

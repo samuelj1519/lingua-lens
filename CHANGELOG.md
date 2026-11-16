@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.8.3
+
+- **Cache**: document batches match glossary terms per segment for both the prompt and the cache key, so an unchanged segment reuses the stored translation instead of calling the model again.
+- **Cache**: hover, selection, and preview refresh load the glossary before computing a key, so a cold glossary does not miss an entry written after the glossary loads.
+- **Cache**: displayable batch translations that equal the source are stored. Use Refresh Preview to bypass the cache and request them again.
+
+### 0.8.3（中文）
+
+- **缓存**：文档批量按单段匹配术语表，提示词和缓存键使用同一份列表。内容未变的段落再次打开时复用译文，不再请求模型。
+- **缓存**：悬停、选区和刷新预览会在计算缓存键之前加载术语表，避免术语表尚未加载时未命中。
+- **缓存**：与源文相同的可展示译文也会写入。需要重新请求时使用刷新预览。
+
 ## 0.8.2
 
 - **Document CodeLens**: show translate / side-file / refresh CodeLens at the top of **JSON, JSONC, YAML, TOML, XML**, and extension-matched `.yml` / `.plist` files (same coverage as editor title actions), not only Markdown/plain text. Structured files use the same whole-document translation path as before.

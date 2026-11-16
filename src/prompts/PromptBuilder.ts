@@ -44,6 +44,7 @@ Rules:
 - For list/table/blockquote fragments: keep the same number of items/rows and the same link URLs; translate text only.
 - Do not add or remove heading # characters unless they appear in the source fragment.
 - Never translate URLs, code spans, or placeholder tokens ⟦Pn⟧.
+- If an item includes a glossary, apply that glossary only to that item.
 - Valid JSON only.
 {{customSystemPrompt}}`;
 
@@ -103,7 +104,10 @@ SOURCE>>>`;
     return [{ role: 'system', content: system }, { role: 'user', content: user }];
   }
 
-  buildBatch(items: { id: string; text: string }[], ctx: PromptContext): ChatMessage[] {
+  buildBatch(
+    items: { id: string; text: string; glossary?: GlossaryTerm[] }[],
+    ctx: PromptContext,
+  ): ChatMessage[] {
     const targetLangName = TARGET_LANG_NAMES[ctx.targetLang];
     let system = SYSTEM_BATCH.replace(/\{\{targetLangName\}\}/g, targetLangName);
     const custom = ctx.customSystemPrompt?.trim();
@@ -112,10 +116,13 @@ SOURCE>>>`;
       custom ? `Additional instructions:\n${custom}` : '',
     );
     const glossaryBlock = formatGlossary(ctx.glossary, ctx.targetLang);
+    const payload = items.map((item) => {
+      const glossary = formatGlossary(item.glossary ?? [], ctx.targetLang).trim();
+      return glossary ? { id: item.id, text: item.text, glossary } : { id: item.id, text: item.text };
+    });
     const user = `Document: ${ctx.fileName ?? 'document'}.
-${glossaryBlock}
-Input:
-${JSON.stringify({ items })}`;
+${glossaryBlock}Input:
+${JSON.stringify({ items: payload })}`;
     return [{ role: 'system', content: system }, { role: 'user', content: user }];
   }
 }

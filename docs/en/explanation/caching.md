@@ -57,7 +57,7 @@ On disk hit, entry promotes to memory. `configure()` rebuilds caches when settin
 After successful LLM response and sanitize:
 
 - `cache.set(key, cleaned, { model, targetLang })`.
-- Batch path sets per item when translation differs from source (`isSameTranslationAsSource` may skip write).
+- The batch path writes one entry per segment. Glossary terms are matched against that segment. Displayable translations are stored, including results that equal the source.
 
 ## Invalidation
 

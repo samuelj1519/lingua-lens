@@ -57,7 +57,7 @@ sha256Hex(
 LLM 成功响应并清理后：
 
 - `cache.set(key, cleaned, { model, targetLang })`。
-- 批量路径在译文与源不同时按项写入（`isSameTranslationAsSource` 可能跳过写入）。
+- 批量路径按段写入。术语表按该段文本匹配。可展示的译文都会写入，包括与源文相同的结果。
 
 ## 失效
 

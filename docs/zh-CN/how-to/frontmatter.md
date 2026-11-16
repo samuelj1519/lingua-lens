@@ -85,7 +85,7 @@ Frontmatter 批量使用缓存 kind `documentFrontmatterBatch`（与正文 `docu
 
 ## 与术语表的交互
 
-工作区术语表术语应用于 `translateBatch` 中拼接用于术语匹配的批量文本。长 frontmatter 值受益于 `.translate-glossary.json` 中一致的术语条目。
+工作区术语表按每个 frontmatter 字段或正文片段单独匹配，再进入该段的提示词和缓存键。长字段仍受益于 `.translate-glossary.json` 中一致的术语条目。
 
 ## 陷阱
 

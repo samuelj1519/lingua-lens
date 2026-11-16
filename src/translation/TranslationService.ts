@@ -9,7 +9,6 @@ import type { Placeholder, Segment, TargetLang, TextUnit } from '../types';
 import { restore } from '../parsing/placeholders';
 import type { StatsService } from '../stats/StatsService';
 import { isCacheableTranslation } from './cacheable';
-import { isSameTranslationAsSource } from '../util/textEquivalence';
 import { sha256HexPrefix } from '../util/hash';
 import * as vscode from 'vscode';
 
@@ -82,6 +81,7 @@ export class TranslationService {
     batchCacheKind: 'documentBatch' | 'documentFrontmatterBatch',
     uri?: vscode.Uri,
   ): Promise<TranslateResult | undefined> {
+    await this.glossary.ensureLoaded(this.workspaceFolder(uri));
     const kind = batchCacheKind;
     const key = this.cacheKey(text, target, kind, uri);
     const mem = this.cache.getMemory(key);
@@ -108,6 +108,7 @@ export class TranslationService {
     kind: 'hover' | 'selection',
     uri?: vscode.Uri,
   ): Promise<TranslateResult | undefined> {
+    await this.glossary.ensureLoaded(this.workspaceFolder(uri));
     const key = this.cacheKey(unit.text, target, kind, uri);
     const mem = this.cache.getMemory(key);
     if (mem !== undefined) {
@@ -142,6 +143,7 @@ export class TranslationService {
     target: TargetLang,
     opts: { kind: 'hover' | 'selection'; bypassCache?: boolean; uri?: import('vscode').Uri },
   ): Promise<TranslateResult> {
+    await this.glossary.ensureLoaded(this.workspaceFolder(opts.uri));
     const key = this.cacheKey(unit.text, target, opts.kind, opts.uri);
     if (!opts.bypassCache) {
       const cached = await this.peekCache(unit, target, opts.kind, opts.uri);
@@ -222,6 +224,7 @@ export class TranslationService {
     target: TargetLang,
     uri?: vscode.Uri,
   ): Promise<void> {
+    await this.glossary.ensureLoaded(this.workspaceFolder(uri));
     for (const seg of segments) {
       if (seg.kind === 'preserved') continue;
       const kind = seg.kind === 'frontmatter' ? 'documentFrontmatterBatch' : 'documentBatch';
@@ -247,9 +250,7 @@ export class TranslationService {
     const pending = [...items];
 
     await this.glossary.ensureLoaded(this.workspaceFolder(uri));
-    const glossaryText = items.map((i) => i.text).join('\n');
-    const glossary = this.glossary.match(glossaryText, this.workspaceFolder(uri), target);
-    const extraBodyHash = sha256HexPrefix(JSON.stringify(cfg.llm.extraBody ?? {}), 16);
+    const folder = this.workspaceFolder(uri);
 
     while (pending.length > 0) {
       if (signal.aborted) break;
@@ -257,11 +258,15 @@ export class TranslationService {
       try {
         const batchKind = batch[0]?.batchCacheKind ?? 'documentBatch';
         const messages = this.prompts.buildBatch(
-          batch.map((b) => ({ id: b.id, text: b.text })),
+          batch.map((b) => ({
+            id: b.id,
+            text: b.text,
+            glossary: this.glossary.match(b.text, folder, target),
+          })),
           {
             kind: batchKind,
             targetLang: target,
-            glossary,
+            glossary: [],
             customSystemPrompt: cfg.llm.systemPrompt,
             fileName,
           },
@@ -288,29 +293,12 @@ export class TranslationService {
             continue;
           }
           const restored = restore(cleaned, item.placeholders);
-          if (isSameTranslationAsSource(item.text, restored.text, item.placeholders)) {
-            results.set(item.id, {
-              text: restored.text,
-              fromCache: false,
-              placeholderOk: restored.ok,
-            });
-            continue;
-          }
           const itemBatchKind = item.batchCacheKind ?? 'documentBatch';
-          const key = this.cache.key({
-            text: item.text,
-            targetLang: target,
-            model: cfg.llm.model,
-            promptVersion: this.prompts.promptVersion({
-              kind: itemBatchKind,
-              targetLang: target,
-              glossary,
-              customSystemPrompt: cfg.llm.systemPrompt,
-            }),
-            baseUrl: cfg.llm.baseUrl,
-            extraBodyHash,
-          });
-          this.cache.set(key, cleaned, { model: cfg.llm.model, targetLang: target });
+          this.cache.set(
+            this.cacheKey(item.text, target, itemBatchKind, uri),
+            cleaned,
+            { model: cfg.llm.model, targetLang: target },
+          );
           results.set(item.id, {
             text: restored.text,
             fromCache: false,
